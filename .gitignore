@@ -1,0 +1,71 @@
+# One directory per application. Patterns here are unanchored (no leading
+# slash) so they match at any depth — a rule written for the first app has
+# to keep working when the next five land beside it.
+
+# ── Dependencies ──────────────────────────────────────────────────────
+node_modules/
+.pnp
+.pnp.js
+.yarn/
+bower_components/
+
+# ── Build output ──────────────────────────────────────────────────────
+dist/
+build/
+out/
+.next/
+.nuxt/
+.astro/
+.svelte-kit/
+.vite/
+.turbo/
+*.tsbuildinfo
+
+# ── Secrets ───────────────────────────────────────────────────────────
+# Connection strings and keys. `.env.example` is committed and carries the
+# variable NAMES with empty or placeholder values; `.env` never is.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets.json
+credentials.json
+
+# ── Local database state ──────────────────────────────────────────────
+*.sqlite
+*.sqlite3
+*.db
+pgdata/
+
+# ── Test and coverage output ──────────────────────────────────────────
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+
+# ── Caches and logs ───────────────────────────────────────────────────
+.cache/
+.eslintcache
+*.log
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ── Agent / workspace tooling, not deliverables ───────────────────────
+.claude/
+.mcp.json
+settings.local.json
+contract.md
+project-profile.md
+RUN.md
+EXIT.md
+LEARNINGS.md
+review/
+
+# ── OS / editor noise ─────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
