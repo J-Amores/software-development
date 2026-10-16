@@ -6,8 +6,8 @@
 
 **Status:** ready-for-agent
 
-- [ ] Root package workspace cleanly links the static web application and backend API packages
-- [ ] Unified toolchain configuration is initialized with Node 22 LTS pinned as the workspace runtime environment
-- [ ] Unified configuration provides root development, build, quality check, and test tasks executable through consistent commands
-- [ ] Local container configuration orchestrates a local document database accessible via a standardized connection URI
-- [ ] Running the workspace quality check task completes successfully with zero errors
+- [x] Root package workspace cleanly links the static web application and backend API packages
+- [x] Unified toolchain configuration is initialized with Node 22 LTS pinned as the workspace runtime environment
+- [x] Unified configuration provides root development, build, quality check, and test tasks executable through consistent commands
+- [x] Local container configuration orchestrates a local document database accessible via a standardized connection URI
+- [x] Running the workspace quality check task completes successfully with zero errors
