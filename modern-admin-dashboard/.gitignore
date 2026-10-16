@@ -16,3 +16,5 @@ pnpm-debug.log*
 .env.*
 !.env.example
 .worktrees/
+test-results/
+playwright-report/

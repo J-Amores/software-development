@@ -58,15 +58,25 @@ export async function startServer(options = {}) {
   const mongodbUri =
     options.mongodbUri ?? (process.env.MONGODB_URI || "mongodb://localhost:27017/admin_dashboard");
 
-  const db = createDatabaseAdapter({ uri: mongodbUri });
+  const db =
+    options.db ??
+    (process.env.MOCK_DB === "true"
+      ? {
+          connect: async () => {},
+          disconnect: async () => {},
+          ping: async () => ({ ok: true, latencyMs: 3 }),
+        }
+      : createDatabaseAdapter({ uri: mongodbUri }));
 
-  try {
-    await db.connect();
-    console.log(`Connected to database at ${mongodbUri}`);
-  } catch (err) {
-    console.warn(
-      `Initial database connection failed: ${err.message}. Server will continue running.`,
-    );
+  if (!options.db && process.env.MOCK_DB !== "true") {
+    try {
+      await db.connect();
+      console.log(`Connected to database at ${mongodbUri}`);
+    } catch (err) {
+      console.warn(
+        `Initial database connection failed: ${err.message}. Server will continue running.`,
+      );
+    }
   }
 
   const app = await createApp({

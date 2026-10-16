@@ -13,12 +13,21 @@ export default defineConfig({
       "docs/**",
       "GLOSSARY.md",
       "AGENTS.md",
+      "test-results/**",
+      "playwright-report/**",
     ],
   },
   lint: {
-    ignorePatterns: [".agents/**", ".scratch/**", ".worktrees/**", "docs/**"],
+    ignorePatterns: [
+      ".agents/**",
+      ".scratch/**",
+      ".worktrees/**",
+      "docs/**",
+      "test-results/**",
+      "playwright-report/**",
+    ],
   },
   test: {
-    exclude: ["**/node_modules/**", "**/.worktrees/**"],
+    exclude: ["**/node_modules/**", "**/.worktrees/**", "e2e/**"],
   },
 });
