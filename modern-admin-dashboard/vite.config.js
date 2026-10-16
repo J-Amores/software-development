@@ -6,9 +6,19 @@ export default defineConfig({
     cache: true,
   },
   fmt: {
-    ignorePatterns: [".agents/**", ".scratch/**", "docs/**", "GLOSSARY.md", "AGENTS.md"],
+    ignorePatterns: [
+      ".agents/**",
+      ".scratch/**",
+      ".worktrees/**",
+      "docs/**",
+      "GLOSSARY.md",
+      "AGENTS.md",
+    ],
   },
   lint: {
-    ignorePatterns: [".agents/**", ".scratch/**", "docs/**"],
+    ignorePatterns: [".agents/**", ".scratch/**", ".worktrees/**", "docs/**"],
+  },
+  test: {
+    exclude: ["**/node_modules/**", "**/.worktrees/**"],
   },
 });

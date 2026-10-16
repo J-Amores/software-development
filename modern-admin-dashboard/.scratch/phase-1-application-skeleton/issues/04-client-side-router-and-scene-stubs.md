@@ -6,9 +6,9 @@
 
 **Status:** ready-for-agent
 
-- [ ] Client router module initializes route mapping and manages navigation through the HTML5 History API without triggering page reloads
-- [ ] Global link interception captures clicks on internal anchor elements and delegates navigation to the router
-- [ ] Static hosting rewrite rule routes deep path requests to the main application entry point to support direct deep linking
-- [ ] View lifecycle interface standardizes mount and unmount operations across all route transitions
-- [ ] Placeholder stub views render consistent semantic headings and breadcrumb details for Team Members, Contacts, Invoices, Profile Form, Calendar Events, FAQ Entries, and Chart views
-- [ ] Automated tests verify route resolution, browser history transitions, and view unmounting during route changes
+- [x] Client router module initializes route mapping and manages navigation through the HTML5 History API without triggering page reloads
+- [x] Global link interception captures clicks on internal anchor elements and delegates navigation to the router
+- [x] Static hosting rewrite rule routes deep path requests to the main application entry point to support direct deep linking
+- [x] View lifecycle interface standardizes mount and unmount operations across all route transitions
+- [x] Placeholder stub views render consistent semantic headings and breadcrumb details for Team Members, Contacts, Invoices, Profile Form, Calendar Events, FAQ Entries, and Chart views
+- [x] Automated tests verify route resolution, browser history transitions, and view unmounting during route changes
