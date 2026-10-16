@@ -1,0 +1,21 @@
+{
+  "name": "modern-admin-dashboard",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vp dev web --host",
+    "build": "vp build",
+    "check": "vp check",
+    "test": "vp test",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "happy-dom": "^21.0.1",
+    "vite-plus": "^1.2.0"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

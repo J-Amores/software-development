@@ -1,0 +1,15 @@
+{
+  "name": "@modern-admin/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.3.1",
+    "fastify": "^5.12.7",
+    "mongodb": "^7.7.0"
+  }
+}

@@ -1,0 +1,38 @@
+import Fastify from "fastify";
+import cors from "@fastify/cors";
+import { healthRoutes } from "./routes/health.js";
+
+/**
+ * Builds and configures the Fastify application instance.
+ *
+ * @param {Object} [options={}]
+ * @param {any} [options.db] - Database adapter instance
+ * @param {boolean | object} [options.logger=false] - Fastify logger configuration
+ * @param {string | string[] | boolean} [options.corsOrigin="*"] - Allowed CORS origins
+ * @returns {Promise<import('fastify').FastifyInstance>}
+ */
+export async function createApp(options = {}) {
+  const { db, logger = false, corsOrigin = "*", ...fastifyOptions } = options;
+
+  const app = Fastify({
+    logger,
+    ...fastifyOptions,
+  });
+
+  await app.register(cors, {
+    origin: corsOrigin,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    credentials: true,
+  });
+
+  if (db) {
+    app.decorate("db", db);
+  }
+
+  await app.register(healthRoutes, { db });
+
+  return app;
+}
+
+export { createApp as buildApp };
+export default createApp;
