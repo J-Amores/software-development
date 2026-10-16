@@ -64,6 +64,7 @@ describe("Backend API & Health Endpoints", () => {
       expect(response.statusCode).toBe(200);
       const payload = JSON.parse(response.body);
       expect(payload.status).toBe("ok");
+      expect(payload.environment).toBe(process.env.NODE_ENV || "development");
       expect(payload.database).toEqual({
         status: "connected",
         latencyMs: 5,
@@ -85,6 +86,7 @@ describe("Backend API & Health Endpoints", () => {
       expect(response.statusCode).toBe(503);
       const payload = JSON.parse(response.body);
       expect(payload.status).toBe("degraded");
+      expect(payload.environment).toBe(process.env.NODE_ENV || "development");
       expect(payload.database.status).toBe("disconnected");
       expect(payload.database.error).toBe("Connection timeout");
     });
@@ -99,6 +101,7 @@ describe("Backend API & Health Endpoints", () => {
       expect(response.statusCode).toBe(200);
       const payload = JSON.parse(response.body);
       expect(payload.status).toBe("ok");
+      expect(payload.environment).toBe(process.env.NODE_ENV || "development");
       expect(payload.database).toEqual({
         status: "disabled",
       });

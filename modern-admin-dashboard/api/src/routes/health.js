@@ -19,11 +19,13 @@ export async function healthRoutes(fastify, options = {}) {
 
   fastify.get("/api/v1/health", async (request, reply) => {
     const timestamp = new Date().toISOString();
+    const environment = process.env.NODE_ENV || "development";
 
     if (!db) {
       return reply.code(200).send({
         status: "ok",
         timestamp,
+        environment,
         database: {
           status: "disabled",
         },
@@ -35,6 +37,7 @@ export async function healthRoutes(fastify, options = {}) {
       return reply.code(200).send({
         status: "ok",
         timestamp,
+        environment,
         database: {
           status: "connected",
           latencyMs: pingResult.latencyMs,
@@ -45,6 +48,7 @@ export async function healthRoutes(fastify, options = {}) {
       return reply.code(503).send({
         status: "degraded",
         timestamp,
+        environment,
         database: {
           status: "disconnected",
           error: error instanceof Error ? error.message : String(error),

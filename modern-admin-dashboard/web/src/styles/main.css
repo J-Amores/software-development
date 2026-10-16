@@ -274,3 +274,293 @@ app-sidebar {
 .sidebar-container.collapsed .sidebar-label {
   display: none;
 }
+
+/* ==========================================================================
+   Scene Views & Layout
+   ========================================================================== */
+.scene-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: fadeIn var(--transition-fast) ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.scene-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.scene-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.breadcrumb-item.active {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.scene-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.scene-subtitle {
+  font-size: 0.875rem;
+  color: var(--color-accent);
+}
+
+/* ==========================================================================
+   Dashboard Health Telemetry Card
+   ========================================================================== */
+.dashboard-card,
+.placeholder-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition:
+    background-color var(--transition-normal),
+    border-color var(--transition-normal);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.card-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.tracer-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-full);
+  background-color: var(--bg-hover);
+  color: var(--color-accent);
+  border: 1px solid var(--border-subtle);
+}
+
+.telemetry-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.telemetry-metric-box {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.metric-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.metric-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.indicator-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.indicator-value.highlight {
+  color: var(--color-success);
+}
+
+.indicator-value.uppercase {
+  text-transform: uppercase;
+}
+
+.indicator-value.timestamp {
+  font-size: 0.875rem;
+  font-family: var(--font-mono);
+}
+
+.metric-status-tag {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.indicator-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-sm);
+  width: fit-content;
+}
+
+.indicator-badge.status-ok {
+  background-color: rgba(76, 206, 172, 0.15);
+  color: var(--color-success);
+  border: 1px solid var(--color-success);
+}
+
+.badge-dot {
+  font-size: 0.75rem;
+}
+
+.health-status-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  padding: 1rem;
+}
+
+/* ==========================================================================
+   Alerts & Error Fallbacks
+   ========================================================================== */
+.health-status-degraded,
+.health-status-error {
+  display: flex;
+  gap: 1rem;
+  padding: 1.25rem;
+  border-radius: var(--radius-md);
+}
+
+.health-status-degraded {
+  background-color: rgba(241, 185, 78, 0.1);
+  border: 1px solid var(--color-warning);
+  color: var(--text-primary);
+}
+
+.health-status-error {
+  background-color: rgba(219, 79, 74, 0.1);
+  border: 1px solid var(--color-danger);
+  color: var(--text-primary);
+}
+
+.alert-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.alert-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.alert-heading {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.alert-text {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.alert-detail,
+.error-trace {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.btn-retry {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  background-color: var(--color-primary);
+  color: var(--text-inverse);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  width: fit-content;
+}
+
+.btn-retry:hover {
+  background-color: var(--color-primary-hover);
+}
+
+/* ==========================================================================
+   Placeholder Scene Card
+   ========================================================================== */
+.placeholder-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.placeholder-badge {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-full);
+  background-color: var(--bg-hover);
+  color: var(--color-accent);
+  border: 1px solid var(--border-subtle);
+}
+
+.placeholder-desc {
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.placeholder-notice {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  background-color: var(--bg-primary);
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--border-color);
+}
