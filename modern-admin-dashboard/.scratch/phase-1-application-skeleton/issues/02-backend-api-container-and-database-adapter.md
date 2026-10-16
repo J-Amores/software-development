@@ -6,8 +6,8 @@
 
 **Status:** ready-for-agent
 
-- [ ] HTTP server initializes with low overhead and responds to basic liveness health checks
-- [ ] Database adapter encapsulates connection lifecycle and connection pooling, reading a single connection URI configuration variable
-- [ ] Process termination hooks intercept SIGTERM and SIGINT to flush pending requests and close database connection pools cleanly during container teardown
-- [ ] Multi-stage container definition packages the production API service for containerized execution
-- [ ] Automated contract tests exercise HTTP routing and lifecycle hooks via in-memory request injection without opening live network ports
+- [x] HTTP server initializes with low overhead and responds to basic liveness health checks
+- [x] Database adapter encapsulates connection lifecycle and connection pooling, reading a single connection URI configuration variable
+- [x] Process termination hooks intercept SIGTERM and SIGINT to flush pending requests and close database connection pools cleanly during container teardown
+- [x] Multi-stage container definition packages the production API service for containerized execution
+- [x] Automated contract tests exercise HTTP routing and lifecycle hooks via in-memory request injection without opening live network ports
