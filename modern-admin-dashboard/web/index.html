@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modern Admin Dashboard</title>
+    <!-- Inline bootstrap script to guarantee zero Flash of Unstyled Theme (FOUC) -->
+    <script>
+      (function () {
+        try {
+          var storageKey = "admin-dashboard-theme";
+          var stored = localStorage.getItem(storageKey);
+          if (stored === "dark" || stored === "light") {
+            document.documentElement.setAttribute("data-theme", stored);
+            return;
+          }
+          var prefersLight =
+            window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+          document.documentElement.setAttribute("data-theme", prefersLight ? "light" : "dark");
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        }
+      })();
+    </script>
+    <link rel="stylesheet" href="/src/styles/main.css" />
+  </head>
+  <body>
+    <app-shell></app-shell>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

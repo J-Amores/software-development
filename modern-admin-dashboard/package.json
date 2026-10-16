@@ -10,6 +10,7 @@
     "test": "vp test"
   },
   "devDependencies": {
+    "happy-dom": "^21.0.1",
     "vite-plus": "^1.2.0"
   },
   "engines": {
