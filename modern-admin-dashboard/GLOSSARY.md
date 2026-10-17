@@ -32,6 +32,10 @@ _Avoid_: Knowledge base article, help ticket, Q&A item.
 A formal, itemized request for payment issued by the organization to a client for delivered services or products.
 _Avoid_: Bill, payment request, tab.
 
+**Amount**:
+The quantified monetary value billed on an invoice or settled in a commercial transaction.
+_Avoid_: Cost, price, fee, charge, total due.
+
 **Transaction**:
 A recorded financial exchange or settlement of monetary value associated with an invoice or commercial activity.
 _Avoid_: Payment, charge, transfer, remittance.

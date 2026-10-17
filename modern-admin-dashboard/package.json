@@ -8,7 +8,9 @@
     "build": "vp build",
     "check": "vp check",
     "test": "vp test",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "seed": "node api/src/db/seed.js",
+    "setup:cloud": "bash scripts/setup-cloud.sh"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1",

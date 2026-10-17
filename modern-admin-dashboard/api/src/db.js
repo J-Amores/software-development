@@ -34,6 +34,16 @@ export function createDatabaseAdapter(config = {}) {
     getClient() {
       return client;
     },
+    getDb(name) {
+      if (!client || !isConnected) {
+        throw new Error("Database adapter is not connected");
+      }
+      const defaultDbName =
+        client.options?.dbName && client.options.dbName !== "test"
+          ? client.options.dbName
+          : "admin_dashboard";
+      return client.db(name || defaultDbName);
+    },
     async connect() {
       if (isConnected && client) {
         return client;
@@ -65,7 +75,11 @@ export function createDatabaseAdapter(config = {}) {
       }
 
       const start = Date.now();
-      await client.db().command({ ping: 1 });
+      const defaultDbName =
+        client.options?.dbName && client.options.dbName !== "test"
+          ? client.options.dbName
+          : "admin_dashboard";
+      await client.db(defaultDbName).command({ ping: 1 });
       const latencyMs = Date.now() - start;
 
       return {
