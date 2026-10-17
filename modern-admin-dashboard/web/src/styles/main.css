@@ -622,7 +622,8 @@ app-sidebar {
   color: var(--text-primary);
 }
 
-.team-status-loading {
+.team-status-loading,
+.contacts-status-loading {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -635,7 +636,8 @@ app-sidebar {
   border-radius: var(--radius-md);
 }
 
-.team-status-error {
+.team-status-error,
+.contacts-status-error {
   display: flex;
   gap: 1rem;
   padding: 1.5rem;

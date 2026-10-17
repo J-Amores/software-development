@@ -1,3 +1,4 @@
+import { ContactsView } from "./views/contacts-view.js";
 import { DashboardView } from "./views/dashboard-view.js";
 import { FormView } from "./views/form-view.js";
 import { PlaceholderView } from "./views/placeholder-view.js";
@@ -9,13 +10,7 @@ import { TeamView } from "./views/team-view.js";
 export const routes = {
   "/": () => new DashboardView(),
   "/team": () => new TeamView(),
-  "/contacts": () =>
-    new PlaceholderView({
-      title: "Contacts Information",
-      subtitle: "External client and institutional contacts directory",
-      section: "Data Management",
-      domainConcept: "Contact records, communication logs, and customer relationship information.",
-    }),
+  "/contacts": () => new ContactsView(),
   "/invoices": () =>
     new PlaceholderView({
       title: "Invoices Balances",

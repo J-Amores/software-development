@@ -188,6 +188,80 @@ describe("Frontend API Client Adapter Seam", () => {
         "body must have required property 'email'",
       );
     });
+
+    it("fetches contacts with query parameters via GET /api/v1/contacts", async () => {
+      const mockContacts = [
+        {
+          id: 1,
+          name: "Jon Snow",
+          email: "jonsnow@gmail.com",
+          age: 35,
+          phone: "(665)121-5454",
+          address: "0912 Won Street, Alabama, SY 10001",
+          city: "New York",
+          zipCode: "10001",
+          registrarId: 123512,
+        },
+      ];
+
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: vi.fn().mockResolvedValue(mockContacts),
+      });
+
+      const client = createApiClient({
+        baseUrl: "http://api.local:8080",
+        fetchFn: mockFetch,
+      });
+
+      const result = await client.getContacts({ q: "jon", sort: "name", order: "asc" });
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        "http://api.local:8080/api/v1/contacts?q=jon&sort=name&order=asc",
+        {
+          method: "GET",
+          headers: { Accept: "application/json" },
+        },
+      );
+      expect(result).toEqual(mockContacts);
+    });
+
+    it("provisions a new contact via POST /api/v1/contacts", async () => {
+      const newContact = {
+        name: "Brienne of Tarth",
+        email: "brienne@tarth.com",
+        age: 32,
+        phone: "(555) 777-8888",
+        address: "Evenfall Hall, Tarth",
+        city: "Tarth",
+        zipCode: "99123",
+        registrarId: 654321,
+      };
+      const createdContact = { id: 4, ...newContact };
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 201,
+        json: vi.fn().mockResolvedValue(createdContact),
+      });
+
+      const client = createApiClient({
+        baseUrl: "http://api.local:8080",
+        fetchFn: mockFetch,
+      });
+
+      const result = await client.createContact(newContact);
+
+      expect(mockFetch).toHaveBeenCalledWith("http://api.local:8080/api/v1/contacts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(newContact),
+      });
+      expect(result).toEqual(createdContact);
+    });
   });
 
   describe("createFakeApiClient", () => {
@@ -263,6 +337,52 @@ describe("Frontend API Client Adapter Seam", () => {
     it("throws error when creating a team member with missing fields in fake client", async () => {
       const fakeClient = createFakeApiClient();
       await expect(fakeClient.createTeamMember({ name: "Incomplete" })).rejects.toThrow(
+        "Missing required fields",
+      );
+    });
+
+    it("provides in-memory querying and creation for contacts", async () => {
+      const fakeClient = createFakeApiClient();
+
+      // Query all
+      const all = await fakeClient.getContacts();
+      expect(Array.isArray(all)).toBe(true);
+      expect(all.length).toBeGreaterThan(0);
+
+      // Query with search
+      const searched = await fakeClient.getContacts({ q: "new york" });
+      expect(searched.length).toBeGreaterThan(0);
+      expect(
+        searched.every(
+          (c) =>
+            c.city.toLowerCase().includes("new york") ||
+            c.address.toLowerCase().includes("new york"),
+        ),
+      ).toBe(true);
+
+      // Create new contact
+      const initialCount = (await fakeClient.getContacts()).length;
+      const created = await fakeClient.createContact({
+        name: "Brienne of Tarth",
+        email: "brienne@tarth.com",
+        age: 32,
+        phone: "(555) 777-8888",
+        address: "Evenfall Hall, Tarth",
+        city: "Tarth",
+        zipCode: "99123",
+        registrarId: 654321,
+      });
+
+      expect(created.name).toBe("Brienne of Tarth");
+      expect(created.id).toBe(initialCount + 1);
+
+      const after = await fakeClient.getContacts();
+      expect(after).toHaveLength(initialCount + 1);
+    });
+
+    it("throws error when creating a contact with missing fields in fake client", async () => {
+      const fakeClient = createFakeApiClient();
+      await expect(fakeClient.createContact({ name: "Incomplete Contact" })).rejects.toThrow(
         "Missing required fields",
       );
     });

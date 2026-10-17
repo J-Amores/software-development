@@ -174,6 +174,84 @@ export function createApiClient(options = {}) {
 
       return data;
     },
+
+    async getContacts(params = {}) {
+      if (!fetchFn) {
+        throw new Error("No fetch implementation available.");
+      }
+
+      const cleanBase = baseUrl.replace(/\/$/, "");
+      const searchParams = new URLSearchParams();
+      if (params.q) searchParams.set("q", params.q);
+      if (params.sort) searchParams.set("sort", params.sort);
+      if (params.order) searchParams.set("order", params.order);
+
+      const qs = searchParams.toString();
+      const url = `${cleanBase}/api/v1/contacts${qs ? `?${qs}` : ""}`;
+
+      let response;
+      try {
+        response = await fetchFn(url, {
+          method: "GET",
+          headers: { Accept: "application/json" },
+        });
+      } catch (err) {
+        throw new Error(`Failed to reach API at ${baseUrl}: ${err.message}`);
+      }
+
+      let data;
+      try {
+        data = await response.json();
+      } catch (err) {
+        throw new Error(`Invalid JSON response from ${url}: ${err.message}`);
+      }
+
+      if (!response.ok) {
+        const errorMsg =
+          data?.message || `API error: ${response.status} ${response.statusText || ""}`.trim();
+        throw new Error(errorMsg);
+      }
+
+      return data;
+    },
+
+    async createContact(contactData) {
+      if (!fetchFn) {
+        throw new Error("No fetch implementation available.");
+      }
+
+      const cleanBase = baseUrl.replace(/\/$/, "");
+      const url = `${cleanBase}/api/v1/contacts`;
+
+      let response;
+      try {
+        response = await fetchFn(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(contactData),
+        });
+      } catch (err) {
+        throw new Error(`Failed to reach API at ${baseUrl}: ${err.message}`);
+      }
+
+      let data;
+      try {
+        data = await response.json();
+      } catch (err) {
+        throw new Error(`Invalid JSON response from ${url}: ${err.message}`);
+      }
+
+      if (!response.ok) {
+        const errorMsg =
+          data?.message || `API error: ${response.status} ${response.statusText || ""}`.trim();
+        throw new Error(errorMsg);
+      }
+
+      return data;
+    },
   };
 }
 
@@ -224,6 +302,41 @@ export function createFakeApiClient(options = {}) {
         access: "user",
       },
     ],
+    contacts = [
+      {
+        id: 1,
+        name: "Jon Snow",
+        email: "jonsnow@gmail.com",
+        age: 35,
+        phone: "(665)121-5454",
+        address: "0912 Won Street, Alabama, SY 10001",
+        city: "New York",
+        zipCode: "10001",
+        registrarId: 123512,
+      },
+      {
+        id: 2,
+        name: "Cersei Lannister",
+        email: "cerseilannister@gmail.com",
+        age: 42,
+        phone: "(421)314-2288",
+        address: "1234 Main Street, New York, NY 10001",
+        city: "New York",
+        zipCode: "13151",
+        registrarId: 123512,
+      },
+      {
+        id: 3,
+        name: "Jaime Lannister",
+        email: "jaimelannister@gmail.com",
+        age: 45,
+        phone: "(422)982-6739",
+        address: "3333 Want Blvd, Estanza, NAY 42125",
+        city: "Estanza",
+        zipCode: "42125",
+        registrarId: 413251,
+      },
+    ],
     shouldThrow = false,
     errorMessage = "Network request failed",
     delayMs = 0,
@@ -231,6 +344,7 @@ export function createFakeApiClient(options = {}) {
 
   const membersStore =
     typeof teamMembers === "function" ? null : teamMembers.map((m) => ({ ...m }));
+  const contactsStore = typeof contacts === "function" ? null : contacts.map((c) => ({ ...c }));
 
   return {
     async getHealth() {
@@ -329,6 +443,88 @@ export function createFakeApiClient(options = {}) {
 
       if (Array.isArray(membersStore)) {
         membersStore.push(created);
+      }
+
+      return { ...created };
+    },
+
+    async getContacts(params = {}) {
+      if (delayMs > 0) {
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+      if (shouldThrow) {
+        throw new Error(errorMessage);
+      }
+
+      const raw = typeof contacts === "function" ? contacts() : contactsStore;
+      let list = raw.map((c) => ({ ...c }));
+
+      if (params.q) {
+        const qLower = params.q.toLowerCase();
+        list = list.filter(
+          (c) =>
+            c.name.toLowerCase().includes(qLower) ||
+            c.email.toLowerCase().includes(qLower) ||
+            c.city.toLowerCase().includes(qLower) ||
+            c.address.toLowerCase().includes(qLower) ||
+            String(c.registrarId).includes(qLower),
+        );
+      }
+
+      if (params.sort) {
+        const key = params.sort;
+        const dir = params.order === "desc" ? -1 : 1;
+        list.sort((a, b) => {
+          if (a[key] < b[key]) return -1 * dir;
+          if (a[key] > b[key]) return 1 * dir;
+          return 0;
+        });
+      }
+
+      return list;
+    },
+
+    async createContact(contactData) {
+      if (delayMs > 0) {
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+      if (shouldThrow) {
+        throw new Error(errorMessage);
+      }
+
+      if (
+        !contactData.name ||
+        !contactData.email ||
+        !contactData.phone ||
+        !contactData.address ||
+        !contactData.city ||
+        !contactData.zipCode ||
+        contactData.age == null ||
+        contactData.registrarId == null
+      ) {
+        throw new Error("Missing required fields for contact creation");
+      }
+
+      const currentStore = typeof contacts === "function" ? contacts() : contactsStore;
+      const nextId =
+        currentStore && currentStore.length > 0
+          ? Math.max(...currentStore.map((c) => c.id)) + 1
+          : 1;
+
+      const created = {
+        id: nextId,
+        name: contactData.name,
+        email: contactData.email,
+        age: Number(contactData.age),
+        phone: contactData.phone,
+        address: contactData.address,
+        city: contactData.city,
+        zipCode: contactData.zipCode,
+        registrarId: Number(contactData.registrarId),
+      };
+
+      if (Array.isArray(contactsStore)) {
+        contactsStore.push(created);
       }
 
       return { ...created };
