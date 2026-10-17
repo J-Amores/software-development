@@ -4,7 +4,7 @@
 
 **Blocked by:** 01: MongoDB Collections, Atomic Sequence Counters & Idempotent Seeding, 02: Deep Semantic HTML DataTable Component Module
 
-**Status:** ready-for-human
+**Status:** resolved
 
 - [x] Backend exposes `GET /api/v1/invoices` and `DELETE /api/v1/invoices/:id` with Fastify JSON Schema validation
 - [x] Invoices reflect normalized numeric amounts and ISO-8601 timestamps

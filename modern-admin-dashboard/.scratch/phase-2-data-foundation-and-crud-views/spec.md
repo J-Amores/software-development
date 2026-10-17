@@ -1,6 +1,6 @@
 # Specification: Phase 2 — MongoDB Atlas Data Foundation & Core Directory/Billing CRUD Views
 
-**Status**: ready-for-agent
+**Status**: resolved
 
 ## Problem Statement
 
