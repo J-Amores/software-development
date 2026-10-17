@@ -1,6 +1,7 @@
 import { ContactsView } from "./views/contacts-view.js";
 import { DashboardView } from "./views/dashboard-view.js";
 import { FormView } from "./views/form-view.js";
+import { InvoicesView } from "./views/invoices-view.js";
 import { PlaceholderView } from "./views/placeholder-view.js";
 import { TeamView } from "./views/team-view.js";
 
@@ -11,14 +12,9 @@ export const routes = {
   "/": () => new DashboardView(),
   "/team": () => new TeamView(),
   "/contacts": () => new ContactsView(),
-  "/invoices": () =>
-    new PlaceholderView({
-      title: "Invoices Balances",
-      subtitle: "Accounts receivable, balances, and billing transactions",
-      section: "Data Management",
-      domainConcept: "Invoice requests, payment records, and financial Transaction settlements.",
-    }),
+  "/invoices": () => new InvoicesView(),
   "/form": () => new FormView(),
+
   "/calendar": () =>
     new PlaceholderView({
       title: "Calendar",

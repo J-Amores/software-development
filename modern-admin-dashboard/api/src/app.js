@@ -3,6 +3,7 @@ import cors from "@fastify/cors";
 import { healthRoutes } from "./routes/health.js";
 import { teamRoutes } from "./routes/team.js";
 import { contactsRoutes } from "./routes/contacts.js";
+import { invoicesRoutes } from "./routes/invoices.js";
 
 /**
  * Builds and configures the Fastify application instance.
@@ -34,6 +35,7 @@ export async function createApp(options = {}) {
   await app.register(healthRoutes, { db });
   await app.register(teamRoutes, { db });
   await app.register(contactsRoutes, { db });
+  await app.register(invoicesRoutes, { db });
 
   return app;
 }

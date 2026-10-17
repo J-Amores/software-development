@@ -288,6 +288,82 @@ export function createApiClient(options = {}) {
 
       return data;
     },
+
+    async getInvoices(params = {}) {
+      if (!fetchFn) {
+        throw new Error("No fetch implementation available.");
+      }
+
+      const cleanBase = baseUrl.replace(/\/$/, "");
+      const searchParams = new URLSearchParams();
+      if (params.q) searchParams.set("q", params.q);
+      if (params.sort) searchParams.set("sort", params.sort);
+      if (params.order) searchParams.set("order", params.order);
+
+      const qs = searchParams.toString();
+      const url = `${cleanBase}/api/v1/invoices${qs ? `?${qs}` : ""}`;
+
+      let response;
+      try {
+        response = await fetchFn(url, {
+          method: "GET",
+          headers: { Accept: "application/json" },
+        });
+      } catch (err) {
+        throw new Error(`Failed to reach API at ${baseUrl}: ${err.message}`);
+      }
+
+      let data;
+      try {
+        data = await response.json();
+      } catch (err) {
+        throw new Error(`Invalid JSON response from ${url}: ${err.message}`);
+      }
+
+      if (!response.ok) {
+        const errorMsg =
+          data?.message || `API error: ${response.status} ${response.statusText || ""}`.trim();
+        throw new Error(errorMsg);
+      }
+
+      return data;
+    },
+
+    async deleteInvoice(id) {
+      if (!fetchFn) {
+        throw new Error("No fetch implementation available.");
+      }
+
+      const cleanBase = baseUrl.replace(/\/$/, "");
+      const url = `${cleanBase}/api/v1/invoices/${id}`;
+
+      let response;
+      try {
+        response = await fetchFn(url, {
+          method: "DELETE",
+          headers: {
+            Accept: "application/json",
+          },
+        });
+      } catch (err) {
+        throw new Error(`Failed to reach API at ${baseUrl}: ${err.message}`);
+      }
+
+      let data;
+      try {
+        data = await response.json();
+      } catch (err) {
+        throw new Error(`Invalid JSON response from ${url}: ${err.message}`);
+      }
+
+      if (!response.ok) {
+        const errorMsg =
+          data?.message || `API error: ${response.status} ${response.statusText || ""}`.trim();
+        throw new Error(errorMsg);
+      }
+
+      return data;
+    },
   };
 }
 
@@ -373,6 +449,32 @@ export function createFakeApiClient(options = {}) {
         registrarId: 413251,
       },
     ],
+    invoices = [
+      {
+        id: 1,
+        name: "Jon Snow",
+        email: "jonsnow@gmail.com",
+        phone: "(665)121-5454",
+        amount: 21.24,
+        date: "2022-03-12T00:00:00.000Z",
+      },
+      {
+        id: 2,
+        name: "Cersei Lannister",
+        email: "cerseilannister@gmail.com",
+        phone: "(421)314-2288",
+        amount: 1.24,
+        date: "2021-06-15T00:00:00.000Z",
+      },
+      {
+        id: 3,
+        name: "Jaime Lannister",
+        email: "jaimelannister@gmail.com",
+        phone: "(422)982-6739",
+        amount: 11.24,
+        date: "2022-05-02T00:00:00.000Z",
+      },
+    ],
     shouldThrow = false,
     errorMessage = "Network request failed",
     delayMs = 0,
@@ -381,6 +483,7 @@ export function createFakeApiClient(options = {}) {
   const membersStore =
     typeof teamMembers === "function" ? null : teamMembers.map((m) => ({ ...m }));
   const contactsStore = typeof contacts === "function" ? null : contacts.map((c) => ({ ...c }));
+  const invoicesStore = typeof invoices === "function" ? null : invoices.map((inv) => ({ ...inv }));
 
   return {
     async getHealth() {
@@ -582,6 +685,56 @@ export function createFakeApiClient(options = {}) {
       }
 
       return { ...created };
+    },
+
+    async getInvoices(params = {}) {
+      if (delayMs > 0) {
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+      if (shouldThrow) {
+        throw new Error(errorMessage);
+      }
+
+      const raw = typeof invoices === "function" ? invoices() : invoicesStore;
+      let list = raw.map((inv) => ({ ...inv }));
+
+      if (params.q) {
+        const qLower = params.q.toLowerCase();
+        list = list.filter(
+          (inv) =>
+            inv.name.toLowerCase().includes(qLower) || inv.email.toLowerCase().includes(qLower),
+        );
+      }
+
+      if (params.sort) {
+        const key = params.sort;
+        const dir = params.order === "desc" ? -1 : 1;
+        list.sort((a, b) => {
+          if (a[key] < b[key]) return -1 * dir;
+          if (a[key] > b[key]) return 1 * dir;
+          return 0;
+        });
+      }
+
+      return list;
+    },
+
+    async deleteInvoice(id) {
+      if (delayMs > 0) {
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+      if (shouldThrow) {
+        throw new Error(errorMessage);
+      }
+
+      const numId = Number(id);
+      const index = invoicesStore ? invoicesStore.findIndex((inv) => inv.id === numId) : -1;
+      if (index === -1) {
+        throw new Error(`Invoice with ID ${id} not found`);
+      }
+
+      invoicesStore.splice(index, 1);
+      return { success: true, id: numId, message: `Invoice ${id} successfully removed` };
     },
   };
 }

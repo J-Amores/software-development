@@ -304,6 +304,83 @@ describe("Frontend API Client Adapter Seam", () => {
       });
       expect(result).toEqual(createdContact);
     });
+
+    it("fetches invoices with query parameters via GET /api/v1/invoices", async () => {
+      const mockInvoices = [
+        {
+          id: 1,
+          name: "Jon Snow",
+          email: "jonsnow@gmail.com",
+          phone: "(665)121-5454",
+          amount: 21.24,
+          date: "2022-03-12T00:00:00.000Z",
+        },
+      ];
+
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: vi.fn().mockResolvedValue(mockInvoices),
+      });
+
+      const client = createApiClient({
+        baseUrl: "http://api.local:8080",
+        fetchFn: mockFetch,
+      });
+
+      const result = await client.getInvoices({ q: "snow", sort: "amount", order: "desc" });
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        "http://api.local:8080/api/v1/invoices?q=snow&sort=amount&order=desc",
+        {
+          method: "GET",
+          headers: { Accept: "application/json" },
+        },
+      );
+      expect(result).toEqual(mockInvoices);
+    });
+
+    it("deletes an invoice via DELETE /api/v1/invoices/:id", async () => {
+      const deleteResponse = {
+        success: true,
+        id: 1,
+        message: "Invoice 1 successfully removed",
+      };
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: vi.fn().mockResolvedValue(deleteResponse),
+      });
+
+      const client = createApiClient({
+        baseUrl: "http://api.local:8080",
+        fetchFn: mockFetch,
+      });
+
+      const result = await client.deleteInvoice(1);
+
+      expect(mockFetch).toHaveBeenCalledWith("http://api.local:8080/api/v1/invoices/1", {
+        method: "DELETE",
+        headers: { Accept: "application/json" },
+      });
+      expect(result).toEqual(deleteResponse);
+    });
+
+    it("throws error when deleteInvoice fails on server", async () => {
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 404,
+        statusText: "Not Found",
+        json: vi.fn().mockResolvedValue({ message: "Invoice with ID 999 not found" }),
+      });
+
+      const client = createApiClient({
+        baseUrl: "http://api.local:8080",
+        fetchFn: mockFetch,
+      });
+
+      await expect(client.deleteInvoice(999)).rejects.toThrow("Invoice with ID 999 not found");
+    });
   });
 
   describe("createFakeApiClient", () => {
@@ -448,6 +525,38 @@ describe("Frontend API Client Adapter Seam", () => {
       await expect(fakeClient.createContact({ name: "Incomplete Contact" })).rejects.toThrow(
         "Missing required fields",
       );
+    });
+
+    it("provides in-memory querying and deletion for invoices", async () => {
+      const fakeClient = createFakeApiClient();
+
+      // Query all
+      const all = await fakeClient.getInvoices();
+      expect(Array.isArray(all)).toBe(true);
+      expect(all).toHaveLength(3);
+
+      // Query with search
+      const searched = await fakeClient.getInvoices({ q: "cersei" });
+      expect(searched).toHaveLength(1);
+      expect(searched[0].name).toBe("Cersei Lannister");
+
+      // Query with sort
+      const sorted = await fakeClient.getInvoices({ sort: "amount", order: "desc" });
+      expect(sorted[0].amount).toBe(21.24);
+
+      // Delete invoice
+      const result = await fakeClient.deleteInvoice(2);
+      expect(result.success).toBe(true);
+      expect(result.id).toBe(2);
+
+      const afterDelete = await fakeClient.getInvoices();
+      expect(afterDelete).toHaveLength(2);
+      expect(afterDelete.some((inv) => inv.id === 2)).toBe(false);
+    });
+
+    it("throws error when deleting nonexistent invoice in fake client", async () => {
+      const fakeClient = createFakeApiClient();
+      await expect(fakeClient.deleteInvoice(999)).rejects.toThrow("Invoice with ID 999 not found");
     });
   });
 });

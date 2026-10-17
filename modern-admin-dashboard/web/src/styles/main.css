@@ -569,13 +569,15 @@ app-sidebar {
 /* ==========================================================================
    Team View & Access Level Styling
    ========================================================================== */
-.team-alert-container {
+.team-alert-container,
+.invoices-alert-container {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
 
-.team-alert {
+.team-alert,
+.invoices-alert {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -586,23 +588,27 @@ app-sidebar {
   animation: fadeIn var(--transition-fast) ease-in-out;
 }
 
-.team-alert-success {
+.team-alert-success,
+.invoices-alert-success {
   background-color: rgba(76, 206, 172, 0.12);
   border: 1px solid var(--color-success);
   color: var(--text-primary);
 }
 
-.team-alert-danger {
+.team-alert-danger,
+.invoices-alert-danger {
   background-color: rgba(219, 79, 74, 0.12);
   border: 1px solid var(--color-danger);
   color: var(--text-primary);
 }
 
-.team-alert-body {
+.team-alert-body,
+.invoices-alert-body {
   flex: 1;
 }
 
-.team-alert-dismiss {
+.team-alert-dismiss,
+.invoices-alert-dismiss {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -617,13 +623,15 @@ app-sidebar {
     color var(--transition-fast);
 }
 
-.team-alert-dismiss:hover {
+.team-alert-dismiss:hover,
+.invoices-alert-dismiss:hover {
   background-color: var(--bg-hover);
   color: var(--text-primary);
 }
 
 .team-status-loading,
-.contacts-status-loading {
+.contacts-status-loading,
+.invoices-status-loading {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -637,7 +645,8 @@ app-sidebar {
 }
 
 .team-status-error,
-.contacts-status-error {
+.contacts-status-error,
+.invoices-status-error {
   display: flex;
   gap: 1rem;
   padding: 1.5rem;
@@ -711,7 +720,35 @@ app-sidebar {
   box-shadow: 0 0 0 2px rgba(219, 79, 74, 0.3);
 }
 
+.btn-delete-selected {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-danger);
+  color: #ffffff;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.btn-delete-selected:hover {
+  background-color: #b93f3b;
+  transform: translateY(-1px);
+}
+
+.invoice-cost-cell {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
 /* ==========================================================================
+
 
    Team Member Provisioning Form Styles (/form)
    ========================================================================== */
