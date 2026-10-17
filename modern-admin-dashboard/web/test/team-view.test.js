@@ -38,6 +38,7 @@ describe("TeamView Component", () => {
     container = document.createElement("div");
     container.id = "test-view-container";
     document.body.appendChild(container);
+    window.confirm = vi.fn();
   });
 
   afterEach(() => {
@@ -46,6 +47,7 @@ describe("TeamView Component", () => {
       view = null;
     }
     container.remove();
+    delete window.confirm;
   });
 
   it("renders loading state initially while fetching team members", () => {
@@ -290,5 +292,104 @@ describe("TeamView Component", () => {
 
     view.unmount();
     expect(container.querySelector(".team-scene")).toBeNull();
+  });
+
+  it("renders delete button with accessible aria-label for each member row", async () => {
+    const fakeClient = createFakeApiClient({
+      teamMembers: sampleMembers,
+    });
+    view = new TeamView({ apiClient: fakeClient });
+    view.mount(container);
+    await view.fetchPromise;
+
+    const deleteBtns = container.querySelectorAll(".btn-delete-row");
+    expect(deleteBtns.length).toBe(3);
+    expect(deleteBtns[0].getAttribute("aria-label")).toBe("Delete Team Member Jon Snow");
+  });
+
+  it("does not delete team member if confirmation is cancelled", async () => {
+    const fakeClient = createFakeApiClient({
+      teamMembers: sampleMembers,
+    });
+    view = new TeamView({ apiClient: fakeClient });
+    view.mount(container);
+    await view.fetchPromise;
+
+    window.confirm.mockReturnValue(false);
+    const deleteSpy = vi.spyOn(fakeClient, "deleteTeamMember");
+
+    const deleteBtn = container.querySelector('.btn-delete-row[data-member-id="1"]');
+    deleteBtn.click();
+
+    expect(window.confirm).toHaveBeenCalledWith(expect.stringContaining("Jon Snow"));
+    expect(deleteSpy).not.toHaveBeenCalled();
+
+    const rows = container.querySelectorAll(".data-table-body .data-table-row");
+    expect(rows.length).toBe(3);
+  });
+
+  it("deletes team member upon confirmed prompt, updates table, and shows success alert", async () => {
+    const fakeClient = createFakeApiClient({
+      teamMembers: sampleMembers,
+    });
+    view = new TeamView({ apiClient: fakeClient });
+    view.mount(container);
+    await view.fetchPromise;
+
+    window.confirm.mockReturnValue(true);
+    const deleteSpy = vi.spyOn(fakeClient, "deleteTeamMember");
+
+    const deleteBtn = container.querySelector('.btn-delete-row[data-member-id="2"]');
+    deleteBtn.click();
+
+    await view.mutationPromise;
+
+    expect(window.confirm).toHaveBeenCalled();
+    expect(deleteSpy).toHaveBeenCalledWith(2);
+
+    // Verify row removed from table
+    const rows = container.querySelectorAll(".data-table-body .data-table-row");
+    expect(rows.length).toBe(2);
+    expect(container.querySelector('.data-table-row[data-row-id="2"]')).toBeNull();
+
+    // Verify status banner
+    const alertEl = container.querySelector('[data-testid="team-alert-status"]');
+    expect(alertEl).not.toBeNull();
+    expect(alertEl.getAttribute("role")).toBe("status");
+    expect(alertEl.textContent).toContain("Cersei Lannister");
+    expect(alertEl.textContent).toContain("deleted");
+  });
+
+  it("displays error alert when delete fails on server and retains row", async () => {
+    const fakeClient = {
+      async getTeamMembers() {
+        return sampleMembers;
+      },
+      async deleteTeamMember() {
+        throw new Error("Database timeout on delete");
+      },
+    };
+
+    view = new TeamView({ apiClient: fakeClient });
+    view.mount(container);
+    await view.fetchPromise;
+
+    window.confirm.mockReturnValue(true);
+
+    const deleteBtn = container.querySelector('.btn-delete-row[data-member-id="1"]');
+    deleteBtn.click();
+
+    await view.mutationPromise;
+
+    // Verify error banner
+    const errorAlert = container.querySelector('[data-testid="team-alert-error"]');
+    expect(errorAlert).not.toBeNull();
+    expect(errorAlert.getAttribute("role")).toBe("alert");
+    expect(errorAlert.textContent).toContain("Failed to delete Jon Snow");
+    expect(errorAlert.textContent).toContain("Database timeout on delete");
+
+    // Verify row still exists in table
+    const rows = container.querySelectorAll(".data-table-body .data-table-row");
+    expect(rows.length).toBe(3);
   });
 });

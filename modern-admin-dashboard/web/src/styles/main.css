@@ -674,7 +674,45 @@ app-sidebar {
   box-shadow: 0 0 0 2px rgba(104, 112, 250, 0.2);
 }
 
+.row-actions-cell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-delete-row {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  color: var(--color-danger);
+  border: 1px solid transparent;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.btn-delete-row:hover {
+  background-color: rgba(219, 79, 74, 0.15);
+  border-color: rgba(219, 79, 74, 0.4);
+  transform: scale(1.05);
+}
+
+.btn-delete-row:focus-visible {
+  outline: none;
+  border-color: var(--color-danger);
+  box-shadow: 0 0 0 2px rgba(219, 79, 74, 0.3);
+}
+
 /* ==========================================================================
+
    Team Member Provisioning Form Styles (/form)
    ========================================================================== */
 .form-scene {

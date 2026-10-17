@@ -94,6 +94,13 @@ function createMockTeamDb(initialMembers = []) {
               delete copy._id;
               return copy;
             },
+
+            async deleteOne(filter) {
+              const id = filter.id;
+              const existed = members.has(id);
+              members.delete(id);
+              return { acknowledged: true, deletedCount: existed ? 1 : 0 };
+            },
           };
         },
       };
@@ -337,6 +344,51 @@ describe("Team API Routes (/api/v1/team)", () => {
       expect(response.statusCode).toBe(400);
       const error = JSON.parse(response.body);
       expect(error.message).toMatch(/access/i);
+    });
+  });
+
+  describe("DELETE /api/v1/team/:id", () => {
+    it("deletes an existing team member by id returning 200 and removal confirmation", async () => {
+      const response = await app.inject({
+        method: "DELETE",
+        url: "/api/v1/team/2",
+      });
+
+      expect(response.statusCode).toBe(200);
+      const data = JSON.parse(response.body);
+      expect(data).toMatchObject({
+        success: true,
+        id: 2,
+      });
+
+      // Verify member 2 was removed from collection
+      const getResponse = await app.inject({
+        method: "GET",
+        url: "/api/v1/team",
+      });
+      const members = JSON.parse(getResponse.body);
+      expect(members.some((m) => m.id === 2)).toBe(false);
+      expect(members.length).toBe(2);
+    });
+
+    it("returns 404 Not Found when deleting a nonexistent team member", async () => {
+      const response = await app.inject({
+        method: "DELETE",
+        url: "/api/v1/team/999",
+      });
+
+      expect(response.statusCode).toBe(404);
+      const error = JSON.parse(response.body);
+      expect(error.message).toContain("999");
+    });
+
+    it("rejects non-numeric id with 400 Bad Request", async () => {
+      const response = await app.inject({
+        method: "DELETE",
+        url: "/api/v1/team/not-a-number",
+      });
+
+      expect(response.statusCode).toBe(400);
     });
   });
 });

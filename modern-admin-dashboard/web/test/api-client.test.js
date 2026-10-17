@@ -189,6 +189,48 @@ describe("Frontend API Client Adapter Seam", () => {
       );
     });
 
+    it("deletes a team member via DELETE /api/v1/team/:id", async () => {
+      const deleteResponse = {
+        success: true,
+        id: 2,
+        message: "Team Member 2 successfully removed",
+      };
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: vi.fn().mockResolvedValue(deleteResponse),
+      });
+
+      const client = createApiClient({
+        baseUrl: "http://api.local:8080",
+        fetchFn: mockFetch,
+      });
+
+      const result = await client.deleteTeamMember(2);
+
+      expect(mockFetch).toHaveBeenCalledWith("http://api.local:8080/api/v1/team/2", {
+        method: "DELETE",
+        headers: { Accept: "application/json" },
+      });
+      expect(result).toEqual(deleteResponse);
+    });
+
+    it("throws error when deleteTeamMember fails on server", async () => {
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 404,
+        statusText: "Not Found",
+        json: vi.fn().mockResolvedValue({ message: "Team Member with ID 99 not found" }),
+      });
+
+      const client = createApiClient({
+        baseUrl: "http://api.local:8080",
+        fetchFn: mockFetch,
+      });
+
+      await expect(client.deleteTeamMember(99)).rejects.toThrow("Team Member with ID 99 not found");
+    });
+
     it("fetches contacts with query parameters via GET /api/v1/contacts", async () => {
       const mockContacts = [
         {
@@ -338,6 +380,27 @@ describe("Frontend API Client Adapter Seam", () => {
       const fakeClient = createFakeApiClient();
       await expect(fakeClient.createTeamMember({ name: "Incomplete" })).rejects.toThrow(
         "Missing required fields",
+      );
+    });
+
+    it("deletes a team member in fake client and removes them from store", async () => {
+      const fakeClient = createFakeApiClient();
+      const initial = await fakeClient.getTeamMembers();
+      expect(initial).toHaveLength(3);
+
+      const result = await fakeClient.deleteTeamMember(2);
+      expect(result.success).toBe(true);
+      expect(result.id).toBe(2);
+
+      const after = await fakeClient.getTeamMembers();
+      expect(after).toHaveLength(2);
+      expect(after.some((m) => m.id === 2)).toBe(false);
+    });
+
+    it("throws error when deleting nonexistent team member in fake client", async () => {
+      const fakeClient = createFakeApiClient();
+      await expect(fakeClient.deleteTeamMember(999)).rejects.toThrow(
+        "Team Member with ID 999 not found",
       );
     });
 

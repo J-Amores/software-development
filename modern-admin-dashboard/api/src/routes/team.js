@@ -200,6 +200,52 @@ export async function teamRoutes(fastify, opts = {}) {
       return reply.status(201).send(doc);
     },
   );
+
+  // DELETE /api/v1/team/:id
+  fastify.delete(
+    "/api/v1/team/:id",
+    {
+      schema: {
+        params: {
+          type: "object",
+          properties: {
+            id: { type: "number" },
+          },
+          required: ["id"],
+        },
+        response: {
+          200: {
+            type: "object",
+            properties: {
+              success: { type: "boolean" },
+              id: { type: "number" },
+              message: { type: "string" },
+            },
+            required: ["success", "id"],
+          },
+        },
+      },
+    },
+    async (request, reply) => {
+      const collection = getMembersCollection();
+      const id = Number(request.params.id);
+      const result = await collection.deleteOne({ id });
+
+      if (result.deletedCount === 0) {
+        return reply.status(404).send({
+          statusCode: 404,
+          error: "Not Found",
+          message: `Team Member with ID ${id} not found`,
+        });
+      }
+
+      return {
+        success: true,
+        id,
+        message: `Team Member ${id} successfully removed`,
+      };
+    },
+  );
 }
 
 export default teamRoutes;

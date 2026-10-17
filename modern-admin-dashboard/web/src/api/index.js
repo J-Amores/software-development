@@ -175,6 +175,42 @@ export function createApiClient(options = {}) {
       return data;
     },
 
+    async deleteTeamMember(id) {
+      if (!fetchFn) {
+        throw new Error("No fetch implementation available.");
+      }
+
+      const cleanBase = baseUrl.replace(/\/$/, "");
+      const url = `${cleanBase}/api/v1/team/${id}`;
+
+      let response;
+      try {
+        response = await fetchFn(url, {
+          method: "DELETE",
+          headers: {
+            Accept: "application/json",
+          },
+        });
+      } catch (err) {
+        throw new Error(`Failed to reach API at ${baseUrl}: ${err.message}`);
+      }
+
+      let data;
+      try {
+        data = await response.json();
+      } catch (err) {
+        throw new Error(`Invalid JSON response from ${url}: ${err.message}`);
+      }
+
+      if (!response.ok) {
+        const errorMsg =
+          data?.message || `API error: ${response.status} ${response.statusText || ""}`.trim();
+        throw new Error(errorMsg);
+      }
+
+      return data;
+    },
+
     async getContacts(params = {}) {
       if (!fetchFn) {
         throw new Error("No fetch implementation available.");
@@ -446,6 +482,24 @@ export function createFakeApiClient(options = {}) {
       }
 
       return { ...created };
+    },
+
+    async deleteTeamMember(id) {
+      if (delayMs > 0) {
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+      if (shouldThrow) {
+        throw new Error(errorMessage);
+      }
+
+      const numId = Number(id);
+      const index = membersStore ? membersStore.findIndex((m) => m.id === numId) : -1;
+      if (index === -1) {
+        throw new Error(`Team Member with ID ${id} not found`);
+      }
+
+      membersStore.splice(index, 1);
+      return { success: true, id: numId, message: `Team Member ${id} successfully removed` };
     },
 
     async getContacts(params = {}) {

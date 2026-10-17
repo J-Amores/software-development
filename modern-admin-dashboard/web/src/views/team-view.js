@@ -103,6 +103,13 @@ export class TeamView {
             sortable: true,
             render: (access, row) => this._renderAccessCell(access, row),
           },
+          {
+            key: "actions",
+            label: "Actions",
+            sortable: false,
+            width: "90px",
+            render: (_val, row) => this._renderActionsCell(row),
+          },
         ];
 
         this.dataTable = new DataTable({
@@ -172,6 +179,28 @@ export class TeamView {
   }
 
   /**
+   * Renders the action buttons cell for a team member row.
+   *
+   * @param {Object} row
+   * @returns {HTMLElement}
+   */
+  _renderActionsCell(row) {
+    const container = document.createElement("div");
+    container.className = "row-actions-cell";
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.type = "button";
+    deleteBtn.className = "btn-delete-row";
+    deleteBtn.dataset.memberId = String(row.id);
+    deleteBtn.setAttribute("aria-label", `Delete Team Member ${row.name}`);
+    deleteBtn.title = `Delete ${row.name}`;
+    deleteBtn.innerHTML = `<span aria-hidden="true">🗑️</span>`;
+
+    container.appendChild(deleteBtn);
+    return container;
+  }
+
+  /**
    * Handles inline access level selector changes.
    *
    * @param {Event} event
@@ -186,7 +215,7 @@ export class TeamView {
   }
 
   /**
-   * Handles action clicks for dismiss buttons and retry.
+   * Handles action clicks for dismiss buttons, retry, and row deletion.
    *
    * @param {Event} event
    */
@@ -202,6 +231,53 @@ export class TeamView {
       this.loadTeamMembers();
       return;
     }
+
+    const deleteBtn = target.closest(".btn-delete-row");
+    if (deleteBtn) {
+      const memberId = Number(deleteBtn.dataset.memberId);
+      this.handleDelete(memberId);
+      return;
+    }
+  }
+
+  /**
+   * Prompts operator confirmation and deletes a team member via the API.
+   *
+   * @param {number} memberId
+   */
+  handleDelete(memberId) {
+    const member = this.teamMembers.find((m) => m.id === memberId);
+    if (!member) return;
+
+    const confirmed =
+      typeof window.confirm === "function"
+        ? window.confirm(
+            `Are you sure you want to delete ${member.name}? This action cannot be undone.`,
+          )
+        : true;
+
+    if (!confirmed) return;
+
+    this.mutationPromise = (async () => {
+      try {
+        await this.apiClient.deleteTeamMember(memberId);
+
+        if (!this.isMounted) return;
+
+        this.teamMembers = this.teamMembers.filter((m) => m.id !== memberId);
+        this.dataTable?.update({ data: this.teamMembers });
+
+        this._showAlert(
+          "status",
+          `Team Member <strong>${member.name}</strong> was successfully deleted.`,
+        );
+      } catch (error) {
+        if (!this.isMounted) return;
+
+        const message = error instanceof Error ? error.message : String(error);
+        this._showAlert("alert", `Failed to delete ${member.name}: ${message}`);
+      }
+    })();
   }
 
   /**
