@@ -6,16 +6,35 @@ import { createApp } from "../src/app.js";
  */
 function createMockTeamDb(initialMembers = []) {
   const members = new Map(initialMembers.map((m) => [m.id, { ...m }]));
+  const counters = new Map([["members", initialMembers.length]]);
 
   return {
     getDb() {
       return {
         collection(name) {
+          if (name === "counters") {
+            return {
+              async findOneAndUpdate(filter, update, _options = {}) {
+                const id = filter._id;
+                let current = counters.get(id) || 0;
+                if (update.$inc) {
+                  current += update.$inc.seq || 1;
+                }
+                counters.set(id, current);
+                return { _id: id, seq: current };
+              },
+            };
+          }
+
           if (name !== "members") {
             throw new Error(`Unexpected collection in team test: ${name}`);
           }
 
           return {
+            async insertOne(doc) {
+              members.set(doc.id, { ...doc });
+              return { acknowledged: true, insertedId: doc.id };
+            },
             find(query = {}, _options = {}) {
               let results = Array.from(members.values());
 
@@ -226,6 +245,98 @@ describe("Team API Routes (/api/v1/team)", () => {
       expect(response.statusCode).toBe(404);
       const error = JSON.parse(response.body);
       expect(error.message).toContain("999");
+    });
+  });
+
+  describe("POST /api/v1/team", () => {
+    it("provisions a new team member and increments sequential ID atomically", async () => {
+      const newMember = {
+        name: "Arya Stark",
+        email: "arya@stark.com",
+        age: 18,
+        phone: "(555) 123-4567",
+        access: "user",
+      };
+
+      const response = await app.inject({
+        method: "POST",
+        url: "/api/v1/team",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newMember),
+      });
+
+      expect(response.statusCode).toBe(201);
+      const data = JSON.parse(response.body);
+      expect(data.id).toBe(4); // sequential after 1, 2, 3
+      expect(data.name).toBe("Arya Stark");
+      expect(data.email).toBe("arya@stark.com");
+      expect(data.age).toBe(18);
+      expect(data.phone).toBe("(555) 123-4567");
+      expect(data.access).toBe("user");
+
+      // Verify second creation increments sequence to 5
+      const response2 = await app.inject({
+        method: "POST",
+        url: "/api/v1/team",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: "Sansa Stark",
+          email: "sansa@stark.com",
+          age: 20,
+          phone: "(555) 987-6543",
+          access: "admin",
+        }),
+      });
+
+      expect(response2.statusCode).toBe(201);
+      const data2 = JSON.parse(response2.body);
+      expect(data2.id).toBe(5);
+
+      // Verify GET returns all members including the newly provisioned ones
+      const getResponse = await app.inject({
+        method: "GET",
+        url: "/api/v1/team",
+      });
+      const all = JSON.parse(getResponse.body);
+      expect(all).toHaveLength(5);
+    });
+
+    it("rejects invalid payloads missing required fields with 400 Bad Request", async () => {
+      const response = await app.inject({
+        method: "POST",
+        url: "/api/v1/team",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: "Bran Stark",
+          // email missing
+          age: 16,
+          phone: "(555) 000-1111",
+          access: "manager",
+        }),
+      });
+
+      expect(response.statusCode).toBe(400);
+      const error = JSON.parse(response.body);
+      expect(error.message).toMatch(/email/i);
+    });
+
+    it("rejects invalid access level values with 400 Bad Request", async () => {
+      const response = await app.inject({
+        method: "POST",
+        url: "/api/v1/team",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: "Robb Stark",
+          email: "robb@stark.com",
+          age: 21,
+          phone: "(555) 222-3333",
+          access: "king", // invalid role
+        }),
+      });
+
+      expect(response.statusCode).toBe(400);
+      const error = JSON.parse(response.body);
+      expect(error.message).toMatch(/access/i);
     });
   });
 });

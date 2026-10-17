@@ -136,6 +136,44 @@ export function createApiClient(options = {}) {
 
       return data;
     },
+
+    async createTeamMember(memberData) {
+      if (!fetchFn) {
+        throw new Error("No fetch implementation available.");
+      }
+
+      const cleanBase = baseUrl.replace(/\/$/, "");
+      const url = `${cleanBase}/api/v1/team`;
+
+      let response;
+      try {
+        response = await fetchFn(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(memberData),
+        });
+      } catch (err) {
+        throw new Error(`Failed to reach API at ${baseUrl}: ${err.message}`);
+      }
+
+      let data;
+      try {
+        data = await response.json();
+      } catch (err) {
+        throw new Error(`Invalid JSON response from ${url}: ${err.message}`);
+      }
+
+      if (!response.ok) {
+        const errorMsg =
+          data?.message || `API error: ${response.status} ${response.statusText || ""}`.trim();
+        throw new Error(errorMsg);
+      }
+
+      return data;
+    },
   };
 }
 
@@ -254,6 +292,46 @@ export function createFakeApiClient(options = {}) {
 
       member.access = access.toLowerCase();
       return { ...member };
+    },
+
+    async createTeamMember(memberData) {
+      if (delayMs > 0) {
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+      if (shouldThrow) {
+        throw new Error(errorMessage);
+      }
+
+      if (
+        !memberData.name ||
+        !memberData.email ||
+        !memberData.phone ||
+        memberData.age == null ||
+        !memberData.access
+      ) {
+        throw new Error("Missing required fields for team member creation");
+      }
+
+      const currentStore = typeof teamMembers === "function" ? teamMembers() : membersStore;
+      const nextId =
+        currentStore && currentStore.length > 0
+          ? Math.max(...currentStore.map((m) => m.id)) + 1
+          : 1;
+
+      const created = {
+        id: nextId,
+        name: memberData.name,
+        email: memberData.email,
+        age: Number(memberData.age),
+        phone: memberData.phone,
+        access: memberData.access.toLowerCase(),
+      };
+
+      if (Array.isArray(membersStore)) {
+        membersStore.push(created);
+      }
+
+      return { ...created };
     },
   };
 }

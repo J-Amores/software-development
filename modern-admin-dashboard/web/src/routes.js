@@ -1,4 +1,5 @@
 import { DashboardView } from "./views/dashboard-view.js";
+import { FormView } from "./views/form-view.js";
 import { PlaceholderView } from "./views/placeholder-view.js";
 import { TeamView } from "./views/team-view.js";
 
@@ -22,13 +23,7 @@ export const routes = {
       section: "Data Management",
       domainConcept: "Invoice requests, payment records, and financial Transaction settlements.",
     }),
-  "/form": () =>
-    new PlaceholderView({
-      title: "Profile Form",
-      subtitle: "Operator profile creation and access configuration",
-      section: "Pages",
-      domainConcept: "Operator credentials, contact preferences, and administrative Access Levels.",
-    }),
+  "/form": () => new FormView(),
   "/calendar": () =>
     new PlaceholderView({
       title: "Calendar",

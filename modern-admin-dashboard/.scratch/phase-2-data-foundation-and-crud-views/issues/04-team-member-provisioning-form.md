@@ -4,14 +4,14 @@
 
 **Blocked by:** 01: MongoDB Collections, Atomic Sequence Counters & Idempotent Seeding
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] Backend exposes `POST /api/v1/team` with Fastify JSON Schema validation requiring name, email, phone, age, and valid access level
-- [ ] Record creation automatically generates the next sequential integer ID via the atomic sequence counter
-- [ ] Frontend API client module and its in-memory testing fake provide a `createTeamMember` method
-- [ ] Live `/form` view replaces the placeholder with an accessible semantic HTML form
-- [ ] Client validation utilizes native HTML5 Constraint Validation APIs (`checkValidity()`, `validity` states) without external libraries
-- [ ] Missing or invalid fields trigger accessible inline error messages styled with theme tokens
-- [ ] Submitting valid data sends payload to the API and displays a prominent success confirmation banner with the new member's name and access level
-- [ ] Successful submission resets form fields and presents a direct action to navigate to `/team` via the client router
-- [ ] Automated tests verify API schema rejection on malformed bodies, atomic ID allocation, and form validation/submission flows in an isolated DOM
+- [x] Backend exposes `POST /api/v1/team` with Fastify JSON Schema validation requiring name, email, phone, age, and valid access level
+- [x] Record creation automatically generates the next sequential integer ID via the atomic sequence counter
+- [x] Frontend API client module and its in-memory testing fake provide a `createTeamMember` method
+- [x] Live `/form` view replaces the placeholder with an accessible semantic HTML form
+- [x] Client validation utilizes native HTML5 Constraint Validation APIs (`checkValidity()`, `validity` states) without external libraries
+- [x] Missing or invalid fields trigger accessible inline error messages styled with theme tokens
+- [x] Submitting valid data sends payload to the API and displays a prominent success confirmation banner with the new member's name and access level
+- [x] Successful submission resets form fields and presents a direct action to navigate to `/team` via the client router
+- [x] Automated tests verify API schema rejection on malformed bodies, atomic ID allocation, and form validation/submission flows in an isolated DOM

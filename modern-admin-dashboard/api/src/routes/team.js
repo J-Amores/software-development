@@ -1,6 +1,8 @@
+import { getNextSequence } from "../db/counters.js";
+
 /**
  * Team Management Routes (/api/v1/team)
- * Fastify plugin providing team member querying and access-level updates.
+ * Fastify plugin providing team member querying, provisioning, and access-level updates.
  */
 
 /**
@@ -10,11 +12,15 @@
 export async function teamRoutes(fastify, opts = {}) {
   const db = opts.db || fastify.db;
 
-  function getMembersCollection() {
+  function getRawDb() {
     if (!db) {
       throw new Error("Database adapter is not configured");
     }
-    return db.getDb().collection("members");
+    return typeof db.getDb === "function" ? db.getDb() : db;
+  }
+
+  function getMembersCollection() {
+    return getRawDb().collection("members");
   }
 
   // GET /api/v1/team
@@ -143,6 +149,55 @@ export async function teamRoutes(fastify, opts = {}) {
       }
 
       return updated;
+    },
+  );
+
+  // POST /api/v1/team
+  fastify.post(
+    "/api/v1/team",
+    {
+      schema: {
+        body: {
+          type: "object",
+          properties: {
+            name: { type: "string", minLength: 1 },
+            email: { type: "string", minLength: 3, pattern: "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$" },
+            phone: { type: "string", minLength: 1 },
+            age: { type: "number", minimum: 1, maximum: 120 },
+            access: { type: "string", enum: ["admin", "manager", "user"] },
+          },
+          required: ["name", "email", "phone", "age", "access"],
+        },
+        response: {
+          201: {
+            type: "object",
+            properties: {
+              id: { type: "number" },
+              name: { type: "string" },
+              email: { type: "string" },
+              age: { type: "number" },
+              phone: { type: "string" },
+              access: { type: "string" },
+            },
+            required: ["id", "name", "email", "age", "phone", "access"],
+          },
+        },
+      },
+    },
+    async (request, reply) => {
+      const rawDb = getRawDb();
+      const id = await getNextSequence(rawDb, "members");
+      const doc = {
+        id,
+        name: request.body.name,
+        email: request.body.email,
+        age: Number(request.body.age),
+        phone: request.body.phone,
+        access: request.body.access.toLowerCase(),
+      };
+
+      await rawDb.collection("members").insertOne(doc);
+      return reply.status(201).send(doc);
     },
   );
 }

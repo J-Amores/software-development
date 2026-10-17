@@ -137,6 +137,57 @@ describe("Frontend API Client Adapter Seam", () => {
       });
       expect(result).toEqual(updatedMember);
     });
+
+    it("provisions a new team member via POST /api/v1/team", async () => {
+      const newMember = {
+        name: "Arya Stark",
+        email: "arya@stark.com",
+        age: 18,
+        phone: "(555) 123-4567",
+        access: "user",
+      };
+      const createdMember = { id: 4, ...newMember };
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 201,
+        json: vi.fn().mockResolvedValue(createdMember),
+      });
+
+      const client = createApiClient({
+        baseUrl: "http://api.local:8080",
+        fetchFn: mockFetch,
+      });
+
+      const result = await client.createTeamMember(newMember);
+
+      expect(mockFetch).toHaveBeenCalledWith("http://api.local:8080/api/v1/team", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(newMember),
+      });
+      expect(result).toEqual(createdMember);
+    });
+
+    it("throws error when createTeamMember fails on server", async () => {
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 400,
+        statusText: "Bad Request",
+        json: vi.fn().mockResolvedValue({ message: "body must have required property 'email'" }),
+      });
+
+      const client = createApiClient({
+        baseUrl: "http://api.local:8080",
+        fetchFn: mockFetch,
+      });
+
+      await expect(client.createTeamMember({ name: "Incomplete" })).rejects.toThrow(
+        "body must have required property 'email'",
+      );
+    });
   });
 
   describe("createFakeApiClient", () => {
@@ -192,6 +243,28 @@ describe("Frontend API Client Adapter Seam", () => {
       const reFetched = await fakeClient.getTeamMembers();
       const jaime = reFetched.find((m) => m.id === 3);
       expect(jaime.access).toBe("manager");
+
+      // Provision new member
+      const created = await fakeClient.createTeamMember({
+        name: "Daenerys Targaryen",
+        email: "daenerys@dragon.com",
+        age: 22,
+        phone: "(555) 333-4444",
+        access: "admin",
+      });
+      expect(created.id).toBe(4);
+      expect(created.name).toBe("Daenerys Targaryen");
+
+      // Verify store length incremented
+      const afterCreation = await fakeClient.getTeamMembers();
+      expect(afterCreation).toHaveLength(4);
+    });
+
+    it("throws error when creating a team member with missing fields in fake client", async () => {
+      const fakeClient = createFakeApiClient();
+      await expect(fakeClient.createTeamMember({ name: "Incomplete" })).rejects.toThrow(
+        "Missing required fields",
+      );
     });
   });
 });
