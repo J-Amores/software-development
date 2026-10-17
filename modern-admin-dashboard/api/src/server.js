@@ -2,6 +2,15 @@ import { fileURLToPath } from "node:url";
 import { createApp } from "./app.js";
 import { createDatabaseAdapter } from "./db.js";
 
+// Auto-load .env file in Node runtime if present
+if (typeof process !== "undefined" && typeof process.loadEnvFile === "function") {
+  try {
+    process.loadEnvFile();
+  } catch {
+    // .env may not exist in container environments where env vars are injected directly
+  }
+}
+
 /**
  * Creates a graceful termination signal handler that closes Fastify and disconnects
  * the database connection pool before exiting.
@@ -71,7 +80,8 @@ export async function startServer(options = {}) {
   if (!options.db && process.env.MOCK_DB !== "true") {
     try {
       await db.connect();
-      console.log(`Connected to database at ${mongodbUri}`);
+      const sanitizedUri = mongodbUri.replace(/\/\/[^:]+:[^@]+@/, "//***:***@");
+      console.log(`Connected to database at ${sanitizedUri}`);
     } catch (err) {
       console.warn(
         `Initial database connection failed: ${err.message}. Server will continue running.`,

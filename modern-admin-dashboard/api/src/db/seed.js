@@ -182,7 +182,8 @@ export async function seedDatabase(db) {
 export async function runSeed(adapter = null) {
   const dbAdapter = adapter || createDatabaseAdapter();
   try {
-    console.log(`Connecting to database at ${dbAdapter.uri}...`);
+    const sanitizedUri = dbAdapter.uri.replace(/\/\/[^:]+:[^@]+@/, "//***:***@");
+    console.log(`Connecting to database at ${sanitizedUri}...`);
     await dbAdapter.connect();
     const db = dbAdapter.getDb();
     console.log(`Seeding database: ${db.databaseName}...`);

@@ -1,6 +1,7 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import { healthRoutes } from "./routes/health.js";
+import { teamRoutes } from "./routes/team.js";
 
 /**
  * Builds and configures the Fastify application instance.
@@ -30,6 +31,7 @@ export async function createApp(options = {}) {
   }
 
   await app.register(healthRoutes, { db });
+  await app.register(teamRoutes, { db });
 
   return app;
 }

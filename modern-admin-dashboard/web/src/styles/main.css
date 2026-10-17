@@ -565,3 +565,109 @@ app-sidebar {
   border-radius: var(--radius-md);
   border: 1px dashed var(--border-color);
 }
+
+/* ==========================================================================
+   Team View & Access Level Styling
+   ========================================================================== */
+.team-alert-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.team-alert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.875rem 1.25rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  animation: fadeIn var(--transition-fast) ease-in-out;
+}
+
+.team-alert-success {
+  background-color: rgba(76, 206, 172, 0.12);
+  border: 1px solid var(--color-success);
+  color: var(--text-primary);
+}
+
+.team-alert-danger {
+  background-color: rgba(219, 79, 74, 0.12);
+  border: 1px solid var(--color-danger);
+  color: var(--text-primary);
+}
+
+.team-alert-body {
+  flex: 1;
+}
+
+.team-alert-dismiss {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.team-alert-dismiss:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.team-status-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 3rem 1rem;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+.team-status-error {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem;
+  background-color: rgba(219, 79, 74, 0.1);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+}
+
+.access-level-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.access-select {
+  height: 28px;
+  padding: 0 0.5rem;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition:
+    border-color var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.access-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(104, 112, 250, 0.2);
+}

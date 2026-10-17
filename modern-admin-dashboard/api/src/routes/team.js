@@ -1,0 +1,150 @@
+/**
+ * Team Management Routes (/api/v1/team)
+ * Fastify plugin providing team member querying and access-level updates.
+ */
+
+/**
+ * @param {import('fastify').FastifyInstance} fastify
+ * @param {Object} [opts={}]
+ */
+export async function teamRoutes(fastify, opts = {}) {
+  const db = opts.db || fastify.db;
+
+  function getMembersCollection() {
+    if (!db) {
+      throw new Error("Database adapter is not configured");
+    }
+    return db.getDb().collection("members");
+  }
+
+  // GET /api/v1/team
+  fastify.get(
+    "/api/v1/team",
+    {
+      schema: {
+        querystring: {
+          type: "object",
+          properties: {
+            q: { type: "string" },
+            sort: { type: "string" },
+            order: { type: "string", enum: ["asc", "desc"] },
+            access: { type: "string", enum: ["admin", "manager", "user"] },
+          },
+        },
+        response: {
+          200: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                id: { type: "number" },
+                name: { type: "string" },
+                email: { type: "string" },
+                age: { type: "number" },
+                phone: { type: "string" },
+                access: { type: "string" },
+              },
+              required: ["id", "name", "email", "age", "phone", "access"],
+            },
+          },
+        },
+      },
+    },
+    async (request, _reply) => {
+      const collection = getMembersCollection();
+      const { q, sort = "id", order = "asc", access } = request.query;
+
+      const filter = {};
+      if (q) {
+        filter.$or = [
+          { name: { $regex: q, $options: "i" } },
+          { email: { $regex: q, $options: "i" } },
+        ];
+      }
+      if (access) {
+        filter.access = access.toLowerCase();
+      }
+
+      const sortDir = order === "desc" ? -1 : 1;
+      const members = await collection
+        .find(filter)
+        .sort({ [sort]: sortDir })
+        .project({ _id: 0 })
+        .toArray();
+
+      return members;
+    },
+  );
+
+  // PATCH /api/v1/team/:id
+  fastify.patch(
+    "/api/v1/team/:id",
+    {
+      schema: {
+        params: {
+          type: "object",
+          properties: {
+            id: { type: "number" },
+          },
+          required: ["id"],
+        },
+        body: {
+          type: "object",
+          properties: {
+            access: { type: "string", enum: ["admin", "manager", "user"] },
+            name: { type: "string" },
+            email: { type: "string" },
+            age: { type: "number" },
+            phone: { type: "string" },
+          },
+          required: ["access"],
+        },
+        response: {
+          200: {
+            type: "object",
+            properties: {
+              id: { type: "number" },
+              name: { type: "string" },
+              email: { type: "string" },
+              age: { type: "number" },
+              phone: { type: "string" },
+              access: { type: "string" },
+            },
+            required: ["id", "name", "email", "age", "phone", "access"],
+          },
+        },
+      },
+    },
+    async (request, reply) => {
+      const collection = getMembersCollection();
+      const id = Number(request.params.id);
+      const updateData = {};
+
+      if (request.body.access) {
+        updateData.access = request.body.access.toLowerCase();
+      }
+      if (request.body.name) updateData.name = request.body.name;
+      if (request.body.email) updateData.email = request.body.email;
+      if (request.body.age !== undefined) updateData.age = request.body.age;
+      if (request.body.phone) updateData.phone = request.body.phone;
+
+      const updated = await collection.findOneAndUpdate(
+        { id },
+        { $set: updateData },
+        { projection: { _id: 0 }, returnDocument: "after" },
+      );
+
+      if (!updated) {
+        return reply.status(404).send({
+          statusCode: 404,
+          error: "Not Found",
+          message: `Team Member with ID ${id} not found`,
+        });
+      }
+
+      return updated;
+    },
+  );
+}
+
+export default teamRoutes;

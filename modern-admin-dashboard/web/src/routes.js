@@ -1,19 +1,13 @@
 import { DashboardView } from "./views/dashboard-view.js";
 import { PlaceholderView } from "./views/placeholder-view.js";
+import { TeamView } from "./views/team-view.js";
 
 /**
  * Route definitions mapping paths to view factory functions.
  */
 export const routes = {
   "/": () => new DashboardView(),
-  "/team": () =>
-    new PlaceholderView({
-      title: "Manage Team",
-      subtitle: "Internal organizational personnel and collaborators",
-      section: "Data Management",
-      domainConcept:
-        "Team Member profiles, organizational affiliations, and Access Level assignments.",
-    }),
+  "/team": () => new TeamView(),
   "/contacts": () =>
     new PlaceholderView({
       title: "Contacts Information",

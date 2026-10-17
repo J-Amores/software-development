@@ -1,5 +1,14 @@
 import { MongoClient } from "mongodb";
 
+// Auto-load .env file in Node runtime if present
+if (typeof process !== "undefined" && typeof process.loadEnvFile === "function") {
+  try {
+    process.loadEnvFile();
+  } catch {
+    // .env may not exist in container environments where env vars are injected directly
+  }
+}
+
 /**
  * Creates a database adapter encapsulating MongoDB connection lifecycle,
  * connection pooling, and ping health verification.

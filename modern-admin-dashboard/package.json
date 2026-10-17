@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vp dev web --host",
+    "api": "node api/src/server.js",
     "build": "vp build",
     "check": "vp check",
     "test": "vp test",

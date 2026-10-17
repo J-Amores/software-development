@@ -87,6 +87,56 @@ describe("Frontend API Client Adapter Seam", () => {
 
       await expect(client.getHealth()).rejects.toThrow(/api error: 500/i);
     });
+    it("fetches team members with query parameters", async () => {
+      const mockMembers = [{ id: 1, name: "Jon Snow", access: "admin" }];
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: vi.fn().mockResolvedValue(mockMembers),
+      });
+
+      const client = createApiClient({
+        baseUrl: "http://api.local:8080",
+        fetchFn: mockFetch,
+      });
+
+      const result = await client.getTeamMembers({ q: "jon", sort: "name", order: "asc" });
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        "http://api.local:8080/api/v1/team?q=jon&sort=name&order=asc",
+        {
+          method: "GET",
+          headers: { Accept: "application/json" },
+        },
+      );
+      expect(result).toEqual(mockMembers);
+    });
+
+    it("updates team member access via PATCH", async () => {
+      const updatedMember = { id: 1, name: "Jon Snow", access: "manager" };
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: vi.fn().mockResolvedValue(updatedMember),
+      });
+
+      const client = createApiClient({
+        baseUrl: "http://api.local:8080",
+        fetchFn: mockFetch,
+      });
+
+      const result = await client.updateTeamMemberAccess(1, "manager");
+
+      expect(mockFetch).toHaveBeenCalledWith("http://api.local:8080/api/v1/team/1", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ access: "manager" }),
+      });
+      expect(result).toEqual(updatedMember);
+    });
   });
 
   describe("createFakeApiClient", () => {
@@ -115,6 +165,33 @@ describe("Frontend API Client Adapter Seam", () => {
       });
 
       await expect(fakeClient.getHealth()).rejects.toThrow("Simulated offline error");
+      await expect(fakeClient.getTeamMembers()).rejects.toThrow("Simulated offline error");
+      await expect(fakeClient.updateTeamMemberAccess(1, "manager")).rejects.toThrow(
+        "Simulated offline error",
+      );
+    });
+
+    it("provides in-memory CRUD operations for team members", async () => {
+      const fakeClient = createFakeApiClient();
+
+      // Query all
+      const all = await fakeClient.getTeamMembers();
+      expect(all).toHaveLength(3);
+      expect(all[0].name).toBe("Jon Snow");
+
+      // Query with search
+      const filtered = await fakeClient.getTeamMembers({ q: "lannister" });
+      expect(filtered).toHaveLength(2);
+
+      // Update access level
+      const updated = await fakeClient.updateTeamMemberAccess(3, "manager");
+      expect(updated.id).toBe(3);
+      expect(updated.access).toBe("manager");
+
+      // Verify mutation persists in in-memory store
+      const reFetched = await fakeClient.getTeamMembers();
+      const jaime = reFetched.find((m) => m.id === 3);
+      expect(jaime.access).toBe("manager");
     });
   });
 });
