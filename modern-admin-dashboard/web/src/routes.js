@@ -1,10 +1,13 @@
+import { BarView } from "./views/bar-view.js";
 import { CalendarView } from "./views/calendar-view.js";
 import { ContactsView } from "./views/contacts-view.js";
 import { DashboardView } from "./views/dashboard-view.js";
 import { FaqView } from "./views/faq-view.js";
 import { FormView } from "./views/form-view.js";
+import { GeographyView } from "./views/geography-view.js";
 import { InvoicesView } from "./views/invoices-view.js";
-import { PlaceholderView } from "./views/placeholder-view.js";
+import { LineView } from "./views/line-view.js";
+import { PieView } from "./views/pie-view.js";
 import { TeamView } from "./views/team-view.js";
 
 /**
@@ -18,32 +21,8 @@ export const routes = {
   "/form": () => new FormView(),
   "/calendar": () => new CalendarView(),
   "/faq": () => new FaqView(),
-  "/bar": () =>
-    new PlaceholderView({
-      title: "Bar Chart",
-      subtitle: "Revenue and performance comparative analytics",
-      section: "Charts & Analytics",
-      domainConcept: "Campaign Metric comparisons across administrative departments.",
-    }),
-  "/pie": () =>
-    new PlaceholderView({
-      title: "Pie Chart",
-      subtitle: "Operational expenditure and category breakdown",
-      section: "Charts & Analytics",
-      domainConcept: "Categorized Campaign Metric allocations and budget distribution.",
-    }),
-  "/line": () =>
-    new PlaceholderView({
-      title: "Line Chart",
-      subtitle: "Longitudinal growth and trend monitoring",
-      section: "Charts & Analytics",
-      domainConcept: "Continuous Campaign Metric telemetry over operational quarters.",
-    }),
-  "/geography": () =>
-    new PlaceholderView({
-      title: "Geography Chart",
-      subtitle: "Global distribution and regional engagement",
-      section: "Charts & Analytics",
-      domainConcept: "Geospatial distribution of Contacts and commercial operations.",
-    }),
+  "/bar": () => new BarView(),
+  "/pie": () => new PieView(),
+  "/line": () => new LineView(),
+  "/geography": () => new GeographyView(),
 };
