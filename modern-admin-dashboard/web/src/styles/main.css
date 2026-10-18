@@ -941,3 +941,263 @@ app-sidebar {
 .btn-primary:hover {
   background-color: var(--color-primary-hover);
 }
+
+/* ==========================================================================
+   Dashboard 12-Column Grid Layout & Components (Phase 4)
+   ========================================================================== */
+.dashboard-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.scene-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.scene-header-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.btn-download-reports {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  padding: 0.625rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.btn-download-reports:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-gap: 20px;
+}
+
+.col-span-3 {
+  grid-column: span 3;
+}
+
+.col-span-4 {
+  grid-column: span 4;
+}
+
+.col-span-8 {
+  grid-column: span 8;
+}
+
+.col-span-12 {
+  grid-column: span 12;
+}
+
+@media (max-width: 992px) {
+  .col-span-3,
+  .col-span-4,
+  .col-span-8 {
+    grid-column: span 12;
+  }
+}
+
+/* StatBox Card */
+.statbox-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 140px;
+}
+
+.statbox-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.statbox-icon {
+  font-size: 1.5rem;
+  color: var(--color-accent);
+}
+
+.statbox-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 0.25rem;
+}
+
+.statbox-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statbox-subtitle {
+  font-size: 0.875rem;
+  color: var(--color-accent);
+  font-weight: 500;
+}
+
+.statbox-badge {
+  font-size: 0.8125rem;
+  font-style: italic;
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+/* Circular Progress Ring */
+.progress-ring-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--color-accent) 0deg,
+    var(--color-accent) calc(var(--progress, 0.75) * 360deg),
+    var(--border-color) calc(var(--progress, 0.75) * 360deg),
+    var(--border-color) 360deg
+  );
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.progress-ring-inner {
+  width: 32px;
+  height: 32px;
+  background-color: var(--bg-card);
+  border-radius: 50%;
+}
+
+/* Dashboard Chart and Content Cards */
+.dashboard-card-inner {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-chart-container {
+  height: 250px;
+  width: 100%;
+  position: relative;
+}
+
+.dashboard-geo-container {
+  height: 200px;
+  width: 100%;
+  position: relative;
+}
+
+/* Transactions Feed Card */
+.transactions-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  height: 360px;
+  display: flex;
+  flex-direction: column;
+}
+
+.transactions-card .card-header {
+  margin-bottom: 0.5rem;
+}
+
+.transactions-list {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.transaction-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.transaction-row:last-child {
+  border-bottom: none;
+}
+
+.transaction-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.transaction-txid {
+  font-weight: 600;
+  color: var(--color-accent);
+  font-size: 0.875rem;
+}
+
+.transaction-user {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.transaction-date {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.transaction-amount-badge {
+  background-color: var(--color-accent);
+  color: var(--text-inverse);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+/* Campaign Card */
+.campaign-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.campaign-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.campaign-amount {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.campaign-desc {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}

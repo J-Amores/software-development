@@ -1,9 +1,10 @@
 // @vitest-environment happy-dom
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { DashboardView } from "../src/views/dashboard-view.js";
 import { createFakeApiClient } from "../src/api/index.js";
+import * as reportExporter from "../src/utils/reportExporter.js";
 
-describe("DashboardView (Vertical Tracer Bullet Seam)", () => {
+describe("DashboardView (12-Column Overview Dashboard Seam)", () => {
   let container;
   let view;
 
@@ -18,116 +19,125 @@ describe("DashboardView (Vertical Tracer Bullet Seam)", () => {
       view.unmount();
       view = null;
     }
-    container.remove();
+    if (container && container.parentNode) {
+      container.remove();
+    }
   });
 
-  it("renders loading state initially while fetching health telemetry", () => {
+  it("renders loading state initially while fetching dashboard summary", () => {
     const fakeClient = createFakeApiClient({
-      delayMs: 100, // delay to observe loading state
+      delayMs: 100,
     });
 
     view = new DashboardView({ apiClient: fakeClient });
     view.mount(container);
 
-    const loadingEl = container.querySelector(".health-status-loading");
+    const loadingEl = container.querySelector(".dashboard-loading");
     expect(loadingEl).not.toBeNull();
-    expect(loadingEl.textContent).toContain("tracer-bullet probe");
+    expect(loadingEl.textContent).toContain("Loading operational dashboard");
   });
 
-  it("renders live operational indicators on successful health check", async () => {
-    const fakeClient = createFakeApiClient({
-      healthResponse: {
-        status: "ok",
-        environment: "production",
-        timestamp: "2026-10-16T12:00:00.000Z",
-        database: {
-          status: "connected",
-          latencyMs: 7,
-        },
-      },
-    });
-
-    view = new DashboardView({ apiClient: fakeClient });
-    view.mount(container);
-
-    // Wait for the async health telemetry query to resolve
-    await view.fetchPromise;
-
-    const apiStatusEl = container.querySelector('[data-testid="api-status"]');
-    expect(apiStatusEl).not.toBeNull();
-    expect(apiStatusEl.textContent).toContain("Operational");
-
-    const dbLatencyEl = container.querySelector('[data-testid="db-latency"]');
-    expect(dbLatencyEl).not.toBeNull();
-    expect(dbLatencyEl.textContent).toContain("7ms");
-
-    const envModeEl = container.querySelector('[data-testid="env-mode"]');
-    expect(envModeEl).not.toBeNull();
-    expect(envModeEl.textContent).toContain("production");
-  });
-
-  it("renders accessible error fallback state when API is unreachable", async () => {
-    const fakeClient = createFakeApiClient({
-      shouldThrow: true,
-      errorMessage: "Failed to connect to backend: Connection refused",
-    });
-
+  it("renders full 12-column grid with 4 StatBoxes on successful load", async () => {
+    const fakeClient = createFakeApiClient();
     view = new DashboardView({ apiClient: fakeClient });
     view.mount(container);
 
     await view.fetchPromise;
 
-    const errorEl = container.querySelector('[data-testid="health-error"]');
-    expect(errorEl).not.toBeNull();
-    expect(errorEl.getAttribute("role")).toBe("alert");
-    expect(errorEl.textContent).toContain("System Unreachable");
-    expect(errorEl.textContent).toContain("Failed to connect to backend: Connection refused");
+    // Header validation
+    expect(container.querySelector(".scene-title").textContent).toBe("DASHBOARD");
+    expect(container.querySelector(".scene-subtitle").textContent).toContain(
+      "Welcome to your dashboard",
+    );
 
-    const retryBtn = container.querySelector("#retry-health-btn");
-    expect(retryBtn).not.toBeNull();
+    // StatBoxes
+    const emailsBox = container.querySelector('[data-testid="statbox-emails"]');
+    expect(emailsBox).not.toBeNull();
+    expect(emailsBox.textContent).toContain("Emails Sent");
+    expect(emailsBox.textContent).toContain("+14%");
+
+    const salesBox = container.querySelector('[data-testid="statbox-sales"]');
+    expect(salesBox).not.toBeNull();
+    expect(salesBox.textContent).toContain("Sales Obtained");
+    expect(salesBox.textContent).toContain("+21%");
+
+    const clientsBox = container.querySelector('[data-testid="statbox-clients"]');
+    expect(clientsBox).not.toBeNull();
+    expect(clientsBox.textContent).toContain("New Clients");
+    expect(clientsBox.textContent).toContain("+5%");
+
+    const trafficBox = container.querySelector('[data-testid="statbox-traffic"]');
+    expect(trafficBox).not.toBeNull();
+    expect(trafficBox.textContent).toContain("Traffic Received");
+    expect(trafficBox.textContent).toContain("+43%");
   });
 
-  it("renders degraded state when database ping indicates disconnected", async () => {
-    const fakeClient = createFakeApiClient({
-      healthResponse: {
-        status: "degraded",
-        environment: "staging",
-        timestamp: "2026-10-16T12:00:00.000Z",
-        database: {
-          status: "disconnected",
-          error: "MongoDB ping timeout after 5000ms",
-        },
-      },
-    });
-
+  it("renders Revenue Line Chart, Recent Transactions, and Row 3 cards", async () => {
+    const fakeClient = createFakeApiClient();
     view = new DashboardView({ apiClient: fakeClient });
     view.mount(container);
 
     await view.fetchPromise;
 
-    const degradedEl = container.querySelector('[data-testid="health-degraded"]');
-    expect(degradedEl).not.toBeNull();
-    expect(degradedEl.getAttribute("role")).toBe("alert");
-    expect(degradedEl.textContent).toContain("Degraded");
-    expect(degradedEl.textContent).toContain("MongoDB ping timeout after 5000ms");
+    // Row 2
+    const revenueCard = container.querySelector('[data-testid="card-revenue-chart"]');
+    expect(revenueCard).not.toBeNull();
+    expect(revenueCard.textContent).toContain("Revenue Generated");
+
+    const txCard = container.querySelector('[data-testid="card-recent-transactions"]');
+    expect(txCard).not.toBeNull();
+    expect(txCard.textContent).toContain("Recent Transactions");
+    const txRows = txCard.querySelectorAll('[data-testid="transaction-row"]');
+    expect(txRows.length).toBeGreaterThan(0);
+
+    // Row 3
+    const campaignCard = container.querySelector('[data-testid="card-campaign"]');
+    expect(campaignCard).not.toBeNull();
+    expect(campaignCard.textContent).toContain("Campaign");
+    expect(campaignCard.textContent).toContain("$48,352");
+
+    const salesChart = container.querySelector('[data-testid="card-sales-chart"]');
+    expect(salesChart).not.toBeNull();
+
+    const geoChart = container.querySelector('[data-testid="card-geography-chart"]');
+    expect(geoChart).not.toBeNull();
   });
 
-  it("retries health check when retry button is clicked", async () => {
-    let callCount = 0;
+  it("triggers operational report export when 'Download Reports' button is clicked", async () => {
+    const fakeClient = createFakeApiClient();
+    view = new DashboardView({ apiClient: fakeClient });
+    view.mount(container);
+
+    await view.fetchPromise;
+
+    const exportSpy = vi.spyOn(reportExporter, "downloadOperationalReport");
+
+    const downloadBtn = container.querySelector('[data-testid="download-reports-btn"]');
+    expect(downloadBtn).not.toBeNull();
+    downloadBtn.click();
+
+    expect(exportSpy).toHaveBeenCalled();
+    exportSpy.mockRestore();
+  });
+
+  it("renders accessible error fallback and handles retry", async () => {
+    let attempts = 0;
     const clientWithRetry = {
-      async getHealth() {
-        callCount++;
-        if (callCount === 1) {
-          throw new Error("Temporary network glitch");
+      async getDashboardSummary() {
+        attempts++;
+        if (attempts === 1) {
+          throw new Error("Failed to reach dashboard API");
         }
         return {
-          status: "ok",
-          environment: "development",
-          timestamp: new Date().toISOString(),
-          database: {
-            status: "connected",
-            latencyMs: 3,
+          summary: {
+            invoicedRevenue: { total: 100, count: 1 },
+            transactionVolume: { total: 50, count: 1 },
+            activeContacts: 2,
+            teamMembers: 2,
+            ratios: { emails: 0.75, sales: 0.5, clients: 0.3, traffic: 0.8 },
           },
+          recentTransactions: [],
+          charts: {},
         };
       },
     };
@@ -137,19 +147,18 @@ describe("DashboardView (Vertical Tracer Bullet Seam)", () => {
 
     await view.fetchPromise;
 
-    // Verify error state
-    expect(container.querySelector('[data-testid="health-error"]')).not.toBeNull();
+    const errorEl = container.querySelector('[data-testid="dashboard-error"]');
+    expect(errorEl).not.toBeNull();
+    expect(errorEl.textContent).toContain("Failed to reach dashboard API");
 
-    // Click retry
-    const retryBtn = container.querySelector("#retry-health-btn");
+    const retryBtn = container.querySelector("#retry-dashboard-btn");
+    expect(retryBtn).not.toBeNull();
     retryBtn.click();
 
     await view.fetchPromise;
 
-    // Verify recovered operational state
-    expect(container.querySelector('[data-testid="api-status"]')).not.toBeNull();
-    expect(container.querySelector('[data-testid="db-latency"]').textContent).toContain("3ms");
-    expect(callCount).toBe(2);
+    expect(container.querySelector('[data-testid="statbox-emails"]')).not.toBeNull();
+    expect(attempts).toBe(2);
   });
 
   it("cleans up resources and unmounts DOM element cleanly", () => {
