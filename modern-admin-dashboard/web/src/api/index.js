@@ -518,6 +518,112 @@ export function createApiClient(options = {}) {
 
       return data;
     },
+
+    async getMetrics(dataset) {
+      if (!fetchFn) {
+        throw new Error("No fetch implementation available.");
+      }
+
+      const cleanBase = baseUrl.replace(/\/$/, "");
+      const url = `${cleanBase}/api/v1/metrics/${encodeURIComponent(dataset)}`;
+
+      let response;
+      try {
+        response = await fetchFn(url, {
+          method: "GET",
+          headers: { Accept: "application/json" },
+        });
+      } catch (err) {
+        throw new Error(`Failed to reach API at ${baseUrl}: ${err.message}`);
+      }
+
+      let data;
+      try {
+        data = await response.json();
+      } catch (err) {
+        throw new Error(`Invalid JSON response from ${url}: ${err.message}`);
+      }
+
+      if (!response.ok) {
+        const errorMsg =
+          data?.message || `API error: ${response.status} ${response.statusText || ""}`.trim();
+        throw new Error(errorMsg);
+      }
+
+      return data;
+    },
+
+    async getTransactions(params = {}) {
+      if (!fetchFn) {
+        throw new Error("No fetch implementation available.");
+      }
+
+      const cleanBase = baseUrl.replace(/\/$/, "");
+      const searchParams = new URLSearchParams();
+      if (params.limit !== undefined) searchParams.set("limit", String(params.limit));
+
+      const qs = searchParams.toString();
+      const url = `${cleanBase}/api/v1/transactions${qs ? `?${qs}` : ""}`;
+
+      let response;
+      try {
+        response = await fetchFn(url, {
+          method: "GET",
+          headers: { Accept: "application/json" },
+        });
+      } catch (err) {
+        throw new Error(`Failed to reach API at ${baseUrl}: ${err.message}`);
+      }
+
+      let data;
+      try {
+        data = await response.json();
+      } catch (err) {
+        throw new Error(`Invalid JSON response from ${url}: ${err.message}`);
+      }
+
+      if (!response.ok) {
+        const errorMsg =
+          data?.message || `API error: ${response.status} ${response.statusText || ""}`.trim();
+        throw new Error(errorMsg);
+      }
+
+      return data;
+    },
+
+    async getDashboardSummary() {
+      if (!fetchFn) {
+        throw new Error("No fetch implementation available.");
+      }
+
+      const cleanBase = baseUrl.replace(/\/$/, "");
+      const url = `${cleanBase}/api/v1/dashboard`;
+
+      let response;
+      try {
+        response = await fetchFn(url, {
+          method: "GET",
+          headers: { Accept: "application/json" },
+        });
+      } catch (err) {
+        throw new Error(`Failed to reach API at ${baseUrl}: ${err.message}`);
+      }
+
+      let data;
+      try {
+        data = await response.json();
+      } catch (err) {
+        throw new Error(`Invalid JSON response from ${url}: ${err.message}`);
+      }
+
+      if (!response.ok) {
+        const errorMsg =
+          data?.message || `API error: ${response.status} ${response.statusText || ""}`.trim();
+        throw new Error(errorMsg);
+      }
+
+      return data;
+    },
   };
 }
 
@@ -682,6 +788,40 @@ export function createFakeApiClient(options = {}) {
         category: "Compliance & Contacts",
       },
     ],
+    metrics = {
+      bar: [
+        { country: "AD", "hot dog": 137, burger: 96, kebab: 72, donut: 140 },
+        { country: "AE", "hot dog": 55, burger: 28, kebab: 58, donut: 29 },
+        { country: "AF", "hot dog": 109, burger: 23, kebab: 34, donut: 152 },
+      ],
+      pie: [
+        { id: "hack", label: "hack", value: 239, color: "hsl(104, 70%, 50%)" },
+        { id: "make", label: "make", value: 170, color: "hsl(162, 70%, 50%)" },
+        { id: "go", label: "go", value: 322, color: "hsl(291, 70%, 50%)" },
+      ],
+      line: [
+        {
+          id: "japan",
+          color: "#4cceac",
+          data: [
+            { x: "plane", y: 101 },
+            { x: "helicopter", y: 75 },
+            { x: "boat", y: 36 },
+          ],
+        },
+      ],
+      geography: [
+        { id: "USA", value: 800000 },
+        { id: "CHN", value: 650000 },
+        { id: "DEU", value: 450000 },
+      ],
+    },
+    transactions = [
+      { txId: "tx-1", user: "johndoe", date: "2026-10-01T12:00:00.000Z", amount: 43.95 },
+      { txId: "tx-2", user: "jackdower", date: "2026-10-02T14:30:00.000Z", amount: 133.45 },
+      { txId: "tx-3", user: "goodmanave", date: "2026-10-05T09:15:00.000Z", amount: 200.95 },
+    ],
+    dashboardSummary = null,
     shouldThrow = false,
     errorMessage = "Network request failed",
     delayMs = 0,
@@ -1066,6 +1206,77 @@ export function createFakeApiClient(options = {}) {
       }
 
       return list;
+    },
+
+    async getMetrics(dataset) {
+      if (delayMs > 0) {
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+      if (shouldThrow) {
+        throw new Error(errorMessage);
+      }
+
+      const rawMetrics = typeof metrics === "function" ? metrics() : metrics;
+      if (!rawMetrics || !rawMetrics[dataset]) {
+        throw new Error(`Metric dataset '${dataset}' not found`);
+      }
+
+      return {
+        metricKey: dataset,
+        data: JSON.parse(JSON.stringify(rawMetrics[dataset])),
+      };
+    },
+
+    async getTransactions(params = {}) {
+      if (delayMs > 0) {
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+      if (shouldThrow) {
+        throw new Error(errorMessage);
+      }
+
+      const raw = typeof transactions === "function" ? transactions() : transactions;
+      let list = raw.map((t) => ({ ...t }));
+      list.sort((a, b) => (a.date < b.date ? 1 : -1));
+
+      if (params.limit !== undefined) {
+        list = list.slice(0, Number(params.limit));
+      }
+
+      return list;
+    },
+
+    async getDashboardSummary() {
+      if (delayMs > 0) {
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+      if (shouldThrow) {
+        throw new Error(errorMessage);
+      }
+
+      if (dashboardSummary) {
+        return typeof dashboardSummary === "function" ? dashboardSummary() : dashboardSummary;
+      }
+
+      const rawMetrics = typeof metrics === "function" ? metrics() : metrics;
+      const rawTx = typeof transactions === "function" ? transactions() : transactions;
+      const sortedTx = rawTx.map((t) => ({ ...t })).sort((a, b) => (a.date < b.date ? 1 : -1));
+
+      return {
+        summary: {
+          invoicedRevenue: { total: 497.85, count: 5 },
+          transactionVolume: { total: 378.35, count: rawTx.length },
+          activeContacts: 3,
+          teamMembers: 3,
+          ratios: { emails: 0.75, sales: 0.5, clients: 0.3, traffic: 0.8 },
+        },
+        recentTransactions: sortedTx.slice(0, 10),
+        charts: {
+          revenueLine: rawMetrics?.line || [],
+          salesBar: rawMetrics?.bar || [],
+          geographyTraffic: rawMetrics?.geography || [],
+        },
+      };
     },
   };
 }

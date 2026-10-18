@@ -527,6 +527,90 @@ describe("Frontend API Client Adapter Seam", () => {
 
       await expect(client.getFaqs()).rejects.toThrow("Database connection failed");
     });
+
+    it("fetches /api/v1/metrics/:dataset via getMetrics", async () => {
+      const mockMetricsData = {
+        metricKey: "bar",
+        data: [{ country: "AD", "hot dog": 137 }],
+      };
+
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: vi.fn().mockResolvedValue(mockMetricsData),
+      });
+
+      const client = createApiClient({
+        baseUrl: "http://api.local:8080",
+        fetchFn: mockFetch,
+      });
+
+      const result = await client.getMetrics("bar");
+
+      expect(mockFetch).toHaveBeenCalledWith("http://api.local:8080/api/v1/metrics/bar", {
+        method: "GET",
+        headers: { Accept: "application/json" },
+      });
+      expect(result).toEqual(mockMetricsData);
+    });
+
+    it("fetches /api/v1/transactions with query parameters via getTransactions", async () => {
+      const mockTransactionsData = [
+        { txId: "tx-1", user: "alice", date: "2022-01-01", amount: 100 },
+      ];
+
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: vi.fn().mockResolvedValue(mockTransactionsData),
+      });
+
+      const client = createApiClient({
+        baseUrl: "http://api.local:8080",
+        fetchFn: mockFetch,
+      });
+
+      const result = await client.getTransactions({ limit: 5 });
+
+      expect(mockFetch).toHaveBeenCalledWith("http://api.local:8080/api/v1/transactions?limit=5", {
+        method: "GET",
+        headers: { Accept: "application/json" },
+      });
+      expect(result).toEqual(mockTransactionsData);
+    });
+
+    it("fetches /api/v1/dashboard via getDashboardSummary", async () => {
+      const mockDashboardData = {
+        summary: {
+          invoicedRevenue: { total: 100, count: 1 },
+          transactionVolume: { total: 50, count: 1 },
+          activeContacts: 5,
+          teamMembers: 3,
+          ratios: { emails: 0.75, sales: 0.5, clients: 0.3, traffic: 0.8 },
+        },
+        recentTransactions: [],
+        charts: { revenueLine: [], salesBar: [], geographyTraffic: [] },
+      };
+
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: vi.fn().mockResolvedValue(mockDashboardData),
+      });
+
+      const client = createApiClient({
+        baseUrl: "http://api.local:8080",
+        fetchFn: mockFetch,
+      });
+
+      const result = await client.getDashboardSummary();
+
+      expect(mockFetch).toHaveBeenCalledWith("http://api.local:8080/api/v1/dashboard", {
+        method: "GET",
+        headers: { Accept: "application/json" },
+      });
+      expect(result).toEqual(mockDashboardData);
+    });
   });
 
   describe("createFakeApiClient", () => {
@@ -779,6 +863,47 @@ describe("Frontend API Client Adapter Seam", () => {
       // Query with no matches
       const empty = await fakeClient.getFaqs({ q: "xyz987nonexistent" });
       expect(empty).toEqual([]);
+    });
+
+    it("provides in-memory querying for metrics datasets via getMetrics", async () => {
+      const fakeClient = createFakeApiClient();
+
+      const barMetric = await fakeClient.getMetrics("bar");
+      expect(barMetric.metricKey).toBe("bar");
+      expect(Array.isArray(barMetric.data)).toBe(true);
+
+      const pieMetric = await fakeClient.getMetrics("pie");
+      expect(pieMetric.metricKey).toBe("pie");
+
+      const lineMetric = await fakeClient.getMetrics("line");
+      expect(lineMetric.metricKey).toBe("line");
+
+      const geoMetric = await fakeClient.getMetrics("geography");
+      expect(geoMetric.metricKey).toBe("geography");
+
+      await expect(fakeClient.getMetrics("invalid")).rejects.toThrow(/not found/i);
+    });
+
+    it("provides in-memory querying for transactions via getTransactions", async () => {
+      const fakeClient = createFakeApiClient();
+
+      const all = await fakeClient.getTransactions();
+      expect(Array.isArray(all)).toBe(true);
+      expect(all.length).toBeGreaterThan(0);
+
+      const limited = await fakeClient.getTransactions({ limit: 2 });
+      expect(limited).toHaveLength(2);
+    });
+
+    it("provides composite dashboard summary via getDashboardSummary", async () => {
+      const fakeClient = createFakeApiClient();
+
+      const summary = await fakeClient.getDashboardSummary();
+      expect(summary.summary).toBeDefined();
+      expect(summary.summary.invoicedRevenue).toBeDefined();
+      expect(summary.summary.transactionVolume).toBeDefined();
+      expect(summary.recentTransactions).toBeDefined();
+      expect(summary.charts).toBeDefined();
     });
   });
 });
