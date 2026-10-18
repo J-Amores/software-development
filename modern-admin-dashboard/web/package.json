@@ -8,7 +8,10 @@
     "@fullcalendar/daygrid": "^6.1.22",
     "@fullcalendar/interaction": "^6.1.22",
     "@fullcalendar/list": "^6.1.22",
-    "@fullcalendar/timegrid": "^6.1.22"
+    "@fullcalendar/timegrid": "^6.1.22",
+    "chart.js": "^4.5.1",
+    "chartjs-chart-geo": "^4.3.6",
+    "topojson-client": "^3.1.0"
   },
   "devDependencies": {
     "happy-dom": "^21.0.1"
