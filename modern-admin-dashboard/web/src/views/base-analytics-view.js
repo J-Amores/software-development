@@ -44,6 +44,7 @@ export class BaseAnalyticsView {
     }
 
     this.container = container;
+    this.container.innerHTML = "";
     this.isMounted = true;
 
     this.element = document.createElement("section");

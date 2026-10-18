@@ -102,25 +102,28 @@ export async function dashboardRoutes(fastify, opts = {}) {
       const metricsColl = rawDb.collection("metrics");
 
       // Parallel aggregate calculations
-      const [teamMembersCount, activeContactsCount, invoicesList, recentTxList, metricsList] =
-        await Promise.all([
-          membersColl.countDocuments(),
-          contactsColl.countDocuments(),
-          invoicesColl.find().toArray(),
-          transactionsColl.find({}).sort({ date: -1 }).limit(10).project({ _id: 0 }).toArray(),
-          metricsColl.find({ metricKey: { $in: ["line", "bar", "geography"] } }).toArray(),
-        ]);
+      const [
+        teamMembersCount,
+        activeContactsCount,
+        invoicesList,
+        recentTxList,
+        metricsList,
+        allTxList,
+      ] = await Promise.all([
+        membersColl.countDocuments(),
+        contactsColl.countDocuments(),
+        invoicesColl.find().toArray(),
+        transactionsColl.find({}).sort({ date: -1 }).limit(10).project({ _id: 0 }).toArray(),
+        metricsColl.find({ metricKey: { $in: ["line", "bar", "geography"] } }).toArray(),
+        transactionsColl.find({}).toArray(),
+      ]);
 
       // Calculate invoice totals
       const totalInvoiced = invoicesList.reduce((sum, inv) => sum + (Number(inv.amount) || 0), 0);
       const roundedInvoicedTotal = Math.round(totalInvoiced * 100) / 100;
 
-      // Calculate transaction totals (from all or recent transactions)
-      const allTransactions =
-        typeof transactionsColl.toArray === "function"
-          ? await transactionsColl.toArray()
-          : recentTxList;
-      const totalTxAmount = allTransactions.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
+      // Calculate transaction totals from all recorded transactions
+      const totalTxAmount = allTxList.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
       const roundedTxTotal = Math.round(totalTxAmount * 100) / 100;
 
       // Extract metrics payloads
@@ -137,7 +140,7 @@ export async function dashboardRoutes(fastify, opts = {}) {
           },
           transactionVolume: {
             total: roundedTxTotal,
-            count: allTransactions.length,
+            count: allTxList.length,
           },
           activeContacts: activeContactsCount,
           teamMembers: teamMembersCount,

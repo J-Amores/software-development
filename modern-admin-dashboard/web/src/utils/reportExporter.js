@@ -20,7 +20,7 @@ export function generateReportCsv(summary = {}, transactions = []) {
   const timestamp = new Date().toISOString();
 
   const lines = [
-    "=== OPERATIONAL REPORT KPI SUMMARY ===",
+    "=== OPERATIONAL REPORT SUMMARY ===",
     "Metric,Value",
     `Invoiced Revenue Total,$${Number(invoicedTotal).toFixed(2)}`,
     `Invoiced Revenue Document Count,${invoicedCount}`,
