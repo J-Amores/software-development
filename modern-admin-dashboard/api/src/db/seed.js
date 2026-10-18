@@ -11,6 +11,8 @@ import {
   mockPieData,
   mockLineData,
   mockGeographyData,
+  mockEvents,
+  mockFaqs,
 } from "../../../data/mockData.js";
 
 /**
@@ -23,6 +25,8 @@ import {
  *   invoicesCount: number,
  *   transactionsCount: number,
  *   metricsCount: number,
+ *   eventsCount: number,
+ *   faqsCount: number,
  *   counters: Record<string, number>
  * }>}
  */
@@ -139,25 +143,77 @@ export async function seedDatabase(db) {
   }));
   await db.collection("metrics").bulkWrite(metricOps);
 
-  // 7. Atomic sequence floors
+  // 7. Calendar Events
+  const eventOps = mockEvents.map((item) => {
+    const doc = {
+      id: item.id,
+      title: item.title,
+      start: item.start,
+      allDay: Boolean(item.allDay),
+      ...(item.end ? { end: item.end } : {}),
+    };
+    return {
+      updateOne: {
+        filter: { id: doc.id },
+        update: { $set: doc },
+        upsert: true,
+      },
+    };
+  });
+  if (eventOps.length > 0) {
+    await db.collection("events").bulkWrite(eventOps);
+  }
+
+  // 8. FAQ Entries
+  const faqOps = mockFaqs.map((item) => {
+    const doc = {
+      id: item.id,
+      question: item.question,
+      answer: item.answer,
+      category: item.category,
+    };
+    return {
+      updateOne: {
+        filter: { id: doc.id },
+        update: { $set: doc },
+        upsert: true,
+      },
+    };
+  });
+  if (faqOps.length > 0) {
+    await db.collection("faqs").bulkWrite(faqOps);
+  }
+
+  // 9. Atomic sequence floors
   const maxMemberId = Math.max(...mockDataTeam.map((m) => m.id), 0);
   const maxContactId = Math.max(...mockDataContacts.map((c) => c.id), 0);
   const maxInvoiceId = Math.max(...mockDataInvoices.map((i) => i.id), 0);
+  const maxEventId = Math.max(...mockEvents.map((e) => e.id), 0);
 
-  const [membersSeq, contactsSeq, invoicesSeq] = await Promise.all([
+  const [membersSeq, contactsSeq, invoicesSeq, eventsSeq] = await Promise.all([
     setSequenceFloor(db, "members", maxMemberId),
     setSequenceFloor(db, "contacts", maxContactId),
     setSequenceFloor(db, "invoices", maxInvoiceId),
+    setSequenceFloor(db, "events", maxEventId),
   ]);
 
-  const [membersCount, contactsCount, invoicesCount, transactionsCount, metricsCount] =
-    await Promise.all([
-      db.collection("members").countDocuments(),
-      db.collection("contacts").countDocuments(),
-      db.collection("invoices").countDocuments(),
-      db.collection("transactions").countDocuments(),
-      db.collection("metrics").countDocuments(),
-    ]);
+  const [
+    membersCount,
+    contactsCount,
+    invoicesCount,
+    transactionsCount,
+    metricsCount,
+    eventsCount,
+    faqsCount,
+  ] = await Promise.all([
+    db.collection("members").countDocuments(),
+    db.collection("contacts").countDocuments(),
+    db.collection("invoices").countDocuments(),
+    db.collection("transactions").countDocuments(),
+    db.collection("metrics").countDocuments(),
+    db.collection("events").countDocuments(),
+    db.collection("faqs").countDocuments(),
+  ]);
 
   return {
     membersCount,
@@ -165,10 +221,13 @@ export async function seedDatabase(db) {
     invoicesCount,
     transactionsCount,
     metricsCount,
+    eventsCount,
+    faqsCount,
     counters: {
       members: membersSeq,
       contacts: contactsSeq,
       invoices: invoicesSeq,
+      events: eventsSeq,
     },
   };
 }
@@ -201,6 +260,10 @@ export async function runSeed(adapter = null) {
     );
     console.log(`  - Transactions: ${summary.transactionsCount}`);
     console.log(`  - Metrics:      ${summary.metricsCount} partitioned keys`);
+    console.log(
+      `  - Events:       ${summary.eventsCount} (counter floor: ${summary.counters.events})`,
+    );
+    console.log(`  - FAQs:         ${summary.faqsCount}`);
 
     return summary;
   } finally {

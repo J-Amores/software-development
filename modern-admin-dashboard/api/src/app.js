@@ -4,6 +4,8 @@ import { healthRoutes } from "./routes/health.js";
 import { teamRoutes } from "./routes/team.js";
 import { contactsRoutes } from "./routes/contacts.js";
 import { invoicesRoutes } from "./routes/invoices.js";
+import { eventsRoutes } from "./routes/events.js";
+import { faqsRoutes } from "./routes/faqs.js";
 
 /**
  * Builds and configures the Fastify application instance.
@@ -36,6 +38,8 @@ export async function createApp(options = {}) {
   await app.register(teamRoutes, { db });
   await app.register(contactsRoutes, { db });
   await app.register(invoicesRoutes, { db });
+  await app.register(eventsRoutes, { db });
+  await app.register(faqsRoutes, { db });
 
   return app;
 }

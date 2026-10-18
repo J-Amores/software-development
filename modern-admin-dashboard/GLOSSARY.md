@@ -43,7 +43,7 @@ _Avoid_: Payment, charge, transfer, remittance.
 ## Planning & Analytics
 
 **Calendar Event**:
-A scheduled operational milestone, meeting, or appointment anchored to a specific date and time on the organizational schedule.
+A scheduled operational milestone, meeting, or appointment anchored to a specific date, date range, or designated time on the organizational schedule.
 _Avoid_: Booking, schedule item, reminder.
 
 **Campaign Metric**:

@@ -1,5 +1,7 @@
+import { CalendarView } from "./views/calendar-view.js";
 import { ContactsView } from "./views/contacts-view.js";
 import { DashboardView } from "./views/dashboard-view.js";
+import { FaqView } from "./views/faq-view.js";
 import { FormView } from "./views/form-view.js";
 import { InvoicesView } from "./views/invoices-view.js";
 import { PlaceholderView } from "./views/placeholder-view.js";
@@ -14,21 +16,8 @@ export const routes = {
   "/contacts": () => new ContactsView(),
   "/invoices": () => new InvoicesView(),
   "/form": () => new FormView(),
-
-  "/calendar": () =>
-    new PlaceholderView({
-      title: "Calendar",
-      subtitle: "Scheduled milestones, appointments, and operations",
-      section: "Pages",
-      domainConcept: "Calendar Event schedules, deadlines, and organizational appointments.",
-    }),
-  "/faq": () =>
-    new PlaceholderView({
-      title: "FAQ Page",
-      subtitle: "Common organizational guidelines and procedures",
-      section: "Pages",
-      domainConcept: "Curated FAQ Entry items providing verified answers to operational questions.",
-    }),
+  "/calendar": () => new CalendarView(),
+  "/faq": () => new FaqView(),
   "/bar": () =>
     new PlaceholderView({
       title: "Bar Chart",

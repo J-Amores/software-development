@@ -30,6 +30,8 @@ export async function ensureIndexes(db) {
     db
       .collection("metrics")
       .createIndex({ metricKey: 1 }, { unique: true, name: "idx_metrics_key_unique" }),
+    db.collection("events").createIndex({ id: 1 }, { unique: true, name: "idx_events_id_unique" }),
+    db.collection("faqs").createIndex({ id: 1 }, { unique: true, name: "idx_faqs_id_unique" }),
   ]);
 
   return results;

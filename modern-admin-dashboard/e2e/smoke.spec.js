@@ -64,29 +64,35 @@ test.describe("Modern Admin Dashboard - Walking Skeleton E2E Smoke Suite", () =>
     await expect(sidebarContainer).not.toHaveClass(/collapsed/);
   });
 
-  test("navigates routes client-side without full page reload and renders placeholder scenes", async ({
+  test("navigates routes client-side without full page reload and renders live views", async ({
     page,
   }) => {
     // 1. Navigate to Manage Team
     await page.click('a[href="/team"]');
     await expect(page).toHaveURL(/\/team$/);
-    await expect(page.locator("#scene-title")).toHaveText("Manage Team");
-    await expect(page.locator(".scene-breadcrumbs")).toContainText("Data Management");
-    await expect(page.locator(".placeholder-desc")).toContainText("Team Member profiles");
+    await expect(page.locator("#team-title")).toHaveText("Manage Team");
 
     // 2. Navigate to Contacts Information
     await page.click('a[href="/contacts"]');
     await expect(page).toHaveURL(/\/contacts$/);
-    await expect(page.locator("#scene-title")).toHaveText("Contacts Information");
-    await expect(page.locator(".placeholder-desc")).toContainText("Contact records");
+    await expect(page.locator("#contacts-title")).toHaveText("Contacts Information");
 
     // 3. Navigate to Invoices Balances
     await page.click('a[href="/invoices"]');
     await expect(page).toHaveURL(/\/invoices$/);
-    await expect(page.locator("#scene-title")).toHaveText("Invoices Balances");
-    await expect(page.locator(".placeholder-desc")).toContainText("Invoice requests");
+    await expect(page.locator("#invoices-title")).toHaveText("Invoices Balances");
 
-    // 4. Return to Dashboard via link
+    // 4. Navigate to Calendar
+    await page.click('a[href="/calendar"]');
+    await expect(page).toHaveURL(/\/calendar$/);
+    await expect(page.locator("#calendar-title")).toHaveText("Calendar");
+
+    // 5. Navigate to FAQ Page
+    await page.click('a[href="/faq"]');
+    await expect(page).toHaveURL(/\/faq$/);
+    await expect(page.locator("#faq-title")).toHaveText("FAQ Page");
+
+    // 6. Return to Dashboard via link
     await page.click('a[href="/"]');
     await expect(page).toHaveURL(/\/$/);
     await expect(page.locator("#dashboard-title")).toHaveText("Administrative Dashboard");

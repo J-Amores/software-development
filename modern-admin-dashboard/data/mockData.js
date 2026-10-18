@@ -1279,3 +1279,91 @@ export const mockGeographyData = [
     value: 171135,
   },
 ];
+
+export const mockEvents = [
+  {
+    id: 1,
+    title: "All-Day Operational Review",
+    start: "2026-10-01",
+    allDay: true,
+  },
+  {
+    id: 2,
+    title: "Quarterly Strategic Planning",
+    start: "2026-10-07",
+    end: "2026-10-09",
+    allDay: true,
+  },
+  {
+    id: 3,
+    title: "Infrastructure Maintenance Window",
+    start: "2026-10-14T02:00:00.000Z",
+    end: "2026-10-14T06:00:00.000Z",
+    allDay: false,
+  },
+  {
+    id: 4,
+    title: "Executive Committee Briefing",
+    start: "2026-10-18T14:00:00.000Z",
+    end: "2026-10-18T15:30:00.000Z",
+    allDay: false,
+  },
+  {
+    id: 5,
+    title: "Departmental Budget Audit",
+    start: "2026-10-22",
+    allDay: true,
+  },
+  {
+    id: 6,
+    title: "Client Partnership Summit",
+    start: "2026-10-28",
+    end: "2026-10-29",
+    allDay: true,
+  },
+];
+
+export const mockFaqs = [
+  {
+    id: 1,
+    question: "How are administrative Access Levels assigned and audited across the organization?",
+    answer:
+      "Operators manage Team Member Access Levels (Admin, Manager, User) directly through the Manage Team directory. Changes take effect immediately and establish the operational authority tier for that collaborator.",
+    category: "Access & Security",
+  },
+  {
+    id: 2,
+    question: "What is the standard settlement window for issued commercial Invoices?",
+    answer:
+      "Commercial invoices carry a standard net-30 settlement expectation from the date of formal issuance. Outstanding balances and payment histories can be audited in real time via the Invoices balances ledger.",
+    category: "Billing & Invoices",
+  },
+  {
+    id: 3,
+    question: "How are operational milestones and appointments scheduled on the Calendar?",
+    answer:
+      "Authorized operators can schedule new Calendar Events directly through the calendar grid or via the Add Event action. Events support all-day operational windows as well as designated hour-bound appointment blocks.",
+    category: "Planning & Schedules",
+  },
+  {
+    id: 4,
+    question: "What procedures govern external Contact record retention and data privacy?",
+    answer:
+      "External Contact profiles, registrar references, and address information are retained under organizational compliance mandates and can only be modified or exported by authorized administrators.",
+    category: "Compliance & Contacts",
+  },
+  {
+    id: 5,
+    question: "How does the platform allocate business identifiers across records?",
+    answer:
+      "All business entities (Team Members, Contacts, Invoices, Calendar Events) receive sequential, human-readable integer identifiers generated atomically to eliminate key collision risks across concurrent requests.",
+    category: "System Architecture",
+  },
+  {
+    id: 6,
+    question: "What should an operator do if an invoice requires cancellation or adjustment?",
+    answer:
+      "Erroneous or settled invoices can be purged from the active ledger via the Invoices directory. Purging removes the receivable obligation and updates aggregate balance calculations across the dashboard.",
+    category: "Billing & Invoices",
+  },
+];

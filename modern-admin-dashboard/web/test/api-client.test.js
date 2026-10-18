@@ -381,6 +381,152 @@ describe("Frontend API Client Adapter Seam", () => {
 
       await expect(client.deleteInvoice(999)).rejects.toThrow("Invoice with ID 999 not found");
     });
+
+    it("fetches /api/v1/events with query params and returns parsed JSON", async () => {
+      const mockEvents = [
+        { id: 1, title: "Meeting", start: "2026-10-01", allDay: true },
+        { id: 2, title: "Review", start: "2026-10-05", allDay: false },
+      ];
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: vi.fn().mockResolvedValue(mockEvents),
+      });
+
+      const client = createApiClient({
+        baseUrl: "http://api.local:8080",
+        fetchFn: mockFetch,
+      });
+
+      const result = await client.getEvents({ sort: "start", order: "desc" });
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        "http://api.local:8080/api/v1/events?sort=start&order=desc",
+        {
+          method: "GET",
+          headers: { Accept: "application/json" },
+        },
+      );
+      expect(result).toEqual(mockEvents);
+    });
+
+    it("provisions a new event via POST /api/v1/events", async () => {
+      const newEvent = {
+        title: "Summit",
+        start: "2026-10-20",
+        allDay: true,
+      };
+      const createdEvent = { id: 3, ...newEvent };
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 201,
+        json: vi.fn().mockResolvedValue(createdEvent),
+      });
+
+      const client = createApiClient({
+        baseUrl: "http://api.local:8080",
+        fetchFn: mockFetch,
+      });
+
+      const result = await client.createEvent(newEvent);
+
+      expect(mockFetch).toHaveBeenCalledWith("http://api.local:8080/api/v1/events", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(newEvent),
+      });
+      expect(result).toEqual(createdEvent);
+    });
+
+    it("removes an event via DELETE /api/v1/events/:id", async () => {
+      const deleteResponse = { success: true, id: 1, message: "Calendar Event 1 removed" };
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: vi.fn().mockResolvedValue(deleteResponse),
+      });
+
+      const client = createApiClient({
+        baseUrl: "http://api.local:8080",
+        fetchFn: mockFetch,
+      });
+
+      const result = await client.deleteEvent(1);
+
+      expect(mockFetch).toHaveBeenCalledWith("http://api.local:8080/api/v1/events/1", {
+        method: "DELETE",
+        headers: { Accept: "application/json" },
+      });
+      expect(result).toEqual(deleteResponse);
+    });
+
+    it("throws error when deleteEvent fails on server", async () => {
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 404,
+        statusText: "Not Found",
+        json: vi.fn().mockResolvedValue({ message: "Calendar Event with ID 999 not found" }),
+      });
+
+      const client = createApiClient({
+        baseUrl: "http://api.local:8080",
+        fetchFn: mockFetch,
+      });
+
+      await expect(client.deleteEvent(999)).rejects.toThrow("Calendar Event with ID 999 not found");
+    });
+
+    it("fetches /api/v1/faqs with query string parameters", async () => {
+      const mockFaqsData = [
+        {
+          id: 1,
+          question: "How are administrative Access Levels assigned?",
+          answer: "Operators manage Team Member Access Levels in the directory.",
+          category: "Access & Security",
+        },
+      ];
+
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: vi.fn().mockResolvedValue(mockFaqsData),
+      });
+
+      const client = createApiClient({
+        baseUrl: "http://api.local:8080",
+        fetchFn: mockFetch,
+      });
+
+      const result = await client.getFaqs({ q: "Access", category: "Access & Security" });
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        "http://api.local:8080/api/v1/faqs?q=Access&category=Access+%26+Security",
+        {
+          method: "GET",
+          headers: { Accept: "application/json" },
+        },
+      );
+      expect(result).toEqual(mockFaqsData);
+    });
+
+    it("throws error when getFaqs fails with 500 server error", async () => {
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 500,
+        statusText: "Internal Server Error",
+        json: vi.fn().mockResolvedValue({ message: "Database connection failed" }),
+      });
+
+      const client = createApiClient({
+        baseUrl: "http://api.local:8080",
+        fetchFn: mockFetch,
+      });
+
+      await expect(client.getFaqs()).rejects.toThrow("Database connection failed");
+    });
   });
 
   describe("createFakeApiClient", () => {
@@ -557,6 +703,82 @@ describe("Frontend API Client Adapter Seam", () => {
     it("throws error when deleting nonexistent invoice in fake client", async () => {
       const fakeClient = createFakeApiClient();
       await expect(fakeClient.deleteInvoice(999)).rejects.toThrow("Invoice with ID 999 not found");
+    });
+
+    it("provides in-memory querying, creation, and deletion for events in fake client", async () => {
+      const fakeClient = createFakeApiClient();
+
+      // Query all
+      const all = await fakeClient.getEvents();
+      expect(Array.isArray(all)).toBe(true);
+      expect(all).toHaveLength(3);
+
+      // Query with sort descending
+      const sorted = await fakeClient.getEvents({ sort: "start", order: "desc" });
+      expect(sorted[0].id).toBe(3);
+
+      // Create event
+      const created = await fakeClient.createEvent({
+        title: "Team Retrospective",
+        start: "2026-10-30",
+        allDay: true,
+      });
+      expect(created.id).toBe(4);
+      expect(created.title).toBe("Team Retrospective");
+
+      const afterCreate = await fakeClient.getEvents();
+      expect(afterCreate).toHaveLength(4);
+
+      // Delete event
+      const result = await fakeClient.deleteEvent(1);
+      expect(result.success).toBe(true);
+      expect(result.id).toBe(1);
+
+      const afterDelete = await fakeClient.getEvents();
+      expect(afterDelete).toHaveLength(3);
+      expect(afterDelete.some((e) => e.id === 1)).toBe(false);
+    });
+
+    it("throws error when creating an event with missing fields in fake client", async () => {
+      const fakeClient = createFakeApiClient();
+      await expect(fakeClient.createEvent({ title: "No Date" })).rejects.toThrow(
+        "Missing required fields",
+      );
+    });
+
+    it("throws error when deleting nonexistent event in fake client", async () => {
+      const fakeClient = createFakeApiClient();
+      await expect(fakeClient.deleteEvent(9999)).rejects.toThrow(
+        "Calendar Event with ID 9999 not found",
+      );
+    });
+
+    it("provides in-memory querying and text filtering for curated FAQs", async () => {
+      const fakeClient = createFakeApiClient();
+
+      // Query all
+      const all = await fakeClient.getFaqs();
+      expect(Array.isArray(all)).toBe(true);
+      expect(all.length).toBeGreaterThanOrEqual(4);
+
+      // Query with text search q matching question
+      const accessFaqs = await fakeClient.getFaqs({ q: "Access Levels" });
+      expect(accessFaqs).toHaveLength(1);
+      expect(accessFaqs[0].id).toBe(1);
+
+      // Query with text search q matching answer text
+      const billingFaqs = await fakeClient.getFaqs({ q: "net-30 settlement" });
+      expect(billingFaqs).toHaveLength(1);
+      expect(billingFaqs[0].id).toBe(2);
+
+      // Query with category filter
+      const planningFaqs = await fakeClient.getFaqs({ category: "Planning & Schedules" });
+      expect(planningFaqs).toHaveLength(1);
+      expect(planningFaqs[0].id).toBe(3);
+
+      // Query with no matches
+      const empty = await fakeClient.getFaqs({ q: "xyz987nonexistent" });
+      expect(empty).toEqual([]);
     });
   });
 });

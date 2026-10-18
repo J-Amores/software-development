@@ -24,13 +24,13 @@ export default defineConfig({
   webServer: [
     {
       command: "MOCK_DB=true node api/src/server.js",
-      port: 8080,
+      url: "http://127.0.0.1:8080/api/v1/health",
       reuseExistingServer: !process.env.CI,
       timeout: 30000,
     },
     {
       command: "vp dev web --port 5173",
-      port: 5173,
+      url: "http://127.0.0.1:5173",
       reuseExistingServer: !process.env.CI,
       timeout: 30000,
     },

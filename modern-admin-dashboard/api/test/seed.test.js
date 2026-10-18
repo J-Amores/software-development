@@ -100,17 +100,21 @@ function createMockDb() {
 
 describe("MongoDB Foundation: Indexes, Counters & Idempotent Seeding", () => {
   describe("Index Enforcement (ensureIndexes)", () => {
-    it("creates unique indexes on all 5 collections", async () => {
+    it("creates unique indexes on all 7 collections", async () => {
       const mockDb = createMockDb();
       const created = await ensureIndexes(mockDb);
 
-      expect(created).toHaveLength(5);
+      expect(created).toHaveLength(7);
       expect(mockDb._indexes.get("members")[0].spec).toEqual({ id: 1 });
       expect(mockDb._indexes.get("members")[0].options.unique).toBe(true);
       expect(mockDb._indexes.get("contacts")[0].spec).toEqual({ id: 1 });
       expect(mockDb._indexes.get("invoices")[0].spec).toEqual({ id: 1 });
       expect(mockDb._indexes.get("transactions")[0].spec).toEqual({ txId: 1 });
       expect(mockDb._indexes.get("metrics")[0].spec).toEqual({ metricKey: 1 });
+      expect(mockDb._indexes.get("events")[0].spec).toEqual({ id: 1 });
+      expect(mockDb._indexes.get("events")[0].options.unique).toBe(true);
+      expect(mockDb._indexes.get("faqs")[0].spec).toEqual({ id: 1 });
+      expect(mockDb._indexes.get("faqs")[0].options.unique).toBe(true);
     });
 
     it("throws an error if an invalid db instance is passed", async () => {
@@ -169,10 +173,13 @@ describe("MongoDB Foundation: Indexes, Counters & Idempotent Seeding", () => {
       expect(summary.invoicesCount).toBe(8);
       expect(summary.transactionsCount).toBe(8);
       expect(summary.metricsCount).toBe(4);
+      expect(summary.eventsCount).toBe(6);
+      expect(summary.faqsCount).toBe(6);
 
       expect(summary.counters.members).toBe(9);
       expect(summary.counters.contacts).toBe(11);
       expect(summary.counters.invoices).toBe(8);
+      expect(summary.counters.events).toBe(6);
 
       // Verify normalization on members
       const members = await mockDb.collection("members").find().toArray();
@@ -196,6 +203,22 @@ describe("MongoDB Foundation: Indexes, Counters & Idempotent Seeding", () => {
       const metrics = await mockDb.collection("metrics").find().toArray();
       const keys = metrics.map((m) => m.metricKey).sort();
       expect(keys).toEqual(["bar", "geography", "line", "pie"]);
+
+      // Verify calendar events structure
+      const events = await mockDb.collection("events").find().toArray();
+      expect(events).toHaveLength(6);
+      expect(typeof events[0].id).toBe("number");
+      expect(typeof events[0].title).toBe("string");
+      expect(typeof events[0].start).toBe("string");
+      expect(typeof events[0].allDay).toBe("boolean");
+
+      // Verify FAQ entries structure
+      const faqs = await mockDb.collection("faqs").find().toArray();
+      expect(faqs).toHaveLength(6);
+      expect(typeof faqs[0].id).toBe("number");
+      expect(typeof faqs[0].question).toBe("string");
+      expect(typeof faqs[0].answer).toBe("string");
+      expect(typeof faqs[0].category).toBe("string");
     });
 
     it("is strictly idempotent across repeated runs", async () => {
@@ -211,12 +234,16 @@ describe("MongoDB Foundation: Indexes, Counters & Idempotent Seeding", () => {
       expect(run2.invoicesCount).toBe(run1.invoicesCount);
       expect(run2.transactionsCount).toBe(run1.transactionsCount);
       expect(run2.metricsCount).toBe(run1.metricsCount);
+      expect(run2.eventsCount).toBe(run1.eventsCount);
+      expect(run2.faqsCount).toBe(run1.faqsCount);
 
       expect(run2.membersCount).toBe(9);
       expect(run2.contactsCount).toBe(11);
       expect(run2.invoicesCount).toBe(8);
       expect(run2.transactionsCount).toBe(8);
       expect(run2.metricsCount).toBe(4);
+      expect(run2.eventsCount).toBe(6);
+      expect(run2.faqsCount).toBe(6);
     });
   });
 });
