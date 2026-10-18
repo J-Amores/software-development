@@ -1,6 +1,7 @@
 import { fileURLToPath } from "node:url";
 import { createApp } from "./app.js";
 import { createDatabaseAdapter } from "./db.js";
+import { createInMemoryDb } from "./db/inMemoryDb.js";
 
 // Auto-load .env file in Node runtime if present
 if (typeof process !== "undefined" && typeof process.loadEnvFile === "function") {
@@ -70,18 +71,18 @@ export async function startServer(options = {}) {
   const db =
     options.db ??
     (process.env.MOCK_DB === "true"
-      ? {
-          connect: async () => {},
-          disconnect: async () => {},
-          ping: async () => ({ ok: true, latencyMs: 3 }),
-        }
+      ? createInMemoryDb()
       : createDatabaseAdapter({ uri: mongodbUri }));
 
-  if (!options.db && process.env.MOCK_DB !== "true") {
+  if (!options.db) {
     try {
       await db.connect();
-      const sanitizedUri = mongodbUri.replace(/\/\/[^:]+:[^@]+@/, "//***:***@");
-      console.log(`Connected to database at ${sanitizedUri}`);
+      if (process.env.MOCK_DB !== "true") {
+        const sanitizedUri = mongodbUri.replace(/\/\/[^:]+:[^@]+@/, "//***:***@");
+        console.log(`Connected to database at ${sanitizedUri}`);
+      } else {
+        console.log("Initialized in-memory database with seed dataset.");
+      }
     } catch (err) {
       console.warn(
         `Initial database connection failed: ${err.message}. Server will continue running.`,

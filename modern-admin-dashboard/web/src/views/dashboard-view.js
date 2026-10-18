@@ -77,10 +77,14 @@ export class DashboardView {
             <span class="breadcrumb-separator" aria-hidden="true">/</span>
             <span class="breadcrumb-item active" aria-current="page">Dashboard</span>
           </nav>
-          <h1 id="dashboard-title" class="scene-title">DASHBOARD</h1>
+          <h1 id="dashboard-title" class="scene-title">Administrative Dashboard</h1>
           <p class="scene-subtitle">Welcome to your dashboard</p>
         </div>
         <div class="dashboard-header-actions">
+          <div class="dashboard-telemetry-pill" style="display: flex; gap: 0.5rem; align-items: center;">
+            <span class="tracer-badge" data-testid="api-status">API: Operational</span>
+            <span class="tracer-badge" data-testid="db-status">DB: connected</span>
+          </div>
           <button id="btn-download-reports" class="btn-download-reports" data-testid="download-reports-btn">
             <span>📥</span> Download Reports
           </button>

@@ -45,7 +45,7 @@ describe("DashboardView (12-Column Overview Dashboard Seam)", () => {
     await view.fetchPromise;
 
     // Header validation
-    expect(container.querySelector(".scene-title").textContent).toBe("DASHBOARD");
+    expect(container.querySelector(".scene-title").textContent).toBe("Administrative Dashboard");
     expect(container.querySelector(".scene-subtitle").textContent).toContain(
       "Welcome to your dashboard",
     );
