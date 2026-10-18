@@ -4,15 +4,22 @@
 
 **Blocked by:** 01
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] Encapsulate Chart.js, `chartjs-chart-geo`, and TopoJSON utilities in `web/src/components/chart/index.js`
-- [ ] Expose minimal public interface: `mount(container, { type, data, options, isDashboard })`, `update(data, options)`, `unmount()`
-- [ ] Callers, views, and view tests never import `chart.js` or `chartjs-chart-geo` directly
-- [ ] Chart styling subscribes to `themeManager` to read tokens from `tokens.css` dynamically updating axis lines, grids, tooltips, and legends upon theme change events
-- [ ] Automatic fallback to accessible semantic DOM elements (`role="img"`, `aria-label`, data attributes, series data summary) when running in headless test environments lacking Canvas 2D context
-- [ ] World map polygon geometries handled via client topological data and merged with server metrics for Choropleth maps
-- [ ] Comprehensive unit tests in `web/test/chart-component.test.js` verify lifecycle, theme change events, fallback rendering, and error handling
-- [ ] `vp test` and `vp check` pass cleanly
+- [x] Encapsulate Chart.js, `chartjs-chart-geo`, and TopoJSON utilities in `web/src/components/chart/index.js`
+- [x] Expose minimal public interface: `mount(container, { type, data, options, isDashboard })`, `update(data, options)`, `unmount()`
+- [x] Callers, views, and view tests never import `chart.js` or `chartjs-chart-geo` directly
+- [x] Chart styling subscribes to `themeManager` to read tokens from `tokens.css` dynamically updating axis lines, grids, tooltips, and legends upon theme change events
+- [x] Automatic fallback to accessible semantic DOM elements (`role="img"`, `aria-label`, data attributes, series data summary) when running in headless test environments lacking Canvas 2D context
+- [x] World map polygon geometries handled via client topological data and merged with server metrics for Choropleth maps
+- [x] Comprehensive unit tests in `web/test/chart-component.test.js` verify lifecycle, theme change events, fallback rendering, and error handling
+- [x] `vp test` and `vp check` pass cleanly
 
 ## Comments
+
+### Implementation Summary
+- **Deep Module Architecture**: Built `web/src/components/chart/index.js` providing full encapsulation of `chart.js` and `chartjs-chart-geo` behind a clean DOM lifecycle (`mount`, `update`, `unmount`).
+- **Headless Fallback**: Employs Canvas 2D context detection (`hasCanvas2D`); in headless environments like `happy-dom`, automatically renders semantic DOM fallback with `role="img"`, `aria-label`, `data-chart-type`, and structured `<div class="chart-summary sr-only" data-testid="chart-summary">` series breakdowns.
+- **Theme Sync**: Subscribes directly to `themeManager`, reading `--text-secondary`, `--border-color`, `--color-primary`, and `--bg-card` from CSS Custom Properties and dynamically updating scales and legends on theme transitions.
+- **Geospatial Decoupling**: Dynamically binds client topological `geoFeatures` with server metrics for Choropleth maps.
+- **Tests**: Comprehensive unit test suite in `web/test/chart-component.test.js` covering lifecycle, fallback rendering, chart type summaries, and theme change listeners.
