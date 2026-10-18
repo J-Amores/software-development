@@ -49,3 +49,8 @@ _Avoid_: Booking, schedule item, reminder.
 **Campaign Metric**:
 A quantified performance indicator measuring the reach, financial yield, or operational performance of an organizational initiative.
 _Avoid_: Statistic, KPI, analytics point, measurement.
+
+**Operational Report**:
+A consolidated formal summary extract of organizational metrics, commercial transactions, and administrative performance compiled for executive review or audit.
+_Avoid_: Export file, download, CSV dump, data dump, spreadsheet.
+
