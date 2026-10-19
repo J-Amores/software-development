@@ -120,9 +120,13 @@ describe("InvoicesView Component", () => {
 
     await view.fetchPromise;
 
+    // Verify no individual row delete buttons are rendered (using selection batch delete instead)
     const deleteBtns = container.querySelectorAll(".btn-delete-row");
-    expect(deleteBtns.length).toBe(3);
-    expect(deleteBtns[0].getAttribute("aria-label")).toBe("Delete Invoice 1 for Jon Snow");
+    expect(deleteBtns.length).toBe(0);
+
+    // Verify row selection checkboxes are rendered
+    const checkboxes = container.querySelectorAll(".row-select-checkbox");
+    expect(checkboxes.length).toBe(3);
   });
 
   it("does not delete invoice if individual confirmation is cancelled", async () => {
@@ -137,8 +141,7 @@ describe("InvoicesView Component", () => {
     window.confirm.mockReturnValue(false);
     const deleteSpy = vi.spyOn(fakeClient, "deleteInvoice");
 
-    const deleteBtn = container.querySelector('.btn-delete-row[data-invoice-id="1"]');
-    deleteBtn.click();
+    view.handleDelete(1);
 
     expect(window.confirm).toHaveBeenCalledWith(expect.stringContaining("Invoice #1 for Jon Snow"));
     expect(deleteSpy).not.toHaveBeenCalled();
@@ -159,8 +162,7 @@ describe("InvoicesView Component", () => {
     window.confirm.mockReturnValue(true);
     const deleteSpy = vi.spyOn(fakeClient, "deleteInvoice");
 
-    const deleteBtn = container.querySelector('.btn-delete-row[data-invoice-id="2"]');
-    deleteBtn.click();
+    view.handleDelete(2);
 
     await view.mutationPromise;
 
@@ -197,8 +199,7 @@ describe("InvoicesView Component", () => {
 
     window.confirm.mockReturnValue(true);
 
-    const deleteBtn = container.querySelector('.btn-delete-row[data-invoice-id="1"]');
-    deleteBtn.click();
+    view.handleDelete(1);
 
     await view.mutationPromise;
 

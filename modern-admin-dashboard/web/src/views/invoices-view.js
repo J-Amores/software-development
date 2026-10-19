@@ -148,13 +148,6 @@ export class InvoicesView {
               return span;
             },
           },
-          {
-            key: "actions",
-            label: "Actions",
-            sortable: false,
-            width: "90px",
-            render: (_val, row) => this._renderActionsCell(row),
-          },
         ];
 
         this.dataTable = new DataTable({
