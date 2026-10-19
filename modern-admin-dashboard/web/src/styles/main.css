@@ -710,25 +710,67 @@ app-sidebar {
 .access-level-cell {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
 }
 
-.access-select {
-  height: 26px;
-  padding: 0 0.375rem;
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-color);
+.access-badge-picker {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.access-badge-picker .badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.5rem;
   border-radius: var(--radius-sm);
-  color: var(--text-primary);
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  cursor: pointer;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
   transition:
+    background-color var(--transition-fast),
     border-color var(--transition-fast),
-    background-color var(--transition-fast);
+    filter var(--transition-fast);
 }
 
-.access-select:focus-visible {
+.access-badge-picker .badge::after {
+  content: "▾";
+  font-size: 0.625rem;
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity var(--transition-fast);
+}
+
+.access-badge-picker:hover .badge {
+  filter: brightness(1.15);
+}
+
+.access-badge-picker:hover .badge::after {
+  opacity: 1;
+}
+
+.access-badge-picker .access-select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+  z-index: 2;
+}
+
+.access-badge-picker:focus-within .badge,
+.access-badge-picker .access-select:focus-visible + .badge {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
@@ -743,28 +785,36 @@ app-sidebar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
   border-radius: var(--radius-sm);
   background-color: transparent;
   color: var(--color-danger);
   border: 1px solid transparent;
-  font-size: 0.875rem;
-  line-height: 1;
   cursor: pointer;
   transition:
     background-color var(--transition-fast),
-    border-color var(--transition-fast);
+    border-color var(--transition-fast),
+    color var(--transition-fast);
 }
 
 .btn-delete-row:hover {
   background-color: rgba(248, 81, 73, 0.15);
   border-color: rgba(248, 81, 73, 0.4);
+  color: var(--color-danger);
 }
 
 .btn-delete-row:focus-visible {
-  outline: 2px solid var(--color-danger);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
+}
+
+.btn-delete-row svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  pointer-events: none;
 }
 
 .btn-delete-selected {
