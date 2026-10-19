@@ -22,7 +22,7 @@ body {
   font-family: var(--font-sans);
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  line-height: 1.5;
+  line-height: 1.45;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition:
@@ -42,6 +42,12 @@ button {
   background: none;
   cursor: pointer;
   color: inherit;
+}
+
+/* Explicit 2px offset focus rings on all interactive elements */
+:focus-visible {
+  outline: 2px solid var(--color-primary) !important;
+  outline-offset: 2px !important;
 }
 
 /* Base custom element display models */
@@ -68,7 +74,7 @@ app-sidebar {
 
 .app-content {
   flex: 1;
-  padding: 1.5rem 2rem;
+  padding: 1rem 1.25rem;
   overflow-y: auto;
 }
 
@@ -78,7 +84,7 @@ app-sidebar {
   align-items: center;
   justify-content: space-between;
   height: var(--topbar-height);
-  padding: 0 1.5rem;
+  padding: 0 1rem;
   background-color: var(--bg-topbar);
   border-bottom: 1px solid var(--border-color);
   transition:
@@ -90,16 +96,16 @@ app-sidebar {
 .topbar-right {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .topbar-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-md);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
   color: var(--text-secondary);
   background-color: transparent;
   transition:
@@ -112,25 +118,31 @@ app-sidebar {
   color: var(--text-primary);
 }
 
+.topbar-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 .operator-profile {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: var(--radius-md);
+  gap: 0.5rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: var(--radius-sm);
 }
 
 .operator-avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: var(--radius-full);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
   background-color: var(--color-primary);
   color: var(--text-inverse);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
-  font-size: 0.875rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.75rem;
 }
 
 .operator-info {
@@ -145,6 +157,7 @@ app-sidebar {
 }
 
 .operator-role {
+  font-family: var(--font-mono);
   font-size: 0.75rem;
   color: var(--color-accent);
 }
@@ -173,14 +186,15 @@ app-sidebar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 1.25rem;
+  padding: 0 1rem;
   border-bottom: 1px solid var(--border-color);
 }
 
 .sidebar-brand {
+  font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.125rem;
-  letter-spacing: 0.05em;
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
   color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
@@ -191,8 +205,8 @@ app-sidebar {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
 }
@@ -202,21 +216,27 @@ app-sidebar {
   color: var(--text-primary);
 }
 
+.sidebar-toggle-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 .sidebar-nav {
   flex: 1;
-  padding: 1rem 0.75rem;
+  padding: 0.75rem 0.5rem;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 0.75rem;
 }
 
 .sidebar-section-title {
+  font-family: var(--font-display);
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--text-muted);
-  padding: 0 0.5rem 0.25rem;
+  padding: 0 0.5rem 0.2rem;
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
@@ -231,15 +251,15 @@ app-sidebar {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.15rem;
 }
 
 .sidebar-item a {
   display: flex;
   align-items: center;
-  gap: 0.875rem;
-  padding: 0.625rem 0.75rem;
-  border-radius: var(--radius-md);
+  gap: 0.625rem;
+  padding: 0.375rem 0.5rem;
+  border-radius: var(--radius-sm);
   color: var(--text-secondary);
   font-size: 0.875rem;
   font-weight: 500;
@@ -254,6 +274,11 @@ app-sidebar {
   color: var(--text-primary);
 }
 
+.sidebar-item a:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 .sidebar-item.active a {
   background-color: var(--bg-active);
   color: var(--color-primary);
@@ -261,8 +286,8 @@ app-sidebar {
 }
 
 .sidebar-icon {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -284,33 +309,38 @@ app-sidebar {
 .scene-view {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  animation: fadeIn var(--transition-fast) ease-in-out;
+  gap: 1rem;
+  animation: fadeIn var(--transition-fast) ease-out;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(4px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
 .scene-header {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.2rem;
+  margin-bottom: 0.75rem;
 }
 
 .scene-breadcrumbs {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.8125rem;
+  gap: 0.375rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
   color: var(--text-muted);
+}
+
+.breadcrumb-separator {
+  font-family: var(--font-mono);
+  color: var(--border-color);
 }
 
 .breadcrumb-item.active {
@@ -319,27 +349,29 @@ app-sidebar {
 }
 
 .scene-title {
-  font-size: 1.75rem;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   color: var(--text-primary);
+  line-height: 1.3;
 }
 
 .scene-subtitle {
-  font-size: 0.875rem;
-  color: var(--color-accent);
+  font-size: 0.75rem;
+  color: var(--text-muted);
 }
 
 /* ==========================================================================
-   Dashboard Health Telemetry Card
+   Dashboard Health Telemetry & Card Base Styles (Anti-Carditis)
    ========================================================================== */
 .dashboard-card,
 .placeholder-card {
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem;
-  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0.75rem;
+  box-shadow: none;
   transition:
     background-color var(--transition-normal),
     border-color var(--transition-normal);
@@ -349,23 +381,25 @@ app-sidebar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.25rem;
-  padding-bottom: 0.75rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--border-subtle);
 }
 
 .card-title {
-  font-size: 1.125rem;
+  font-family: var(--font-display);
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .tracer-badge {
+  font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 600;
-  padding: 0.25rem 0.625rem;
-  border-radius: var(--radius-full);
-  background-color: var(--bg-hover);
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-secondary);
   color: var(--color-accent);
   border: 1px solid var(--border-subtle);
 }
@@ -373,20 +407,21 @@ app-sidebar {
 .telemetry-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .telemetry-metric-box {
-  background-color: var(--bg-primary);
+  background-color: var(--bg-secondary);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: 1rem;
+  border-radius: var(--radius-sm);
+  padding: 0.625rem 0.75rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.35rem;
 }
 
 .metric-label {
+  font-family: var(--font-display);
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -401,7 +436,9 @@ app-sidebar {
 }
 
 .indicator-value {
-  font-size: 1.25rem;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 1.125rem;
   font-weight: 700;
   color: var(--text-primary);
 }
@@ -417,10 +454,12 @@ app-sidebar {
 .indicator-value.timestamp {
   font-size: 0.875rem;
   font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .metric-status-tag {
-  font-size: 0.6875rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
   text-transform: uppercase;
   color: var(--text-muted);
 }
@@ -428,16 +467,17 @@ app-sidebar {
 .indicator-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
-  font-size: 0.875rem;
+  gap: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
   font-weight: 600;
-  padding: 0.25rem 0.625rem;
+  padding: 0.15rem 0.5rem;
   border-radius: var(--radius-sm);
   width: fit-content;
 }
 
 .indicator-badge.status-ok {
-  background-color: rgba(76, 206, 172, 0.15);
+  background-color: rgba(57, 211, 83, 0.12);
   color: var(--color-success);
   border: 1px solid var(--color-success);
 }
@@ -449,10 +489,10 @@ app-sidebar {
 .health-status-loading {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
   color: var(--text-secondary);
-  font-size: 0.9375rem;
-  padding: 1rem;
+  font-size: 0.875rem;
+  padding: 0.75rem;
 }
 
 /* ==========================================================================
@@ -461,36 +501,36 @@ app-sidebar {
 .health-status-degraded,
 .health-status-error {
   display: flex;
-  gap: 1rem;
-  padding: 1.25rem;
-  border-radius: var(--radius-md);
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
 }
 
 .health-status-degraded {
-  background-color: rgba(241, 185, 78, 0.1);
+  background-color: rgba(210, 153, 34, 0.1);
   border: 1px solid var(--color-warning);
   color: var(--text-primary);
 }
 
 .health-status-error {
-  background-color: rgba(219, 79, 74, 0.1);
+  background-color: rgba(248, 81, 73, 0.1);
   border: 1px solid var(--color-danger);
   color: var(--text-primary);
 }
 
 .alert-icon {
-  font-size: 1.5rem;
+  font-size: 1.125rem;
   line-height: 1;
 }
 
 .alert-body {
   display: flex;
   flex-direction: column;
-  gap: 0.375rem;
+  gap: 0.25rem;
 }
 
 .alert-heading {
-  font-size: 1.125rem;
+  font-size: 0.875rem;
   font-weight: 600;
 }
 
@@ -502,13 +542,14 @@ app-sidebar {
 .alert-detail,
 .error-trace {
   font-family: var(--font-mono);
-  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.75rem;
   background: var(--bg-primary);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
-  padding: 0.5rem 0.75rem;
+  padding: 0.375rem 0.625rem;
   margin-top: 0.25rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.375rem;
   overflow-x: auto;
   white-space: pre-wrap;
   word-break: break-all;
@@ -518,10 +559,11 @@ app-sidebar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
+  padding: 0.375rem 0.75rem;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
   font-weight: 600;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   background-color: var(--color-primary);
   color: var(--text-inverse);
   cursor: pointer;
@@ -533,38 +575,45 @@ app-sidebar {
   background-color: var(--color-primary-hover);
 }
 
+.btn-retry:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 /* ==========================================================================
    Placeholder Scene Card
    ========================================================================== */
 .placeholder-card {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .placeholder-badge {
   display: inline-block;
   align-self: flex-start;
+  font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 600;
-  padding: 0.25rem 0.625rem;
-  border-radius: var(--radius-full);
-  background-color: var(--bg-hover);
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-secondary);
   color: var(--color-accent);
   border: 1px solid var(--border-subtle);
 }
 
 .placeholder-desc {
-  font-size: 1rem;
+  font-size: 0.875rem;
   color: var(--text-primary);
 }
 
 .placeholder-notice {
-  font-size: 0.8125rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
   color: var(--text-muted);
   background-color: var(--bg-primary);
-  padding: 0.75rem 1rem;
-  border-radius: var(--radius-md);
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm);
   border: 1px dashed var(--border-color);
 }
 
@@ -575,7 +624,7 @@ app-sidebar {
 .invoices-alert-container {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .team-alert,
@@ -583,23 +632,23 @@ app-sidebar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 0.875rem 1.25rem;
-  border-radius: var(--radius-md);
+  gap: 0.75rem;
+  padding: 0.625rem 0.875rem;
+  border-radius: var(--radius-sm);
   font-size: 0.875rem;
-  animation: fadeIn var(--transition-fast) ease-in-out;
+  animation: fadeIn var(--transition-fast) ease-out;
 }
 
 .team-alert-success,
 .invoices-alert-success {
-  background-color: rgba(76, 206, 172, 0.12);
+  background-color: rgba(57, 211, 83, 0.1);
   border: 1px solid var(--color-success);
   color: var(--text-primary);
 }
 
 .team-alert-danger,
 .invoices-alert-danger {
-  background-color: rgba(219, 79, 74, 0.12);
+  background-color: rgba(248, 81, 73, 0.1);
   border: 1px solid var(--color-danger);
   color: var(--text-primary);
 }
@@ -614,11 +663,11 @@ app-sidebar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   cursor: pointer;
   transition:
     background-color var(--transition-fast),
@@ -637,52 +686,51 @@ app-sidebar {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  padding: 3rem 1rem;
+  gap: 0.5rem;
+  padding: 2rem 1rem;
   color: var(--text-secondary);
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
 }
 
 .team-status-error,
 .contacts-status-error,
 .invoices-status-error {
   display: flex;
-  gap: 1rem;
-  padding: 1.5rem;
-  background-color: rgba(219, 79, 74, 0.1);
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background-color: rgba(248, 81, 73, 0.1);
   border: 1px solid var(--color-danger);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   color: var(--text-primary);
 }
 
 .access-level-cell {
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .access-select {
-  height: 28px;
-  padding: 0 0.5rem;
+  height: 26px;
+  padding: 0 0.375rem;
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
-  font-family: inherit;
-  font-size: 0.8125rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
   cursor: pointer;
   transition:
     border-color var(--transition-fast),
     background-color var(--transition-fast);
 }
 
-.access-select:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(104, 112, 250, 0.2);
+.access-select:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .row-actions-cell {
@@ -695,63 +743,62 @@ app-sidebar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 26px;
+  height: 26px;
   border-radius: var(--radius-sm);
   background-color: transparent;
   color: var(--color-danger);
   border: 1px solid transparent;
-  font-size: 1rem;
+  font-size: 0.875rem;
   line-height: 1;
   cursor: pointer;
   transition:
     background-color var(--transition-fast),
-    border-color var(--transition-fast),
-    transform var(--transition-fast);
+    border-color var(--transition-fast);
 }
 
 .btn-delete-row:hover {
-  background-color: rgba(219, 79, 74, 0.15);
-  border-color: rgba(219, 79, 74, 0.4);
-  transform: scale(1.05);
+  background-color: rgba(248, 81, 73, 0.15);
+  border-color: rgba(248, 81, 73, 0.4);
 }
 
 .btn-delete-row:focus-visible {
-  outline: none;
-  border-color: var(--color-danger);
-  box-shadow: 0 0 0 2px rgba(219, 79, 74, 0.3);
+  outline: 2px solid var(--color-danger);
+  outline-offset: 2px;
 }
 
 .btn-delete-selected {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 0.85rem;
-  font-size: 0.8125rem;
+  gap: 0.375rem;
+  padding: 0.3rem 0.625rem;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
   font-weight: 600;
   border-radius: var(--radius-sm);
   background-color: var(--color-danger);
   color: #ffffff;
   cursor: pointer;
-  transition:
-    background-color var(--transition-fast),
-    transform var(--transition-fast);
+  transition: background-color var(--transition-fast);
 }
 
 .btn-delete-selected:hover {
-  background-color: #b93f3b;
-  transform: translateY(-1px);
+  background-color: #d03d36;
+}
+
+.btn-delete-selected:focus-visible {
+  outline: 2px solid var(--color-danger);
+  outline-offset: 2px;
 }
 
 .invoice-cost-cell {
   font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   font-weight: 600;
   color: var(--color-accent);
 }
 
 /* ==========================================================================
-
-
    Team Member Provisioning Form Styles (/form)
    ========================================================================== */
 .form-scene {
@@ -761,28 +808,28 @@ app-sidebar {
 .form-alert-container {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .form-alert {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 1rem 1.25rem;
-  border-radius: var(--radius-md);
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
   font-size: 0.875rem;
-  animation: fadeIn var(--transition-fast) ease-in-out;
+  animation: fadeIn var(--transition-fast) ease-out;
 }
 
 .form-alert-success {
-  background-color: rgba(76, 206, 172, 0.12);
+  background-color: rgba(57, 211, 83, 0.12);
   border: 1px solid var(--color-success);
   color: var(--text-primary);
 }
 
 .form-alert-danger {
-  background-color: rgba(219, 79, 74, 0.12);
+  background-color: rgba(248, 81, 73, 0.12);
   border: 1px solid var(--color-danger);
   color: var(--text-primary);
 }
@@ -792,25 +839,25 @@ app-sidebar {
   align-items: center;
   justify-content: space-between;
   flex: 1;
-  gap: 1.5rem;
+  gap: 1rem;
   flex-wrap: wrap;
 }
 
 .form-alert-content {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .form-alert-dismiss {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   cursor: pointer;
   transition:
     background-color var(--transition-fast),
@@ -825,12 +872,13 @@ app-sidebar {
 .btn-navigate-team {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
-  padding: 0.375rem 0.875rem;
+  gap: 0.25rem;
+  padding: 0.25rem 0.625rem;
   border-radius: var(--radius-sm);
   background-color: var(--color-success);
   color: var(--text-inverse);
-  font-size: 0.8125rem;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
   font-weight: 600;
   white-space: nowrap;
   transition: opacity var(--transition-fast);
@@ -840,24 +888,29 @@ app-sidebar {
   opacity: 0.9;
 }
 
+.btn-navigate-team:focus-visible {
+  outline: 2px solid var(--color-success);
+  outline-offset: 2px;
+}
+
 .form-card {
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 2rem;
-  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0.75rem;
+  box-shadow: none;
 }
 
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.875rem 1rem;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.375rem;
+  gap: 0.25rem;
 }
 
 .form-group-full {
@@ -865,9 +918,11 @@ app-sidebar {
 }
 
 .form-label {
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
 }
 
 .required-indicator {
@@ -876,49 +931,48 @@ app-sidebar {
 
 .form-input,
 .form-select {
-  height: 42px;
-  padding: 0 0.875rem;
+  height: 32px;
+  padding: 0 0.625rem;
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
-  font-family: inherit;
+  font-family: var(--font-sans);
   font-size: 0.875rem;
   transition:
     border-color var(--transition-fast),
-    box-shadow var(--transition-fast);
+    background-color var(--transition-fast);
 }
 
-.form-input:focus,
-.form-select:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(104, 112, 250, 0.2);
+.form-input:focus-visible,
+.form-select:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .form-input[aria-invalid="true"],
 .form-select[aria-invalid="true"] {
   border-color: var(--color-danger);
-  box-shadow: 0 0 0 1px var(--color-danger);
 }
 
 .field-error-slot {
-  min-height: 18px;
+  min-height: 16px;
 }
 
 .field-error {
   display: block;
+  font-family: var(--font-mono);
   font-size: 0.75rem;
   color: var(--color-danger);
-  margin-top: 0.25rem;
-  animation: fadeIn var(--transition-fast) ease-in-out;
+  margin-top: 0.2rem;
+  animation: fadeIn var(--transition-fast) ease-out;
 }
 
 .form-actions {
   display: flex;
   justify-content: flex-end;
-  margin-top: 2rem;
-  padding-top: 1.5rem;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
   border-top: 1px solid var(--border-subtle);
 }
 
@@ -926,36 +980,40 @@ app-sidebar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.75rem 1.75rem;
+  padding: 0.375rem 0.875rem;
   background-color: var(--color-primary);
   color: var(--text-inverse);
+  font-family: var(--font-display);
   font-size: 0.875rem;
   font-weight: 600;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  transition:
-    background-color var(--transition-fast),
-    box-shadow var(--transition-fast);
+  transition: background-color var(--transition-fast);
 }
 
 .btn-primary:hover {
   background-color: var(--color-primary-hover);
 }
 
+.btn-primary:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 /* ==========================================================================
-   Dashboard 12-Column Grid Layout & Components (Phase 4)
+   Dashboard 12-Column Grid Layout & Components (Phase 4 Refactored)
    ========================================================================== */
 .dashboard-header-actions {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .scene-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .scene-header-left {
@@ -966,13 +1024,14 @@ app-sidebar {
 .btn-download-reports {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.375rem;
   background-color: var(--color-primary);
   color: #ffffff;
-  padding: 0.625rem 1.25rem;
+  padding: 0.35rem 0.75rem;
+  font-family: var(--font-display);
   font-weight: 600;
-  font-size: 0.875rem;
-  border-radius: var(--radius-md);
+  font-size: 0.75rem;
+  border-radius: var(--radius-sm);
   border: none;
   cursor: pointer;
   transition: background-color var(--transition-fast);
@@ -982,10 +1041,15 @@ app-sidebar {
   background-color: var(--color-primary-hover);
 }
 
+.btn-download-reports:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  grid-gap: 20px;
+  grid-gap: 12px;
 }
 
 .col-span-3 {
@@ -1016,12 +1080,13 @@ app-sidebar {
 .statbox-card {
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 140px;
+  min-height: 96px;
+  box-shadow: none;
 }
 
 .statbox-top {
@@ -1031,47 +1096,48 @@ app-sidebar {
 }
 
 .statbox-icon {
-  font-size: 1.5rem;
-  color: var(--color-accent);
+  display: none;
 }
 
 .statbox-value {
-  font-size: 1.5rem;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin-top: 0.25rem;
+  line-height: 1.2;
 }
 
 .statbox-bottom {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 0.5rem;
 }
 
 .statbox-subtitle {
-  font-size: 0.875rem;
-  color: var(--color-accent);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .statbox-badge {
-  font-size: 0.8125rem;
-  font-style: italic;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.75rem;
   color: var(--color-accent);
   font-weight: 600;
 }
 
-/* Circular Progress Ring */
+/* Operational Progress Gauge */
 .progress-ring-circle {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: conic-gradient(
-    var(--color-accent) 0deg,
-    var(--color-accent) calc(var(--progress, 0.75) * 360deg),
-    var(--border-color) calc(var(--progress, 0.75) * 360deg),
-    var(--border-color) 360deg
-  );
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background: var(--surface-raised);
   position: relative;
   display: flex;
   align-items: center;
@@ -1080,30 +1146,28 @@ app-sidebar {
 }
 
 .progress-ring-inner {
-  width: 32px;
-  height: 32px;
-  background-color: var(--bg-card);
-  border-radius: 50%;
+  display: none;
 }
 
 /* Dashboard Chart and Content Cards */
 .dashboard-card-inner {
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0.75rem;
   display: flex;
   flex-direction: column;
+  box-shadow: none;
 }
 
 .dashboard-chart-container {
-  height: 250px;
+  height: 220px;
   width: 100%;
   position: relative;
 }
 
 .dashboard-geo-container {
-  height: 200px;
+  height: 180px;
   width: 100%;
   position: relative;
 }
@@ -1112,15 +1176,16 @@ app-sidebar {
 .transactions-card {
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 1.25rem;
-  height: 360px;
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  height: 320px;
   display: flex;
   flex-direction: column;
+  box-shadow: none;
 }
 
 .transactions-card .card-header {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.375rem;
 }
 
 .transactions-list {
@@ -1132,7 +1197,7 @@ app-sidebar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 0;
+  padding: 0.375rem 0;
   border-bottom: 1px solid var(--border-subtle);
 }
 
@@ -1143,63 +1208,73 @@ app-sidebar {
 .transaction-meta {
   display: flex;
   flex-direction: column;
-  gap: 0.125rem;
+  gap: 0.1rem;
 }
 
 .transaction-txid {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   font-weight: 600;
   color: var(--color-accent);
-  font-size: 0.875rem;
+  font-size: 0.75rem;
 }
 
 .transaction-user {
-  font-size: 0.8125rem;
-  color: var(--text-secondary);
+  font-size: 0.875rem;
+  color: var(--text-primary);
 }
 
 .transaction-date {
-  font-size: 0.8125rem;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.75rem;
   color: var(--text-muted);
 }
 
 .transaction-amount-badge {
-  background-color: var(--color-accent);
-  color: var(--text-inverse);
-  padding: 0.25rem 0.5rem;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border-color);
+  color: var(--color-accent);
+  padding: 0.125rem 0.4rem;
   border-radius: var(--radius-sm);
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
 }
 
 /* Campaign Card */
 .campaign-card {
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  box-shadow: none;
 }
 
 .campaign-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
   text-align: center;
-  margin: 1rem 0;
+  margin: 0.75rem 0;
 }
 
 .campaign-amount {
-  font-size: 1.25rem;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 1.125rem;
   font-weight: 700;
   color: var(--color-accent);
 }
 
 .campaign-desc {
-  font-size: 0.8125rem;
-  color: var(--text-secondary);
+  font-size: 0.75rem;
+  color: var(--text-muted);
 }
 
 /* Accessible screen-reader-only utility */
@@ -1221,11 +1296,11 @@ app-sidebar {
 .analytics-scene .chart-card-container {
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem;
-  height: 520px;
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0.75rem;
+  height: 480px;
   position: relative;
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
   overflow: hidden;
 }
 
@@ -1245,4 +1320,21 @@ app-sidebar {
   width: 100% !important;
   height: 100% !important;
   display: block;
+}
+
+/* Utility Helpers */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.border-border-subtle {
+  border-color: var(--border-subtle);
 }

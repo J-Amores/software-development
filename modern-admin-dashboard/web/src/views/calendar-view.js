@@ -98,7 +98,7 @@ export class CalendarView {
         <aside class="calendar-sidebar" data-testid="calendar-sidebar">
           <div class="calendar-sidebar-header">
             <h2 class="calendar-sidebar-title">Upcoming Events</h2>
-            <span class="calendar-badge" id="calendar-event-count" data-testid="sidebar-event-count">0</span>
+            <span class="calendar-badge font-mono tabular-nums" id="calendar-event-count" data-testid="sidebar-event-count">0</span>
           </div>
           <ul id="calendar-sidebar-list" class="calendar-sidebar-events-list" data-testid="sidebar-events-list">
             <li class="calendar-sidebar-empty">Loading upcoming events...</li>
@@ -113,7 +113,7 @@ export class CalendarView {
       <dialog id="event-create-dialog" class="calendar-modal-dialog" data-testid="event-create-dialog">
         <header class="calendar-modal-header">
           <h3 class="calendar-modal-title">Schedule Calendar Event</h3>
-          <button type="button" class="calendar-modal-dismiss" data-action="close-create-dialog" aria-label="Close dialog">✕</button>
+          <button type="button" class="calendar-modal-dismiss" data-action="close-create-dialog" aria-label="Close dialog">&times;</button>
         </header>
         <form id="event-create-form" class="calendar-modal-body" method="dialog" data-testid="event-create-form">
           <div class="calendar-form-group">
@@ -143,7 +143,7 @@ export class CalendarView {
       <dialog id="event-delete-dialog" class="calendar-modal-dialog" data-testid="event-delete-dialog">
         <header class="calendar-modal-header">
           <h3 class="calendar-modal-title">Confirm Event Removal</h3>
-          <button type="button" class="calendar-modal-dismiss" data-action="close-delete-dialog" aria-label="Close dialog">✕</button>
+          <button type="button" class="calendar-modal-dismiss" data-action="close-delete-dialog" aria-label="Close dialog">&times;</button>
         </header>
         <div class="calendar-modal-body">
           <p style="font-size: 0.875rem; color: var(--text-secondary);">Are you sure you want to remove the scheduled operational event from the active schedule?</p>
@@ -239,9 +239,9 @@ export class CalendarView {
       li.innerHTML = `
         <div class="calendar-sidebar-card-top">
           <span class="calendar-sidebar-card-title">${event.title}</span>
-          <button type="button" class="calendar-event-delete-btn" data-action="delete-event" data-event-id="${event.id}" aria-label="Delete ${event.title}">✕</button>
+          <button type="button" class="calendar-event-delete-btn" data-action="delete-event" data-event-id="${event.id}" aria-label="Delete ${event.title}">&times;</button>
         </div>
-        <span class="calendar-sidebar-card-date">${dateLabel}</span>
+        <span class="calendar-sidebar-card-date font-mono tabular-nums">${dateLabel}</span>
       `;
 
       listEl.appendChild(li);
@@ -380,7 +380,7 @@ export class CalendarView {
 
       detailsEl.innerHTML = `
         <strong>${clickInfo.title}</strong>
-        <span style="color: var(--text-muted); font-size: 0.8125rem;">Date: ${dateStr}</span>
+        <span class="font-mono tabular-nums" style="color: var(--text-muted); font-size: 0.875rem;">Date: ${dateStr}</span>
       `;
     }
 
@@ -503,7 +503,7 @@ export class CalendarView {
 
     alertEl.innerHTML = `
       <div class="calendar-alert-body">${messageHtml}</div>
-      <button type="button" class="calendar-alert-dismiss" aria-label="${isStatus ? "Dismiss message" : "Dismiss alert"}">✕</button>
+      <button type="button" class="calendar-alert-dismiss" aria-label="${isStatus ? "Dismiss message" : "Dismiss alert"}">&times;</button>
     `;
 
     alertContainer.innerHTML = "";

@@ -72,7 +72,7 @@ export class ContactsView {
 
     contentEl.innerHTML = `
       <div class="contacts-status-loading" role="status">
-        <span class="spinner" aria-hidden="true">⏳</span> Loading contacts...
+        <span class="spinner font-mono" aria-hidden="true">[PENDING]</span> Loading contacts...
       </div>
     `;
 
@@ -117,7 +117,7 @@ export class ContactsView {
 
         contentEl.innerHTML = `
           <div class="contacts-status-error" role="alert" data-testid="contacts-error">
-            <div class="alert-icon" aria-hidden="true">⚠️</div>
+            <div class="alert-icon font-mono" aria-hidden="true">[WARN]</div>
             <div class="alert-body">
               <h3 class="alert-heading">Unable to Load Contacts</h3>
               <p class="alert-text">${message}</p>

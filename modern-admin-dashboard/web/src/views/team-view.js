@@ -76,7 +76,7 @@ export class TeamView {
 
     contentEl.innerHTML = `
       <div class="team-status-loading" role="status">
-        <span class="spinner" aria-hidden="true">⏳</span> Loading team members...
+        <span class="spinner font-mono" aria-hidden="true">[PENDING]</span> Loading team members...
       </div>
     `;
 
@@ -130,7 +130,7 @@ export class TeamView {
 
         contentEl.innerHTML = `
           <div class="team-status-error" role="alert" data-testid="team-error">
-            <div class="alert-icon" aria-hidden="true">⚠️</div>
+            <div class="alert-icon font-mono" aria-hidden="true">[WARN]</div>
             <div class="alert-body">
               <h3 class="alert-heading">Unable to Load Team Members</h3>
               <p class="alert-text">${message}</p>
@@ -194,7 +194,7 @@ export class TeamView {
     deleteBtn.dataset.memberId = String(row.id);
     deleteBtn.setAttribute("aria-label", `Delete Team Member ${row.name}`);
     deleteBtn.title = `Delete ${row.name}`;
-    deleteBtn.innerHTML = `<span aria-hidden="true">🗑️</span>`;
+    deleteBtn.innerHTML = `<span class="btn-text font-mono" aria-hidden="true">[DELETE]</span>`;
 
     container.appendChild(deleteBtn);
     return container;
@@ -337,7 +337,7 @@ export class TeamView {
 
     alertEl.innerHTML = `
       <div class="team-alert-body">${messageHtml}</div>
-      <button type="button" class="team-alert-dismiss" aria-label="${isStatus ? "Dismiss message" : "Dismiss alert"}">✕</button>
+      <button type="button" class="team-alert-dismiss" aria-label="${isStatus ? "Dismiss message" : "Dismiss alert"}">&times;</button>
     `;
 
     alertContainer.innerHTML = "";

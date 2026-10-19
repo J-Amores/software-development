@@ -1,16 +1,17 @@
 /* ==========================================================================
-   Curated FAQ Semantic Accordion Scene Styles (/faq)
+   Curated FAQ Semantic Accordion Scene Styles (/faq) - Archetype 1
+   High-density terminal styling, hairline borders, dense vertical rhythm.
    ========================================================================== */
 
 .faq-scene {
-  max-width: 980px;
+  max-width: 960px;
   width: 100%;
 }
 
 .faq-alert-container {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
   margin-bottom: 0.5rem;
 }
 
@@ -18,15 +19,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 0.875rem 1.25rem;
-  border-radius: var(--radius-md);
+  gap: 0.75rem;
+  padding: 0.625rem 0.875rem;
+  border-radius: var(--radius-sm);
   font-size: 0.875rem;
-  animation: fadeIn var(--transition-fast) ease-in-out;
+  animation: fadeIn var(--transition-fast) ease-out;
 }
 
 .faq-alert-danger {
-  background-color: rgba(219, 79, 74, 0.12);
+  background-color: rgba(248, 81, 73, 0.12);
   border: 1px solid var(--color-danger);
   color: var(--text-primary);
 }
@@ -39,11 +40,11 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   cursor: pointer;
   transition:
     background-color var(--transition-fast),
@@ -55,55 +56,62 @@
   color: var(--text-primary);
 }
 
+.faq-alert-dismiss:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 /* Controls Toolbar (Search & Expand/Collapse All) */
 .faq-controls-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
-  padding: 1rem 1.25rem;
+  padding: 0.5rem 0.75rem;
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
 }
 
 .faq-search-wrapper {
   position: relative;
   flex: 1;
-  min-width: 260px;
+  min-width: 240px;
 }
 
 .faq-search-icon {
   position: absolute;
-  left: 0.875rem;
+  left: 0.625rem;
   top: 50%;
   transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--text-muted);
   pointer-events: none;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
 }
 
 .faq-search-input {
   width: 100%;
-  height: 38px;
-  padding: 0 1rem 0 2.25rem;
+  height: 30px;
+  padding: 0 0.75rem 0 1.875rem;
   background-color: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
   font-size: 0.875rem;
-  font-family: inherit;
+  font-family: var(--font-sans);
   transition:
     border-color var(--transition-fast),
-    box-shadow var(--transition-fast);
+    background-color var(--transition-fast);
 }
 
-.faq-search-input:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(104, 112, 250, 0.2);
+.faq-search-input:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .faq-search-input::placeholder {
@@ -113,14 +121,16 @@
 .faq-controls-actions {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .faq-count-badge {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   font-size: 0.75rem;
   font-weight: 600;
-  padding: 0.25rem 0.625rem;
-  border-radius: var(--radius-full);
+  padding: 0.125rem 0.45rem;
+  border-radius: var(--radius-sm);
   background-color: var(--bg-hover);
   color: var(--text-secondary);
   border: 1px solid var(--border-subtle);
@@ -130,9 +140,10 @@
 .faq-toggle-all-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.45rem 0.85rem;
-  font-size: 0.8125rem;
+  gap: 0.25rem;
+  padding: 0.25rem 0.625rem;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
   font-weight: 600;
   border-radius: var(--radius-sm);
   background-color: var(--bg-primary);
@@ -147,27 +158,30 @@
 
 .faq-toggle-all-btn:hover {
   background-color: var(--bg-hover);
-  border-color: var(--border-color);
   color: var(--color-primary);
+}
+
+.faq-toggle-all-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 /* Semantic Accordion List */
 .faq-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.375rem;
 }
 
 .faq-accordion {
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
   overflow: hidden;
   transition:
     border-color var(--transition-fast),
-    background-color var(--transition-fast),
-    box-shadow var(--transition-fast);
+    background-color var(--transition-fast);
 }
 
 .faq-accordion:hover {
@@ -175,15 +189,15 @@
 }
 
 .faq-accordion[open] {
-  border-color: rgba(104, 112, 250, 0.4);
+  border-color: var(--color-primary);
 }
 
 .faq-summary {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 1.125rem 1.25rem;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
   cursor: pointer;
   user-select: none;
   list-style: none;
@@ -200,32 +214,32 @@
 }
 
 .faq-summary:focus-visible {
-  outline: none;
-  background-color: var(--bg-hover);
-  box-shadow: inset 0 0 0 2px var(--color-primary);
+  outline: 2px solid var(--color-primary) !important;
+  outline-offset: 2px !important;
 }
 
 .faq-question {
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--text-primary);
-  line-height: 1.4;
+  line-height: 1.35;
   flex: 1;
 }
 
 .faq-summary-meta {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
   flex-shrink: 0;
 }
 
 .faq-category-badge {
-  font-size: 0.6875rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  padding: 0.2rem 0.5rem;
+  padding: 0.125rem 0.375rem;
   border-radius: var(--radius-sm);
   background-color: var(--bg-primary);
   color: var(--color-accent);
@@ -233,9 +247,9 @@
 }
 
 .faq-chevron {
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
-  transition: transform var(--transition-fast) ease;
+  transition: transform var(--transition-fast) ease-out;
   line-height: 1;
 }
 
@@ -245,17 +259,17 @@
 }
 
 .faq-content {
-  padding: 0 1.25rem 1.25rem 1.25rem;
+  padding: 0 0.75rem 0.625rem 0.75rem;
   border-top: 1px solid var(--border-subtle);
   background-color: var(--bg-card);
-  animation: fadeIn var(--transition-fast) ease-in-out;
+  animation: fadeIn var(--transition-fast) ease-out;
 }
 
 .faq-answer {
   font-size: 0.875rem;
-  line-height: 1.6;
+  line-height: 1.5;
   color: var(--text-secondary);
-  padding-top: 1rem;
+  padding-top: 0.5rem;
 }
 
 /* Empty, Loading, and Error States */
@@ -263,13 +277,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  padding: 3rem 1rem;
+  gap: 0.5rem;
+  padding: 2rem 1rem;
   color: var(--text-secondary);
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
 }
 
 .faq-empty-state {
@@ -277,22 +291,22 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 3.5rem 1.5rem;
+  gap: 0.35rem;
+  padding: 2.5rem 1rem;
   background-color: var(--bg-card);
   border: 1px dashed var(--border-color);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   text-align: center;
 }
 
 .faq-empty-title {
-  font-size: 1rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .faq-empty-desc {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
-  max-width: 420px;
+  max-width: 380px;
 }

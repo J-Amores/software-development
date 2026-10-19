@@ -106,7 +106,7 @@ export class InvoicesView {
 
     contentEl.innerHTML = `
       <div class="invoices-status-loading" role="status">
-        <span class="spinner" aria-hidden="true">⏳</span> Loading invoices...
+        <span class="spinner font-mono" aria-hidden="true">[PENDING]</span> Loading invoices...
       </div>
     `;
 
@@ -132,7 +132,7 @@ export class InvoicesView {
             sortable: true,
             render: (amount) => {
               const span = document.createElement("span");
-              span.className = "invoice-cost-cell";
+              span.className = "invoice-cost-cell font-mono tabular-nums";
               span.textContent = formatCurrency(amount);
               return span;
             },
@@ -141,7 +141,12 @@ export class InvoicesView {
             key: "date",
             label: "Date",
             sortable: true,
-            render: (date) => formatDate(date),
+            render: (date) => {
+              const span = document.createElement("span");
+              span.className = "invoice-date-cell font-mono tabular-nums";
+              span.textContent = formatDate(date);
+              return span;
+            },
           },
           {
             key: "actions",
@@ -167,7 +172,7 @@ export class InvoicesView {
             btn.id = "btn-delete-selected";
             btn.dataset.testid = "btn-delete-selected";
             btn.style.display = "none";
-            btn.innerHTML = `<span aria-hidden="true">🗑️</span> Delete Selected (0)`;
+            btn.innerHTML = `<span class="btn-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></span> Delete Selected (0)`;
             this.deleteSelectedBtn = btn;
             container.appendChild(btn);
           },
@@ -176,7 +181,7 @@ export class InvoicesView {
             if (this.deleteSelectedBtn) {
               if (this.selectedIds.length > 0) {
                 this.deleteSelectedBtn.style.display = "inline-flex";
-                this.deleteSelectedBtn.innerHTML = `<span aria-hidden="true">🗑️</span> Delete Selected (${this.selectedIds.length})`;
+                this.deleteSelectedBtn.innerHTML = `<span class="btn-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></span> Delete Selected (${this.selectedIds.length})`;
               } else {
                 this.deleteSelectedBtn.style.display = "none";
               }
@@ -194,7 +199,7 @@ export class InvoicesView {
 
         contentEl.innerHTML = `
           <div class="invoices-status-error" role="alert" data-testid="invoices-error">
-            <div class="alert-icon" aria-hidden="true">⚠️</div>
+            <div class="alert-icon font-mono" aria-hidden="true">[WARN]</div>
             <div class="alert-body">
               <h3 class="alert-heading">Unable to Load Invoices</h3>
               <p class="alert-text">${message}</p>
@@ -222,7 +227,7 @@ export class InvoicesView {
     deleteBtn.dataset.invoiceId = String(row.id);
     deleteBtn.setAttribute("aria-label", `Delete Invoice ${row.id} for ${row.name}`);
     deleteBtn.title = `Delete Invoice #${row.id}`;
-    deleteBtn.innerHTML = `<span aria-hidden="true">🗑️</span>`;
+    deleteBtn.innerHTML = `<span class="btn-text font-mono" aria-hidden="true">[DELETE]</span>`;
 
     container.appendChild(deleteBtn);
     return container;
@@ -359,7 +364,7 @@ export class InvoicesView {
 
     alertEl.innerHTML = `
       <div class="invoices-alert-body">${messageHtml}</div>
-      <button type="button" class="invoices-alert-dismiss" aria-label="${isStatus ? "Dismiss message" : "Dismiss alert"}">✕</button>
+      <button type="button" class="invoices-alert-dismiss" aria-label="${isStatus ? "Dismiss message" : "Dismiss alert"}">&times;</button>
     `;
 
     alertContainer.innerHTML = "";

@@ -76,7 +76,7 @@ export class FaqView {
       <!-- Controls Toolbar: Search Filter & Expand/Collapse All -->
       <div class="faq-controls-bar">
         <div class="faq-search-wrapper">
-          <span class="faq-search-icon" aria-hidden="true">🔍</span>
+          <span class="faq-search-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
           <input
             type="search"
             id="faq-search-input"
@@ -87,7 +87,7 @@ export class FaqView {
           />
         </div>
         <div class="faq-controls-actions">
-          <span id="faq-count-badge" class="faq-count-badge" data-testid="faq-count-badge">0 questions</span>
+          <span id="faq-count-badge" class="faq-count-badge font-mono tabular-nums" data-testid="faq-count-badge">0 questions</span>
           <button
             type="button"
             id="faq-toggle-all-btn"
@@ -351,7 +351,7 @@ export class FaqView {
 
     alertEl.innerHTML = `
       <div class="faq-alert-body">${messageHtml}</div>
-      <button type="button" class="faq-alert-dismiss" aria-label="Dismiss alert">✕</button>
+      <button type="button" class="faq-alert-dismiss" aria-label="Dismiss alert">&times;</button>
     `;
 
     alertContainer.innerHTML = "";

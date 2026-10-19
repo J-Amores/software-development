@@ -98,7 +98,7 @@ export class FormView {
                 type="number"
                 id="member-age"
                 name="age"
-                class="form-input"
+                class="form-input font-mono tabular-nums"
                 placeholder="e.g. 30"
                 required
                 min="1"
@@ -117,7 +117,7 @@ export class FormView {
                 type="tel"
                 id="member-phone"
                 name="phone"
-                class="form-input"
+                class="form-input font-mono tabular-nums"
                 placeholder="e.g. (555) 123-4567"
                 required
                 minlength="1"
@@ -285,7 +285,7 @@ export class FormView {
           "alert",
           `
             <div class="form-alert-content">
-              <span class="alert-icon" aria-hidden="true">⚠️</span>
+              <span class="alert-icon font-mono" aria-hidden="true">[WARN]</span>
               <span>Failed to provision Team Member: ${message}</span>
             </div>
           `,
@@ -312,7 +312,7 @@ export class FormView {
 
     alertEl.innerHTML = `
       <div class="form-alert-body">${messageHtml}</div>
-      <button type="button" class="form-alert-dismiss" aria-label="${isStatus ? "Dismiss message" : "Dismiss alert"}">✕</button>
+      <button type="button" class="form-alert-dismiss" aria-label="${isStatus ? "Dismiss message" : "Dismiss alert"}">&times;</button>
     `;
 
     alertContainer.innerHTML = "";
