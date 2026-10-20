@@ -1,13 +1,19 @@
 /**
- * Dashboard View
+ * Dashboard View - Executive Kinetic Carbon
  * Primary administrative overview view adhering to the mount / unmount lifecycle seam.
- * Renders the 12-column responsive CSS Grid dashboard with live KPI StatBoxes,
- * embedded charts, recent transactions feed, and client-side operational report export.
+ * Renders the 12-column Bento-box grid with live KPI StatBoxes, animated radial SVG gauges,
+ * embedded Chart.js visualizations with Stitch palette, recent transactions feed, and CSV report export.
  */
 
 import { apiClient as defaultApiClient } from "../api/index.js";
 import { ChartComponent } from "../components/chart/index.js";
 import { downloadOperationalReport } from "../utils/reportExporter.js";
+import {
+  isMotionReduced,
+  animateNumber,
+  bindBentoSpotlight,
+  staggerEnter,
+} from "../utils/motion.js";
 
 /**
  * Formats a numeric value into currency format ($XX.XX).
@@ -48,8 +54,12 @@ export class DashboardView {
     this.fetchPromise = null;
     this.data = null;
     this.activeCharts = [];
+    this.lineChartComponent = null;
+    this._unbindSpotlight = null;
 
     this._handleDownloadClick = this._handleDownloadClick.bind(this);
+    this._handleTimeframeClick = this._handleTimeframeClick.bind(this);
+    this._handleViewAllTxClick = this._handleViewAllTxClick.bind(this);
   }
 
   /**
@@ -70,23 +80,30 @@ export class DashboardView {
     this.element.setAttribute("aria-labelledby", "dashboard-title");
 
     this.element.innerHTML = `
-      <header class="scene-header">
+      <header class="scene-header bento-header" style="display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 1rem; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-subtle); flex-wrap: wrap; gap: 1rem;">
         <div class="scene-header-left">
-          <nav class="scene-breadcrumbs" aria-label="Breadcrumb">
+          <nav class="scene-breadcrumbs" aria-label="Breadcrumb" style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem; font-family: var(--font-mono);">
             <span class="breadcrumb-item">Overview</span>
-            <span class="breadcrumb-separator" aria-hidden="true">/</span>
-            <span class="breadcrumb-item active" aria-current="page">Dashboard</span>
+            <span class="breadcrumb-separator" aria-hidden="true" style="margin: 0 0.35rem;">/</span>
+            <span class="breadcrumb-item active" aria-current="page" style="color: var(--color-primary); font-weight: 600;">Dashboard</span>
           </nav>
-          <h1 id="dashboard-title" class="scene-title">Administrative Dashboard</h1>
-          <p class="scene-subtitle">Welcome to your dashboard</p>
+          <h1 id="dashboard-title" class="scene-title" style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); letter-spacing: -0.02em;">Administrative Dashboard</h1>
+          <p class="scene-subtitle" style="font-size: 0.8125rem; color: var(--text-secondary); margin-top: 0.2rem;">Welcome to your dashboard. System healthy and synced with cluster nodes.</p>
         </div>
-        <div class="dashboard-header-actions">
+        <div class="dashboard-header-actions" style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
           <div class="dashboard-telemetry-pill" style="display: flex; gap: 0.5rem; align-items: center;">
-            <span class="tracer-badge" data-testid="api-status">API: Operational</span>
-            <span class="tracer-badge" data-testid="db-status">DB: connected</span>
+            <div class="tracer-badge" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.65rem; border-radius: var(--radius-full); background: var(--bg-surface); border: 1px solid var(--border-subtle); font-family: var(--font-mono); font-size: 0.7rem; color: var(--color-secondary);">
+              <span class="pulse-indicator" style="color: var(--color-secondary);"><span class="pulse-indicator-dot"></span></span>
+              <span data-testid="api-status">API: Operational</span>
+            </div>
+            <div class="tracer-badge" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.65rem; border-radius: var(--radius-full); background: var(--bg-surface); border: 1px solid var(--border-subtle); font-family: var(--font-mono); font-size: 0.7rem; color: var(--color-tertiary);">
+              <span class="pulse-indicator" style="color: var(--color-tertiary);"><span class="pulse-indicator-dot"></span></span>
+              <span data-testid="db-status">DB: connected</span>
+            </div>
           </div>
-          <button id="btn-download-reports" class="btn-download-reports" data-testid="download-reports-btn">
-            <span>📥</span> Download Reports
+          <button id="btn-download-reports" class="btn-download-reports" data-testid="download-reports-btn" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.85rem; border-radius: var(--radius-lg); background: rgba(192, 193, 255, 0.1); border: 1px solid var(--color-primary); color: var(--color-primary); font-size: 0.8125rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast);">
+            <span class="material-symbols-outlined" style="font-size: 16px;">file_download</span>
+            <span>Download Reports</span>
           </button>
         </div>
       </header>
@@ -94,7 +111,7 @@ export class DashboardView {
       <div id="dashboard-alert-container"></div>
 
       <div id="dashboard-content" class="dashboard-body">
-        <div class="dashboard-loading" role="status">
+        <div class="dashboard-loading" role="status" style="display: flex; align-items: center; justify-content: center; padding: 3rem; color: var(--text-muted); gap: 0.5rem; font-size: 0.875rem;">
           <span class="spinner" aria-hidden="true">⏳</span> Loading operational dashboard telemetry...
         </div>
       </div>
@@ -108,6 +125,9 @@ export class DashboardView {
       downloadBtn.addEventListener("click", this._handleDownloadClick);
     }
 
+    // Attach specular cursor spotlight
+    this._unbindSpotlight = bindBentoSpotlight(this.element);
+
     this.loadDashboardData();
   }
 
@@ -120,7 +140,7 @@ export class DashboardView {
     if (!contentEl) return;
 
     contentEl.innerHTML = `
-      <div class="dashboard-loading" role="status">
+      <div class="dashboard-loading" role="status" style="display: flex; align-items: center; justify-content: center; padding: 3rem; color: var(--text-muted); gap: 0.5rem; font-size: 0.875rem;">
         <span class="spinner" aria-hidden="true">⏳</span> Loading operational dashboard telemetry...
       </div>
     `;
@@ -152,7 +172,6 @@ export class DashboardView {
     const txVolume = summary.transactionVolume?.total ?? 378.35;
     const activeContacts = summary.activeContacts ?? 3;
     const teamMembers = summary.teamMembers ?? 3;
-    const ratios = summary.ratios || { emails: 0.75, sales: 0.5, clients: 0.3, traffic: 0.8 };
 
     const recentTx = Array.isArray(data.recentTransactions) ? data.recentTransactions : [];
     const charts = data.charts || {};
@@ -162,11 +181,11 @@ export class DashboardView {
         (tx) => `
         <div class="transaction-row" data-testid="transaction-row">
           <div class="transaction-meta">
-            <span class="transaction-txid">${tx.txId}</span>
+            <span class="transaction-txid font-mono">${tx.txId}</span>
             <span class="transaction-user">${tx.user}</span>
           </div>
-          <span class="transaction-date">${formatDate(tx.date)}</span>
-          <span class="transaction-amount-badge">${formatCurrency(tx.amount)}</span>
+          <span class="transaction-date font-mono">${formatDate(tx.date)}</span>
+          <span class="transaction-amount-badge font-mono">+${formatCurrency(tx.amount)}</span>
         </div>
       `,
       )
@@ -174,131 +193,245 @@ export class DashboardView {
 
     contentEl.innerHTML = `
       <div class="dashboard-grid">
-        <!-- Row 1: 4 KPI StatBox Cards -->
-        <div class="col-span-3 statbox-card" data-testid="statbox-emails">
+        <!-- Row 1: 4 Executive Bento KPI StatCards (3 Cols Each) -->
+        <div class="bento-card col-span-3 statbox-card stagger-item" data-testid="statbox-emails">
           <div class="statbox-top">
             <div>
-              <span class="statbox-icon" aria-hidden="true">✉️</span>
-              <div class="statbox-value">${formatCurrency(invoicedRevenue)}</div>
+              <span class="statbox-subtitle font-mono text-muted uppercase tracking-wider text-[11px]">EMAILS SENT</span>
+              <div class="statbox-value font-mono font-bold" id="kpi-emails-val">${formatCurrency(invoicedRevenue)}</div>
             </div>
-            <div class="progress-ring-circle" style="--progress: ${ratios.emails};" aria-hidden="true">
-              <div class="progress-ring-inner"></div>
+            <div class="progress-gauge-wrapper">
+              <svg class="progress-gauge" viewBox="0 0 36 36">
+                <path class="gauge-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--bg-surface-high)" stroke-width="3"></path>
+                <path class="gauge-fill" pathLength="100" data-target-offset="25" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--color-primary)" stroke-dasharray="100 100" stroke-dashoffset="100" stroke-linecap="round" stroke-width="3"></path>
+              </svg>
+              <span class="material-symbols-outlined progress-gauge-icon" style="color: var(--color-primary);">mail</span>
             </div>
           </div>
           <div class="statbox-bottom">
+            <div class="statbox-badge font-mono" style="color: var(--color-secondary);">
+              <span class="material-symbols-outlined" style="font-size: 14px;">trending_up</span>
+              <span>+14.2%</span>
+            </div>
             <span class="statbox-subtitle">Emails Sent</span>
-            <span class="statbox-badge">+14%</span>
           </div>
         </div>
 
-        <div class="col-span-3 statbox-card" data-testid="statbox-sales">
+        <div class="bento-card col-span-3 statbox-card stagger-item" data-testid="statbox-sales">
           <div class="statbox-top">
             <div>
-              <span class="statbox-icon" aria-hidden="true">💼</span>
-              <div class="statbox-value">${formatCurrency(txVolume)}</div>
+              <span class="statbox-subtitle font-mono text-muted uppercase tracking-wider text-[11px]">SALES OBTAINED</span>
+              <div class="statbox-value font-mono font-bold" id="kpi-sales-val">${formatCurrency(txVolume)}</div>
             </div>
-            <div class="progress-ring-circle" style="--progress: ${ratios.sales};" aria-hidden="true">
-              <div class="progress-ring-inner"></div>
+            <div class="progress-gauge-wrapper">
+              <svg class="progress-gauge" viewBox="0 0 36 36">
+                <path class="gauge-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--bg-surface-high)" stroke-width="3"></path>
+                <path class="gauge-fill" pathLength="100" data-target-offset="18" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--color-secondary)" stroke-dasharray="100 100" stroke-dashoffset="100" stroke-linecap="round" stroke-width="3"></path>
+              </svg>
+              <span class="material-symbols-outlined progress-gauge-icon" style="color: var(--color-secondary);">point_of_sale</span>
             </div>
           </div>
           <div class="statbox-bottom">
+            <div class="statbox-badge font-mono" style="color: var(--color-secondary);">
+              <span class="material-symbols-outlined" style="font-size: 14px;">trending_up</span>
+              <span>+21.4%</span>
+            </div>
             <span class="statbox-subtitle">Sales Obtained</span>
-            <span class="statbox-badge">+21%</span>
           </div>
         </div>
 
-        <div class="col-span-3 statbox-card" data-testid="statbox-clients">
+        <div class="bento-card col-span-3 statbox-card stagger-item" data-testid="statbox-clients">
           <div class="statbox-top">
             <div>
-              <span class="statbox-icon" aria-hidden="true">👤</span>
-              <div class="statbox-value">${activeContacts.toLocaleString()}</div>
+              <span class="statbox-subtitle font-mono text-muted uppercase tracking-wider text-[11px]">NEW CLIENTS</span>
+              <div class="statbox-value font-mono font-bold" id="kpi-clients-val">${activeContacts.toLocaleString()}</div>
             </div>
-            <div class="progress-ring-circle" style="--progress: ${ratios.clients};" aria-hidden="true">
-              <div class="progress-ring-inner"></div>
+            <div class="progress-gauge-wrapper">
+              <svg class="progress-gauge" viewBox="0 0 36 36">
+                <path class="gauge-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--bg-surface-high)" stroke-width="3"></path>
+                <path class="gauge-fill" pathLength="100" data-target-offset="52" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--color-tertiary)" stroke-dasharray="100 100" stroke-dashoffset="100" stroke-linecap="round" stroke-width="3"></path>
+              </svg>
+              <span class="material-symbols-outlined progress-gauge-icon" style="color: var(--color-tertiary);">person_add</span>
             </div>
           </div>
           <div class="statbox-bottom">
+            <div class="statbox-badge font-mono" style="color: var(--color-secondary);">
+              <span class="material-symbols-outlined" style="font-size: 14px;">trending_up</span>
+              <span>+8.1%</span>
+            </div>
             <span class="statbox-subtitle">New Clients</span>
-            <span class="statbox-badge">+5%</span>
           </div>
         </div>
 
-        <div class="col-span-3 statbox-card" data-testid="statbox-traffic">
+        <div class="bento-card col-span-3 statbox-card stagger-item" data-testid="statbox-traffic">
           <div class="statbox-top">
             <div>
-              <span class="statbox-icon" aria-hidden="true">🚦</span>
-              <div class="statbox-value">${teamMembers.toLocaleString()}</div>
+              <span class="statbox-subtitle font-mono text-muted uppercase tracking-wider text-[11px]">TRAFFIC RECEIVED</span>
+              <div class="statbox-value font-mono font-bold" id="kpi-traffic-val">${teamMembers.toLocaleString()}</div>
             </div>
-            <div class="progress-ring-circle" style="--progress: ${ratios.traffic};" aria-hidden="true">
-              <div class="progress-ring-inner"></div>
+            <div class="progress-gauge-wrapper">
+              <svg class="progress-gauge" viewBox="0 0 36 36">
+                <path class="gauge-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--bg-surface-high)" stroke-width="3"></path>
+                <path class="gauge-fill" pathLength="100" data-target-offset="36" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--color-primary-action)" stroke-dasharray="100 100" stroke-dashoffset="100" stroke-linecap="round" stroke-width="3"></path>
+              </svg>
+              <span class="material-symbols-outlined progress-gauge-icon" style="color: var(--color-primary-action);">traffic</span>
             </div>
           </div>
           <div class="statbox-bottom">
+            <div class="statbox-badge font-mono" style="color: var(--color-secondary);">
+              <span class="material-symbols-outlined" style="font-size: 14px;">trending_up</span>
+              <span>+43.5%</span>
+            </div>
             <span class="statbox-subtitle">Traffic Received</span>
-            <span class="statbox-badge">+43%</span>
           </div>
         </div>
 
-        <!-- Row 2: Revenue Generated Line Chart (8 cols) & Recent Transactions (4 cols) -->
-        <div class="col-span-8 dashboard-card-inner" data-testid="card-revenue-chart">
-          <div class="card-header">
+        <!-- Row 2: Revenue Generated Multi-Series Chart (8 cols) & Recent Transactions (4 cols) -->
+        <div class="bento-card col-span-8 dashboard-card-inner stagger-item" data-testid="card-revenue-chart">
+          <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-hairline);">
             <div>
-              <h2 class="card-title">Revenue Generated</h2>
-              <div class="statbox-value" style="color: var(--color-accent); font-size: 1.25rem;">$59,342.32</div>
+              <span class="card-title-eyebrow font-mono text-[11px] text-muted uppercase tracking-wider">Revenue Generated</span>
+              <div style="display: flex; align-items: baseline; gap: 0.75rem; margin-top: 0.15rem;">
+                <h2 id="revenue-headline-val" class="card-title font-mono font-bold text-2xl text-secondary" style="margin: 0; color: var(--color-secondary);">$59,342.32</h2>
+                <span class="badge-yoy font-mono text-xs px-2 py-0.5 rounded border border-secondary" style="color: var(--color-secondary); background: rgba(78, 222, 163, 0.08); border-color: rgba(78, 222, 163, 0.25);">+18.4% YOY</span>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+              <div class="series-legend-chips">
+                <span class="series-chip"><span class="series-chip-dot" style="background: var(--color-primary);"></span> ARR</span>
+                <span class="series-chip"><span class="series-chip-dot" style="background: var(--color-secondary);"></span> MRR</span>
+                <span class="series-chip"><span class="series-chip-dot" style="background: var(--color-error-light);"></span> Expansion</span>
+              </div>
+              <div class="timeframe-pill-group" id="timeframe-pill-group">
+                <button type="button" class="timeframe-btn" data-range="1D">1D</button>
+                <button type="button" class="timeframe-btn" data-range="7D">7D</button>
+                <button type="button" class="timeframe-btn active" data-range="1M">1M</button>
+                <button type="button" class="timeframe-btn" data-range="1Y">1Y</button>
+                <button type="button" class="timeframe-btn" data-range="ALL">ALL</button>
+              </div>
             </div>
           </div>
           <div id="dashboard-line-chart-slot" class="dashboard-chart-container"></div>
         </div>
 
-        <div class="col-span-4 transactions-card" data-testid="card-recent-transactions">
+        <div class="bento-card col-span-4 transactions-card stagger-item" data-testid="card-recent-transactions">
           <div class="card-header">
-            <h2 class="card-title">Recent Transactions</h2>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span class="material-symbols-outlined" style="font-size: 18px; color: var(--color-primary);">receipt_long</span>
+              <h2 class="card-title font-sans font-semibold text-sm" style="margin: 0; color: var(--text-primary);">Recent Transactions</h2>
+            </div>
+            <span class="font-mono text-xs text-muted">${recentTx.length} total</span>
           </div>
-          <div class="transactions-list">
-            ${txRowsHtml || '<div class="empty-state">No recent transactions recorded.</div>'}
+          <div class="transactions-list custom-scroll">
+            ${txRowsHtml || '<div class="empty-state" style="padding: 1rem; text-align: center; color: var(--text-muted); font-size: 0.8125rem;">No recent transactions recorded.</div>'}
           </div>
+          <button type="button" class="btn-view-all-tx font-mono text-xs" id="btn-view-all-tx">
+            View All Transactions →
+          </button>
         </div>
 
-        <!-- Row 3: Campaign Revenue (4 cols), Sales Bar Chart (4 cols), Geography Traffic (4 cols) -->
-        <div class="col-span-4 campaign-card" data-testid="card-campaign">
+        <!-- Row 3: Campaign (4 cols) + Sales Quantity Bar (4 cols) + Geography Traffic (4 cols) -->
+        <div class="bento-card col-span-4 campaign-card stagger-item" data-testid="card-campaign">
           <div class="card-header">
-            <h2 class="card-title">Campaign</h2>
+            <h2 class="card-title font-mono text-[11px] text-muted uppercase tracking-wider" style="margin: 0;">Campaign</h2>
+            <span class="badge-status font-mono text-[10px] px-2 py-0.5 rounded-full" style="color: var(--color-secondary); background: rgba(78, 222, 163, 0.1);">Active</span>
           </div>
           <div class="campaign-content">
-            <div class="progress-ring-circle" style="--progress: 0.75; width: 64px; height: 64px;" aria-hidden="true">
-              <div class="progress-ring-inner" style="width: 48px; height: 48px;"></div>
+            <div style="position: relative; width: 140px; height: 140px; display: flex; align-items: center; justify-content: center;">
+              <svg style="width: 140px; height: 140px; transform: rotate(-90deg);" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" fill="none" r="40" stroke="var(--bg-surface-high)" stroke-width="8"></circle>
+                <circle class="campaign-ring-fill" cx="50" cy="50" fill="none" r="40" stroke="var(--color-secondary)" stroke-dasharray="251.3 251.3" stroke-dashoffset="251.3" data-target-offset="40.2" stroke-linecap="round" stroke-width="8"></circle>
+                <circle class="campaign-ring-fill" cx="50" cy="50" fill="none" r="40" stroke="var(--color-primary)" stroke-dasharray="50 251.3" stroke-dashoffset="251.3" data-target-offset="-160" stroke-linecap="round" stroke-width="8"></circle>
+              </svg>
+              <div style="position: absolute; display: flex; flex-direction: column; align-items: center; text-align: center;">
+                <span class="font-mono font-bold text-xl text-on-surface">84%</span>
+                <span class="text-[10px] text-muted font-sans uppercase tracking-wider">TARGET</span>
+              </div>
             </div>
-            <div class="campaign-amount">$48,352 revenue generated</div>
-            <div class="campaign-desc">Includes extra misc expenditures and costs</div>
+            <div class="campaign-amount font-mono" style="margin-top: 0.25rem;">$48,352 revenue generated</div>
+            <div class="campaign-desc font-sans text-muted">Includes extra misc expenditures and recurring client quotas.</div>
+          </div>
+          <div class="campaign-footer font-sans">
+            <div>
+              <div class="text-[11px] text-muted font-mono">Target</div>
+              <div class="font-mono font-semibold text-sm text-primary">$57,500</div>
+            </div>
+            <div style="width: 1px; background: var(--border-hairline);"></div>
+            <div>
+              <div class="text-[11px] text-muted font-mono">Efficiency</div>
+              <div class="font-mono font-semibold text-sm" style="color: var(--color-secondary);">+12.4%</div>
+            </div>
           </div>
         </div>
 
-        <div class="col-span-4 dashboard-card-inner" data-testid="card-sales-chart">
-          <div class="card-header">
-            <h2 class="card-title">Sales Quantity</h2>
+        <div class="bento-card col-span-4 dashboard-card-inner stagger-item" data-testid="card-sales-chart">
+          <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-hairline);">
+            <h2 class="card-title font-mono text-[11px] text-muted uppercase tracking-wider" style="margin: 0;">Sales Quantity</h2>
+            <div style="display: flex; align-items: center; gap: 0.4rem;">
+              <span class="pulse-indicator-dot" style="background: var(--color-primary);"></span>
+              <span class="font-mono text-[11px] text-muted">Q3 / Q4</span>
+            </div>
           </div>
           <div id="dashboard-bar-chart-slot" class="dashboard-chart-container"></div>
         </div>
 
-        <div class="col-span-4 dashboard-card-inner" data-testid="card-geography-chart">
-          <div class="card-header">
-            <h2 class="card-title">Geography Based Traffic</h2>
+        <div class="bento-card col-span-4 dashboard-card-inner stagger-item" data-testid="card-geography-chart">
+          <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-hairline);">
+            <h2 class="card-title font-mono text-[11px] text-muted uppercase tracking-wider" style="margin: 0;">Geography Based Traffic</h2>
+            <span class="material-symbols-outlined" style="font-size: 18px; color: var(--text-muted);">public</span>
           </div>
           <div id="dashboard-geo-chart-slot" class="dashboard-geo-container"></div>
+          <div class="geo-country-table">
+            <div class="geo-country-row">
+              <span class="geo-country-name font-sans">
+                <span class="pulse-indicator-dot" style="background: var(--color-secondary);"></span>
+                United States
+              </span>
+              <span class="geo-country-pct font-mono">48.2%</span>
+            </div>
+            <div class="geo-country-row">
+              <span class="geo-country-name font-sans">
+                <span class="pulse-indicator-dot" style="background: var(--color-primary);"></span>
+                Germany
+              </span>
+              <span class="geo-country-pct font-mono">22.4%</span>
+            </div>
+            <div class="geo-country-row">
+              <span class="geo-country-name font-sans">
+                <span class="pulse-indicator-dot" style="background: var(--color-tertiary);"></span>
+                United Kingdom
+              </span>
+              <span class="geo-country-pct font-mono">16.1%</span>
+            </div>
+            <div class="geo-country-row">
+              <span class="geo-country-name font-sans">
+                <span class="pulse-indicator-dot" style="background: var(--color-error-light);"></span>
+                Japan
+              </span>
+              <span class="geo-country-pct font-mono">13.3%</span>
+            </div>
+          </div>
+          <div class="geo-footer font-mono">
+            <span>Global Edge Nodes: 18 Active</span>
+            <span style="color: var(--color-secondary); display: inline-flex; align-items: center; gap: 0.3rem;">
+              <span class="pulse-indicator-dot" style="background: var(--color-secondary);"></span>
+              18ms latency
+            </span>
+          </div>
         </div>
       </div>
     `;
 
-    // Mount child mini-charts
+    // Mount child mini-charts with Executive Kinetic Carbon theme
     const lineSlot = contentEl.querySelector("#dashboard-line-chart-slot");
     if (lineSlot && charts.revenueLine) {
-      const lineChart = new ChartComponent({
+      this.lineChartComponent = new ChartComponent({
         type: "line",
         data: charts.revenueLine,
         isDashboard: true,
       });
-      lineChart.mount(lineSlot);
-      this.activeCharts.push(lineChart);
+      this.lineChartComponent.mount(lineSlot);
+      this.activeCharts.push(this.lineChartComponent);
     }
 
     const barSlot = contentEl.querySelector("#dashboard-bar-chart-slot");
@@ -322,6 +455,127 @@ export class DashboardView {
       geoChart.mount(geoSlot);
       this.activeCharts.push(geoChart);
     }
+
+    // Attach timeframe pill listeners
+    const timeframeGroup = contentEl.querySelector("#timeframe-pill-group");
+    if (timeframeGroup) {
+      timeframeGroup.addEventListener("click", this._handleTimeframeClick);
+    }
+
+    // Attach View All Transactions button listener
+    const viewAllBtn = contentEl.querySelector("#btn-view-all-tx");
+    if (viewAllBtn) {
+      viewAllBtn.addEventListener("click", this._handleViewAllTxClick);
+    }
+
+    // Trigger stagger cascade entry on cards
+    staggerEnter(contentEl, ".stagger-item", 8);
+
+    // Animate KPI numbers, SVG progress gauges, and campaign target rings
+    if (!isMotionReduced()) {
+      const emailsValEl = contentEl.querySelector("#kpi-emails-val");
+      if (emailsValEl) {
+        animateNumber(emailsValEl, invoicedRevenue, (val) => formatCurrency(val));
+      }
+      const salesValEl = contentEl.querySelector("#kpi-sales-val");
+      if (salesValEl) {
+        animateNumber(salesValEl, txVolume, (val) => formatCurrency(val));
+      }
+      const clientsValEl = contentEl.querySelector("#kpi-clients-val");
+      if (clientsValEl) {
+        animateNumber(clientsValEl, activeContacts, (val) => Math.round(val).toLocaleString());
+      }
+      const trafficValEl = contentEl.querySelector("#kpi-traffic-val");
+      if (trafficValEl) {
+        animateNumber(trafficValEl, teamMembers, (val) => Math.round(val).toLocaleString());
+      }
+
+      // Animate SVG radial gauge arcs and campaign ring on frame 1
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          contentEl.querySelectorAll(".gauge-fill").forEach((path) => {
+            const target = path.dataset.targetOffset;
+            if (target !== undefined) {
+              path.style.strokeDashoffset = target;
+            }
+          });
+          contentEl.querySelectorAll(".campaign-ring-fill").forEach((circle) => {
+            const target = circle.dataset.targetOffset;
+            if (target !== undefined) {
+              circle.style.strokeDashoffset = target;
+            }
+          });
+        });
+      });
+    } else {
+      // Synchronous frame-0 resolution for tests & reduced motion
+      contentEl.querySelectorAll(".gauge-fill").forEach((path) => {
+        const target = path.dataset.targetOffset;
+        if (target !== undefined) {
+          path.setAttribute("stroke-dashoffset", target);
+          path.style.strokeDashoffset = target;
+        }
+      });
+      contentEl.querySelectorAll(".campaign-ring-fill").forEach((circle) => {
+        const target = circle.dataset.targetOffset;
+        if (target !== undefined) {
+          circle.setAttribute("stroke-dashoffset", target);
+          circle.style.strokeDashoffset = target;
+        }
+      });
+    }
+  }
+
+  _handleTimeframeClick(e) {
+    const btn = e.target.closest?.(".timeframe-btn");
+    if (!btn || !this.lineChartComponent) return;
+
+    const group = this.element?.querySelector("#timeframe-pill-group");
+    if (group) {
+      group.querySelectorAll(".timeframe-btn").forEach((b) => b.classList.remove("active"));
+    }
+    btn.classList.add("active");
+
+    const range = btn.dataset.range || "1M";
+    const baseData = this.data?.charts?.revenueLine;
+    if (!Array.isArray(baseData)) return;
+
+    // Filter points based on timeframe to morph the spline curve
+    let sliceLen = 12;
+    let targetRevenue = 59342.32;
+    if (range === "1D") {
+      sliceLen = 3;
+      targetRevenue = 4820.5;
+    } else if (range === "7D") {
+      sliceLen = 5;
+      targetRevenue = 16340.2;
+    } else if (range === "1M") {
+      sliceLen = 8;
+      targetRevenue = 59342.32;
+    } else if (range === "1Y") {
+      sliceLen = 10;
+      targetRevenue = 342910.0;
+    } else if (range === "ALL") {
+      sliceLen = 12;
+      targetRevenue = 780450.0;
+    }
+
+    const filteredData = baseData.map((series) => ({
+      ...series,
+      data: Array.isArray(series.data) ? series.data.slice(0, sliceLen) : [],
+    }));
+
+    this.lineChartComponent.update(filteredData);
+
+    const headlineEl = this.element?.querySelector("#revenue-headline-val");
+    if (headlineEl) {
+      animateNumber(headlineEl, targetRevenue, (val) => formatCurrency(val), 350);
+    }
+  }
+
+  _handleViewAllTxClick() {
+    window.history.pushState({}, "", "/invoices");
+    window.dispatchEvent(new PopStateEvent("popstate"));
   }
 
   _renderError(message) {
@@ -343,7 +597,7 @@ export class DashboardView {
 
     if (contentEl) {
       contentEl.innerHTML = `
-        <div class="dashboard-card" style="text-align: center; padding: 2rem;">
+        <div class="bento-card dashboard-card" style="text-align: center; padding: 2rem;">
           <p>Dashboard telemetry could not be retrieved from the server.</p>
         </div>
       `;
@@ -365,6 +619,7 @@ export class DashboardView {
       }
     }
     this.activeCharts = [];
+    this.lineChartComponent = null;
   }
 
   /**
@@ -376,6 +631,21 @@ export class DashboardView {
     const downloadBtn = this.element?.querySelector("#btn-download-reports");
     if (downloadBtn) {
       downloadBtn.removeEventListener("click", this._handleDownloadClick);
+    }
+
+    const timeframeGroup = this.element?.querySelector("#timeframe-pill-group");
+    if (timeframeGroup) {
+      timeframeGroup.removeEventListener("click", this._handleTimeframeClick);
+    }
+
+    const viewAllBtn = this.element?.querySelector("#btn-view-all-tx");
+    if (viewAllBtn) {
+      viewAllBtn.removeEventListener("click", this._handleViewAllTxClick);
+    }
+
+    if (this._unbindSpotlight) {
+      this._unbindSpotlight();
+      this._unbindSpotlight = null;
     }
 
     this._cleanupCharts();

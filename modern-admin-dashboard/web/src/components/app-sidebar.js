@@ -41,7 +41,13 @@ export class AppSidebar extends HTMLElement {
     this.innerHTML = `
       <aside class="sidebar-container ${this.isCollapsed ? "collapsed" : ""}" role="navigation" aria-label="Main Navigation">
         <div class="sidebar-header">
-          <span class="sidebar-brand">ADMIN OPS</span>
+          <div class="sidebar-brand-wrapper">
+            <div style="display: flex; align-items: center; gap: 0.4rem;">
+              <span class="pulse-indicator" style="color: var(--color-secondary);"><span class="pulse-indicator-dot"></span></span>
+              <span class="sidebar-brand font-mono font-bold tracking-wider">ADMIN OPS</span>
+            </div>
+            <div class="sidebar-brand-subtitle font-mono text-muted">Enterprise Suite • v2.4</div>
+          </div>
           <button 
             type="button" 
             class="sidebar-toggle-btn" 
@@ -49,17 +55,17 @@ export class AppSidebar extends HTMLElement {
             aria-label="${this.isCollapsed ? "Expand sidebar" : "Collapse sidebar"}" 
             aria-expanded="${String(!this.isCollapsed)}"
           >
-            <span aria-hidden="true">☰</span>
+            <span class="material-symbols-outlined" style="font-size: 18px;">menu</span>
           </button>
         </div>
 
-        <nav class="sidebar-nav">
+        <nav class="sidebar-nav custom-scroll">
           <div class="sidebar-section">
             <span class="sidebar-section-title">Overview</span>
             <ul class="sidebar-menu">
               <li class="sidebar-item" data-route="/">
                 <a href="/">
-                  <span class="sidebar-icon" aria-hidden="true">🏠</span>
+                  <span class="material-symbols-outlined sidebar-icon" aria-hidden="true">dashboard</span>
                   <span class="sidebar-label">Dashboard</span>
                 </a>
               </li>
@@ -71,19 +77,19 @@ export class AppSidebar extends HTMLElement {
             <ul class="sidebar-menu">
               <li class="sidebar-item" data-route="/team">
                 <a href="/team">
-                  <span class="sidebar-icon" aria-hidden="true">👥</span>
+                  <span class="material-symbols-outlined sidebar-icon" aria-hidden="true">group</span>
                   <span class="sidebar-label">Manage Team</span>
                 </a>
               </li>
               <li class="sidebar-item" data-route="/contacts">
                 <a href="/contacts">
-                  <span class="sidebar-icon" aria-hidden="true">📇</span>
+                  <span class="material-symbols-outlined sidebar-icon" aria-hidden="true">contacts</span>
                   <span class="sidebar-label">Contacts Information</span>
                 </a>
               </li>
               <li class="sidebar-item" data-route="/invoices">
                 <a href="/invoices">
-                  <span class="sidebar-icon" aria-hidden="true">📄</span>
+                  <span class="material-symbols-outlined sidebar-icon" aria-hidden="true">receipt_long</span>
                   <span class="sidebar-label">Invoices Balances</span>
                 </a>
               </li>
@@ -95,19 +101,19 @@ export class AppSidebar extends HTMLElement {
             <ul class="sidebar-menu">
               <li class="sidebar-item" data-route="/form">
                 <a href="/form">
-                  <span class="sidebar-icon" aria-hidden="true">👤</span>
+                  <span class="material-symbols-outlined sidebar-icon" aria-hidden="true">person</span>
                   <span class="sidebar-label">Profile Form</span>
                 </a>
               </li>
               <li class="sidebar-item" data-route="/calendar">
                 <a href="/calendar">
-                  <span class="sidebar-icon" aria-hidden="true">📅</span>
+                  <span class="material-symbols-outlined sidebar-icon" aria-hidden="true">calendar_today</span>
                   <span class="sidebar-label">Calendar</span>
                 </a>
               </li>
               <li class="sidebar-item" data-route="/faq">
                 <a href="/faq">
-                  <span class="sidebar-icon" aria-hidden="true">❓</span>
+                  <span class="material-symbols-outlined sidebar-icon" aria-hidden="true">help_outline</span>
                   <span class="sidebar-label">FAQ Page</span>
                 </a>
               </li>
@@ -119,29 +125,46 @@ export class AppSidebar extends HTMLElement {
             <ul class="sidebar-menu">
               <li class="sidebar-item" data-route="/bar">
                 <a href="/bar">
-                  <span class="sidebar-icon" aria-hidden="true">📊</span>
+                  <span class="material-symbols-outlined sidebar-icon" aria-hidden="true">bar_chart</span>
                   <span class="sidebar-label">Bar Chart</span>
                 </a>
               </li>
               <li class="sidebar-item" data-route="/pie">
                 <a href="/pie">
-                  <span class="sidebar-icon" aria-hidden="true">🥧</span>
+                  <span class="material-symbols-outlined sidebar-icon" aria-hidden="true">pie_chart</span>
                   <span class="sidebar-label">Pie Chart</span>
                 </a>
               </li>
               <li class="sidebar-item" data-route="/line">
                 <a href="/line">
-                  <span class="sidebar-icon" aria-hidden="true">📈</span>
+                  <span class="material-symbols-outlined sidebar-icon" aria-hidden="true">show_chart</span>
                   <span class="sidebar-label">Line Chart</span>
                 </a>
               </li>
               <li class="sidebar-item" data-route="/geography">
                 <a href="/geography">
-                  <span class="sidebar-icon" aria-hidden="true">🗺️</span>
+                  <span class="material-symbols-outlined sidebar-icon" aria-hidden="true">public</span>
                   <span class="sidebar-label">Geography Chart</span>
                 </a>
               </li>
             </ul>
+          </div>
+
+          <div class="sidebar-footer">
+            <a href="/form" class="sidebar-cta-btn">
+              <span class="material-symbols-outlined" style="font-size: 16px;">add_circle</span>
+              <span class="sidebar-label">Deploy Node</span>
+            </a>
+            <div class="sidebar-footer-links">
+              <a href="/faq" class="sidebar-footer-link" title="Documentation">
+                <span class="material-symbols-outlined" style="font-size: 16px;">menu_book</span>
+                <span class="sidebar-label">Docs</span>
+              </a>
+              <button type="button" class="sidebar-footer-link" id="sidebar-settings-btn" title="Settings">
+                <span class="material-symbols-outlined" style="font-size: 16px;">settings</span>
+                <span class="sidebar-label">Settings</span>
+              </button>
+            </div>
           </div>
         </nav>
       </aside>
@@ -152,6 +175,17 @@ export class AppSidebar extends HTMLElement {
     const toggleBtn = this.querySelector("#sidebar-toggle");
     if (toggleBtn) {
       toggleBtn.addEventListener("click", () => this.toggleCollapse());
+    }
+
+    const settingsBtn = this.querySelector("#sidebar-settings-btn");
+    if (settingsBtn) {
+      settingsBtn.addEventListener("click", () => {
+        const topbar = document.querySelector("app-topbar");
+        const settingsDialog = topbar?.querySelector("#settings-dialog");
+        if (settingsDialog && typeof settingsDialog.showModal === "function") {
+          settingsDialog.showModal();
+        }
+      });
     }
   }
 

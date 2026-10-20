@@ -1,0 +1,142 @@
+/* ==========================================================================
+   Motion Graphics & Micro-Interaction Styles - Tactile Fluidity
+   Zero-framework Web Standards transitions, stagger, and spotlight.
+   ========================================================================== */
+
+@keyframes staggerIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pingPulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+}
+
+.stagger-item {
+  animation: staggerIn 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--stagger-index, 0) * 35ms);
+}
+
+/* Obsidian Specular Hardware Edge Card */
+.bento-card {
+  position: relative;
+  background-color: var(--bg-surface-low);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  transition:
+    border-color var(--transition-normal),
+    box-shadow var(--transition-normal),
+    background-color var(--transition-normal);
+}
+
+.bento-card:hover {
+  border-color: rgba(192, 193, 255, 0.25);
+  box-shadow:
+    var(--shadow-card),
+    0 8px 24px -4px rgba(0, 0, 0, 0.4);
+}
+
+/* Specular Border Glow Spotlight */
+.bento-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    320px circle at var(--mouse-x, -999px) var(--mouse-y, -999px),
+    rgba(192, 193, 255, 0.2),
+    rgba(78, 222, 163, 0.12) 40%,
+    transparent 80%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 150ms ease-out;
+  z-index: 1;
+}
+
+.bento-card:hover::before {
+  opacity: 1;
+}
+
+/* Status indicator pulse animation */
+.pulse-indicator {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 8px;
+  height: 8px;
+}
+
+.pulse-indicator::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-full);
+  background-color: currentColor;
+  animation: pingPulse 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.pulse-indicator-dot {
+  position: relative;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background-color: currentColor;
+}
+
+/* View transitions pinning rules */
+app-sidebar {
+  view-transition-name: app-sidebar;
+}
+
+app-topbar {
+  view-transition-name: app-topbar;
+}
+
+#view-container {
+  view-transition-name: view-canvas;
+}
+
+::view-transition-old(view-canvas) {
+  animation: 90ms cubic-bezier(0.4, 0, 1, 1) both fade-out;
+}
+
+::view-transition-new(view-canvas) {
+  animation: 180ms cubic-bezier(0, 0, 0.2, 1) 40ms both fade-in;
+}
+
+/* Accessibility: zero animation in reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

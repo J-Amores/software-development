@@ -54,22 +54,22 @@ describe("DashboardView (12-Column Overview Dashboard Seam)", () => {
     const emailsBox = container.querySelector('[data-testid="statbox-emails"]');
     expect(emailsBox).not.toBeNull();
     expect(emailsBox.textContent).toContain("Emails Sent");
-    expect(emailsBox.textContent).toContain("+14%");
+    expect(emailsBox.textContent).toContain("+14.2%");
 
     const salesBox = container.querySelector('[data-testid="statbox-sales"]');
     expect(salesBox).not.toBeNull();
     expect(salesBox.textContent).toContain("Sales Obtained");
-    expect(salesBox.textContent).toContain("+21%");
+    expect(salesBox.textContent).toContain("+21.4%");
 
     const clientsBox = container.querySelector('[data-testid="statbox-clients"]');
     expect(clientsBox).not.toBeNull();
     expect(clientsBox.textContent).toContain("New Clients");
-    expect(clientsBox.textContent).toContain("+5%");
+    expect(clientsBox.textContent).toContain("+8.1%");
 
     const trafficBox = container.querySelector('[data-testid="statbox-traffic"]');
     expect(trafficBox).not.toBeNull();
     expect(trafficBox.textContent).toContain("Traffic Received");
-    expect(trafficBox.textContent).toContain("+43%");
+    expect(trafficBox.textContent).toContain("+43.5%");
   });
 
   it("renders Revenue Line Chart, Recent Transactions, and Row 3 cards", async () => {

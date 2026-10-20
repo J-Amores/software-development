@@ -23,6 +23,7 @@ import {
 import { ChoroplethController, GeoFeature, ColorScale, ProjectionScale } from "chartjs-chart-geo";
 import { geoFeatures } from "../../../../data/mockGeoFeatures.js";
 import { themeManager } from "../../theme/index.js";
+import { isMotionReduced } from "../../utils/motion.js";
 
 let isRegistered = false;
 
@@ -76,20 +77,26 @@ function hasCanvas2D(canvas) {
 function getThemeColors() {
   if (typeof window === "undefined" || typeof document === "undefined") {
     return {
-      textColor: "#858585",
-      borderColor: "#333333",
-      primaryColor: "#4cceac",
-      accentColor: "#6870fa",
-      cardBg: "#1F2A40",
+      textColor: "#c7c4d7",
+      borderColor: "rgba(255, 255, 255, 0.05)",
+      primaryColor: "#c0c1ff",
+      secondaryColor: "#4edea3",
+      tertiaryColor: "#7bd0ff",
+      accentColor: "#4edea3",
+      errorColor: "#ffb4ab",
+      cardBg: "#1c1b1d",
     };
   }
   const styles = getComputedStyle(document.documentElement);
   return {
-    textColor: styles.getPropertyValue("--text-secondary").trim() || "#858585",
-    borderColor: styles.getPropertyValue("--border-color").trim() || "#333333",
-    primaryColor: styles.getPropertyValue("--color-primary").trim() || "#4cceac",
-    accentColor: styles.getPropertyValue("--color-accent").trim() || "#6870fa",
-    cardBg: styles.getPropertyValue("--bg-card").trim() || "#1F2A40",
+    textColor: styles.getPropertyValue("--text-secondary").trim() || "#c7c4d7",
+    borderColor: styles.getPropertyValue("--border-subtle").trim() || "rgba(255, 255, 255, 0.05)",
+    primaryColor: styles.getPropertyValue("--color-primary").trim() || "#c0c1ff",
+    secondaryColor: styles.getPropertyValue("--color-secondary").trim() || "#4edea3",
+    tertiaryColor: styles.getPropertyValue("--color-tertiary").trim() || "#7bd0ff",
+    accentColor: styles.getPropertyValue("--color-accent").trim() || "#4edea3",
+    errorColor: styles.getPropertyValue("--color-error-light").trim() || "#ffb4ab",
+    cardBg: styles.getPropertyValue("--bg-surface-low").trim() || "#1c1b1d",
   };
 }
 
@@ -202,8 +209,42 @@ export class ChartComponent {
       const config = this._buildChartConfig();
       this.chart.data = config.data;
       this.chart.options = config.options;
-      this.chart.update();
+      this.chart.update(isMotionReduced() ? "none" : undefined);
     }
+  }
+
+  /**
+   * Generates animation configuration respecting motion reduction guardrails.
+   * Resolves instantly with false in test runners and prefers-reduced-motion.
+   */
+  _getAnimationOptions() {
+    if (isMotionReduced()) {
+      return false;
+    }
+    return {
+      duration: 850,
+      easing: "easeOutQuart",
+    };
+  }
+
+  /**
+   * Generates high-density Executive Kinetic Carbon tooltip configuration.
+   */
+  _getTooltipOptions(_colors) {
+    return {
+      enabled: true,
+      backgroundColor: "rgba(20, 20, 22, 0.94)",
+      titleColor: "#e5e1e4",
+      bodyColor: "#c7c4d7",
+      borderColor: "rgba(255, 255, 255, 0.12)",
+      borderWidth: 1,
+      cornerRadius: 6,
+      padding: { top: 8, bottom: 8, left: 12, right: 12 },
+      boxPadding: 4,
+      usePointStyle: true,
+      titleFont: { family: "'Inter', sans-serif", weight: 600, size: 12 },
+      bodyFont: { family: "'JetBrains Mono', monospace", size: 11 },
+    };
   }
 
   /**
@@ -293,11 +334,11 @@ export class ChartComponent {
 
     const defaultColors = [
       colors.primaryColor,
-      colors.accentColor,
-      "#f2c94c",
-      "#eb5757",
-      "#56ccf2",
-      "#bb6bd9",
+      colors.errorColor,
+      colors.secondaryColor,
+      colors.tertiaryColor,
+      "#e1e0ff",
+      "#00a572",
     ];
 
     const datasets = Array.from(keys).map((key, idx) => ({
@@ -305,6 +346,7 @@ export class ChartComponent {
       data: items.map((item) => Number(item[key]) || 0),
       backgroundColor: defaultColors[idx % defaultColors.length],
       borderRadius: 4,
+      borderSkipped: false,
     }));
 
     return {
@@ -313,20 +355,36 @@ export class ChartComponent {
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        animation: this._getAnimationOptions(),
+        interaction: {
+          mode: "index",
+          intersect: false,
+        },
+        hover: {
+          mode: "index",
+          intersect: false,
+        },
         plugins: {
           legend: {
             display: !this.isDashboard,
             labels: { color: colors.textColor },
           },
+          tooltip: this._getTooltipOptions(colors),
         },
         scales: {
           x: {
-            ticks: { color: colors.textColor },
+            ticks: {
+              color: colors.textColor,
+              font: { family: "'JetBrains Mono', monospace", size: 10 },
+            },
             grid: { display: false },
           },
           y: {
-            ticks: { color: colors.textColor },
-            grid: { color: colors.borderColor },
+            ticks: {
+              color: colors.textColor,
+              font: { family: "'JetBrains Mono', monospace", size: 10 },
+            },
+            grid: { color: "rgba(255, 255, 255, 0.05)", borderDash: [4, 4] },
           },
         },
       },
@@ -339,7 +397,7 @@ export class ChartComponent {
     const dataValues = items.map((item) => Number(item.value) || 0);
     const backgroundColors = items.map((item, idx) => {
       if (item.color) return item.color;
-      const palette = ["#4cceac", "#6870fa", "#f2c94c", "#eb5757", "#56ccf2"];
+      const palette = ["#c0c1ff", "#4edea3", "#7bd0ff", "#ffb4ab", "#e1e0ff"];
       return palette[idx % palette.length];
     });
 
@@ -353,17 +411,20 @@ export class ChartComponent {
             backgroundColor: backgroundColors,
             borderColor: colors.cardBg,
             borderWidth: 2,
+            hoverOffset: 8,
           },
         ],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        animation: this._getAnimationOptions(),
         plugins: {
           legend: {
             position: this.isDashboard ? "bottom" : "right",
             labels: { color: colors.textColor },
           },
+          tooltip: this._getTooltipOptions(colors),
         },
       },
     };
@@ -381,6 +442,8 @@ export class ChartComponent {
     }
     const labels = Array.from(allX);
 
+    const stitchColors = [colors.primaryColor, colors.secondaryColor, colors.errorColor];
+
     const datasets = seriesList.map((series, idx) => {
       const pointMap = new Map();
       if (Array.isArray(series.data)) {
@@ -389,15 +452,45 @@ export class ChartComponent {
         }
       }
 
-      const seriesColor = series.color || (idx === 0 ? colors.primaryColor : colors.accentColor);
+      const seriesColor = this.isDashboard
+        ? stitchColors[idx % stitchColors.length]
+        : series.color || stitchColors[idx % stitchColors.length];
+
+      let fillColor = false;
+      if (this.isDashboard && idx === 0) {
+        fillColor = "rgba(192, 193, 255, 0.12)";
+        if (this.canvas && typeof this.canvas.getContext === "function") {
+          try {
+            const ctx = this.canvas.getContext("2d");
+            if (ctx && typeof ctx.createLinearGradient === "function") {
+              const gradient = ctx.createLinearGradient(0, 0, 0, 240);
+              gradient.addColorStop(0, "rgba(192, 193, 255, 0.28)");
+              gradient.addColorStop(1, "rgba(192, 193, 255, 0.0)");
+              fillColor = gradient;
+            }
+          } catch {
+            fillColor = "rgba(192, 193, 255, 0.12)";
+          }
+        }
+      }
 
       return {
         label: series.id,
         data: labels.map((x) => pointMap.get(x) ?? null),
         borderColor: seriesColor,
-        backgroundColor: seriesColor,
-        tension: 0.3,
-        fill: false,
+        backgroundColor: fillColor || seriesColor,
+        tension: 0.4,
+        fill: Boolean(fillColor),
+        borderWidth: this.isDashboard ? 2.5 : 2,
+        pointRadius: this.isDashboard ? 3.5 : 3,
+        pointHoverRadius: 6.5,
+        pointBackgroundColor: colors.cardBg,
+        pointBorderColor: seriesColor,
+        pointBorderWidth: 2,
+        pointHoverBackgroundColor: seriesColor,
+        pointHoverBorderColor: "#ffffff",
+        pointHoverBorderWidth: 2,
+        borderDash: this.isDashboard && idx === 2 ? [3, 3] : undefined,
       };
     });
 
@@ -407,27 +500,43 @@ export class ChartComponent {
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        animation: this._getAnimationOptions(),
+        interaction: {
+          mode: "index",
+          intersect: false,
+        },
+        hover: {
+          mode: "index",
+          intersect: false,
+        },
         plugins: {
           legend: {
             display: !this.isDashboard,
             labels: { color: colors.textColor },
           },
+          tooltip: this._getTooltipOptions(colors),
         },
         scales: {
           x: {
-            ticks: { color: colors.textColor },
-            grid: { color: colors.borderColor },
+            ticks: {
+              color: colors.textColor,
+              font: { family: "'JetBrains Mono', monospace", size: 10 },
+            },
+            grid: { display: false },
           },
           y: {
-            ticks: { color: colors.textColor },
-            grid: { color: colors.borderColor },
+            ticks: {
+              color: colors.textColor,
+              font: { family: "'JetBrains Mono', monospace", size: 10 },
+            },
+            grid: { color: "rgba(255, 255, 255, 0.05)", borderDash: [4, 4] },
           },
         },
       },
     };
   }
 
-  _buildGeoConfig(_colors) {
+  _buildGeoConfig(colors) {
     const metrics = Array.isArray(this.data) ? this.data : [];
     const metricMap = new Map(metrics.map((m) => [m.id, m.value]));
 
@@ -444,6 +553,10 @@ export class ChartComponent {
               feature: d,
               value: metricMap.get(d.id) ?? 0,
             })),
+            borderColor: "rgba(255, 255, 255, 0.08)",
+            borderWidth: 0.5,
+            hoverBorderColor: "#c0c1ff",
+            hoverBorderWidth: 1.5,
           },
         ],
       },
@@ -452,9 +565,19 @@ export class ChartComponent {
         maintainAspectRatio: false,
         showOutline: true,
         showGraticule: !this.isDashboard,
+        animation: this._getAnimationOptions(),
         plugins: {
           legend: {
             display: false,
+          },
+          tooltip: {
+            ...this._getTooltipOptions(colors),
+            callbacks: {
+              label: (context) => {
+                const val = context.raw?.value ?? 0;
+                return ` Traffic: ${val.toLocaleString()}`;
+              },
+            },
           },
         },
         scales: {
@@ -464,10 +587,15 @@ export class ChartComponent {
           },
           color: {
             axis: "x",
-            quantize: 5,
+            interpolate: (v) => {
+              if (v === 0) return "#201f22";
+              if (v < 0.25) return "#2a2a2c";
+              if (v < 0.5) return "rgba(123, 208, 255, 0.45)";
+              if (v < 0.75) return "rgba(123, 208, 255, 0.85)";
+              return "#4edea3";
+            },
             legend: {
-              position: "bottom-right",
-              align: "bottom",
+              display: false,
             },
           },
         },
