@@ -80,7 +80,7 @@ export class DashboardView {
     this.element.setAttribute("aria-labelledby", "dashboard-title");
 
     this.element.innerHTML = `
-      <header class="scene-header bento-header" style="display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 1rem; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-subtle); flex-wrap: wrap; gap: 1rem;">
+      <header class="scene-header bento-header" style="display: flex; flex-direction: row; justify-content: space-between; align-items: flex-end; width: 100%; padding-bottom: 1rem; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-subtle); flex-wrap: wrap; gap: 1rem;">
         <div class="scene-header-left">
           <nav class="scene-breadcrumbs" aria-label="Breadcrumb" style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem; font-family: var(--font-mono);">
             <span class="breadcrumb-item">Overview</span>
