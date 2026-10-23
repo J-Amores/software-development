@@ -19,6 +19,7 @@ import {
   Tooltip,
   Legend,
   Colors,
+  Filler,
 } from "chart.js";
 import { ChoroplethController, GeoFeature, ColorScale, ProjectionScale } from "chartjs-chart-geo";
 import { geoFeatures } from "../../../../data/mockGeoFeatures.js";
@@ -44,6 +45,7 @@ function ensureChartRegistered() {
       Tooltip,
       Legend,
       Colors,
+      Filler,
       ChoroplethController,
       GeoFeature,
       ColorScale,

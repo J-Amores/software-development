@@ -1,249 +1,161 @@
 ---
 name: Executive Kinetic Carbon
+version: 1.0.0
 colors:
-  surface: "#131315"
-  surface-dim: "#131315"
-  surface-bright: "#39393b"
-  surface-container-lowest: "#0e0e10"
-  surface-container-low: "#1c1b1d"
-  surface-container: "#201f22"
-  surface-container-high: "#2a2a2c"
-  surface-container-highest: "#353437"
-  on-surface: "#e5e1e4"
-  on-surface-variant: "#c7c4d7"
-  inverse-surface: "#e5e1e4"
-  inverse-on-surface: "#313032"
-  outline: "#908fa0"
-  outline-variant: "#464554"
-  surface-tint: "#c0c1ff"
-  primary: "#c0c1ff"
-  on-primary: "#1000a9"
-  primary-container: "#8083ff"
-  on-primary-container: "#0d0096"
-  inverse-primary: "#494bd6"
-  secondary: "#4edea3"
-  on-secondary: "#003824"
-  secondary-container: "#00a572"
-  on-secondary-container: "#00311f"
-  tertiary: "#7bd0ff"
-  on-tertiary: "#00354a"
-  tertiary-container: "#009bd1"
-  on-tertiary-container: "#002d40"
-  error: "#ffb4ab"
-  on-error: "#690005"
-  error-container: "#93000a"
-  on-error-container: "#ffdad6"
-  primary-fixed: "#e1e0ff"
-  primary-fixed-dim: "#c0c1ff"
-  on-primary-fixed: "#07006c"
-  on-primary-fixed-variant: "#2f2ebe"
-  secondary-fixed: "#6ffbbe"
-  secondary-fixed-dim: "#4edea3"
-  on-secondary-fixed: "#002113"
-  on-secondary-fixed-variant: "#005236"
-  tertiary-fixed: "#c4e7ff"
-  tertiary-fixed-dim: "#7bd0ff"
-  on-tertiary-fixed: "#001e2c"
-  on-tertiary-fixed-variant: "#004c69"
-  background: "#131315"
-  on-background: "#e5e1e4"
-  surface-variant: "#353437"
+  primary: "#6366F1"
+  secondary: "#10B981"
+  accent: "#6366F1"
+  surface: "#14161F"
+  background: "#0C0D12"
+  border: "#222536"
+  danger: "#EF4444"
+  success: "#10B981"
 typography:
-  display-hero:
+  headline-display:
     fontFamily: Inter
-    fontSize: 40px
-    fontWeight: "600"
-    lineHeight: 48px
-  display-hero-mobile:
-    fontFamily: Inter
-    fontSize: 30px
-    fontWeight: "600"
-    lineHeight: 38px
+    fontSize: 32px
+    fontWeight: 600
+    lineHeight: 1.2
   headline-lg:
     fontFamily: Inter
     fontSize: 24px
-    fontWeight: "600"
-    lineHeight: 32px
+    fontWeight: 600
+    lineHeight: 1.3
   headline-md:
     fontFamily: Inter
     fontSize: 20px
-    fontWeight: "600"
-    lineHeight: 28px
-  headline-sm:
-    fontFamily: Inter
-    fontSize: 16px
-    fontWeight: "600"
-    lineHeight: 24px
+    fontWeight: 600
+    lineHeight: 1.4
   body-lg:
     fontFamily: Inter
-    fontSize: 15px
-    fontWeight: "400"
-    lineHeight: 22px
+    fontSize: 16px
+    fontWeight: 400
+    lineHeight: 1.5
   body-md:
     fontFamily: Inter
-    fontSize: 13px
-    fontWeight: "400"
-    lineHeight: 18px
+    fontSize: 14px
+    fontWeight: 400
+    lineHeight: 1.5
   body-sm:
     fontFamily: Inter
     fontSize: 12px
-    fontWeight: "400"
-    lineHeight: 16px
-  mono-kpi-lg:
+    fontWeight: 400
+    lineHeight: 1.5
+  mono-code:
     fontFamily: JetBrains Mono
-    fontSize: 28px
-    fontWeight: "600"
-    lineHeight: 34px
-  mono-kpi-md:
+    fontSize: 13px
+    fontWeight: 400
+    lineHeight: 1.4
+  mono-numbers:
     fontFamily: JetBrains Mono
-    fontSize: 20px
-    fontWeight: "500"
-    lineHeight: 26px
-  mono-data-table:
-    fontFamily: JetBrains Mono
-    fontSize: 12px
-    fontWeight: "400"
-    lineHeight: 16px
-  mono-badge:
-    fontFamily: JetBrains Mono
-    fontSize: 11px
-    fontWeight: "500"
-    lineHeight: 14px
-  label-caps:
-    fontFamily: Inter
-    fontSize: 11px
-    fontWeight: "600"
-    lineHeight: 14px
+    fontSize: 14px
+    fontWeight: 500
+    lineHeight: 1.4
 rounded:
-  sm: 0.125rem
-  DEFAULT: 0.25rem
-  md: 0.375rem
-  lg: 0.5rem
-  xl: 0.75rem
-  full: 9999px
+  sm: 6px
+  md: 8px
+  lg: 12px
 spacing:
-  gutter: 1rem
-  gutter-lg: 1.25rem
-  margin: 1.5rem
-  margin-mobile: 1rem
-  space-xs: 0.25rem
-  space-sm: 0.5rem
-  space-md: 0.75rem
-  space-lg: 1.25rem
-  space-xl: 1.75rem
+  xs: 4px
+  sm: 8px
+  md: 16px
+  lg: 24px
+  xl: 32px
 ---
 
-## Brand & Style
+## Overview
 
-This design system embodies high-velocity operational command and executive precision. Engineered for enterprise leadership, quantitative analysts, and system operators, the aesthetic synthesizes the focused utility of developer platforms like Linear and Raycast with the refined polish of Stripe.
+Executive Kinetic Carbon is an operational, high-density executive dashboard design system inspired by LUNO Admin, built for precision, rapid telemetry scanning, and rock-solid responsive reliability.
 
-### Core Tenets
+### Visual Aesthetic & Philosophy
 
-- **Obsidian Density & Clarity:** High information density without visual noise. Data stands unhindered against deep carbon backdrops.
-- **Micro-Engineered Craft:** Hairline dividers, subtle inner glow reflections, and crisp typographic hierarchy signal elite engineering quality.
-- **Tactile Fluidity:** Every state transition feels immediate, crisp, and predictable, invoking confidence during critical operational monitoring.
-
-### Visual Aesthetic
-
-Minimalist Modern with Glassmorphic Precision. Surfaces are structured in layered dark carbon tiers accented by razor-thin borders, subtle backdrop blur filters, and vibrant luminescence reserved strictly for status updates, actionable data paths, and vital enterprise metrics.
+- **Obsidian Executive Carbon:** Interfaces emphasize an authoritative dark mode palette anchored in obsidian carbon (`#0C0D12` canvas and `#14161F` cards), elevated panels (`#1B1E2B`), electric indigo primary actions (`#6366F1`), and emerald jade status indicators (`#10B981`).
+- **High Data Density:** Whitespace is disciplined and purposeful. Bento-style modular groupings, compact data tables, and structured KPI widgets present mission-critical telemetry without needless fluff or cognitive drag.
+- **Zero Decorative Gimmicks:** Visual hierarchy is established solely through tonal stratification, specular hairline framing (`box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.07)`), and cryptographic tabular numbers.
 
 ## Colors
 
-The color architecture is built around an uncompromising dark carbon baseline, engineered with an inverted crisp slate counterpart for light mode.
+The color palette prioritizes high contrast (meeting WCAG AA standards), legible data presentation, and explicit status communication.
 
-### Dark Mode Palette (Default)
-
-- **Base Canvas (`#09090b`):** Deep zinc/carbon canvas minimizing eye strain while emphasizing illuminated metrics.
-- **Card Surface (`#121215`):** Elevated container layer providing soft separation from the primary background.
-- **Interactive Surface / Hover (`#18181b`):** Dynamic feedback color for table rows, clickable list items, and active states.
-- **Hairline Border (`rgba(255, 255, 255, 0.08)`): Crisp 1px structural framing.
-- **Primary Accent (`#6366f1`):** Electric Indigo for key actions, primary interactive selections, and focal analytics points.
-- **Secondary / Metric Health (`#10b981`):** Vivid Emerald designating positive momentum, live operational health, and fiscal gains.
-- **Warning / Alert (`#f59e0b` & `#ef4444`):** Controlled amber and crimson hues utilized sparingly for anomalies and operational bottlenecks.
-
-### Light Mode Contrast Tier
-
-- **Canvas Base (`#f8fafc`):** Crisp alabaster slate foundation.
-- **Elevated Card (`#ffffff`):** Pure white container surfaces framed with `rgba(0, 0, 0, 0.08)` borders and soft micro-drop shadows.
-- **Interactive / Hover (`#f1f5f9`):** Subtle neutral tint for tactile feedback.
+- **Primary (`#6366F1`):** Electric indigo foundation for primary interactive affordances, active navigation pills, and critical highlights.
+- **Secondary (`#10B981`):** Emerald jade for healthy status indicators, positive delta pills, and completed tasks.
+- **Accent (`#6366F1`):** Electric indigo accent reserved for key interactive actions.
+- **Surface (`#14161F`):** Deep carbon container canvas for content cards, data tables, and bento modules.
+- **Background (`#0C0D12`):** Obsidian dark application canvas base providing contrast under elevated cards.
+- **Border (`#222536`):** Hairline 1px border for containers, cards, table row dividers, and input strokes.
+- **Danger (`#EF4444`):** Vibrant red for error states, destructive triggers, and negative operational alerts.
+- **Success (`#10B981`):** Emerald jade for positive delta pills and healthy metrics.
 
 ## Typography
 
-Typography establishes an intentional distinction between human interface navigation and raw computational telemetry.
+Typography enforces a strict semantic separation between prose UI navigation and computational telemetry.
 
-### Font Pairing Strategy
-
-- **Inter:** Drives all navigational labels, structural section headers, and prose content. Its neutral, engineered curves ensure uncompromised legibility across complex multi-panel dashboard layouts.
-- **JetBrains Mono:** Dedicated to numeric KPIs, telemetry status, financial values, dates, and tabular tables. Must always be styled with `font-feature-settings: "tnum" on, "zero" on` to guarantee rigid vertical alignment across rapidly recalculating rows.
-
-### Header Casing & Metric Weighting
-
-Category eyebrows and sidebar sub-group titles utilize `label-caps` in uppercase with letter spacing of `+0.06em`. Numeric metric headers prioritize bold weights (`600`) to let users scan large bento dashboards effortlessly.
+- **Inter:** Drives all navigational labels, structural section headers, and prose content. Neutral, highly legible geometric curves sustain readability across complex multi-panel dashboard views.
+- **JetBrains Mono:** Dedicated to numeric KPIs, telemetry status, financial values, timestamps, and data tables. Must always be configured with tabular lining numbers (`font-feature-settings: "tnum" on, "zero" on`) to guarantee rigid vertical column alignment across live recalculating data.
 
 ## Layout & Spacing
 
-The layout model is driven by an asymmetric Bento-box modular grid. Information is organized in high-utility spatial modules designed to maximize screen real estate and prioritize cognitive throughput.
+Information is organized in responsive modular layouts designed to maximize screen utility and eliminate accidental layout shift.
 
-### Grid & Layout Rules
+### Breakpoint Constraints & Navigation
 
-- **Desktop (1280px+):** Fixed 240px or 280px left navigation sidebar paired with a 12-column fluid grid canvas using `1.25rem` (`20px`) gutters. Bento blocks span flexible units (e.g., 3-col KPI cards, 8-col chart modules, 4-col real-time transaction ledgers).
-- **Tablet (768px - 1279px):** Sidebar collapses to an icon rail (64px) or slide-over drawer. Bento grid shifts to an 8-column layout with `1rem` gutters.
-- **Mobile (<768px):** Single-column stacked stream with `margin-mobile` of `1rem`. Secondary telemetry panes wrap cleanly under main metric aggregates.
+- **Desktop (1280px+ & 1440px):** Permanent 240px or 256px left navigation rail paired with a fluid multi-column grid canvas. Gutters utilize `spacing.lg` (`24px`).
+- **Tablet (768px - 1279px):** Navigation rail collapses into an icon strip or responsive drawer. Bento cards reflow into 2-column aggregates.
+- **Mobile (<768px):** Navigation collapses completely into a sliding drawer triggered by a persistent header hamburger button. All bento modules stack vertically into a single fluid stream with `spacing.md` (`16px`) padding. Zero horizontal scrolling is strictly enforced (`scrollWidth <= clientWidth`).
 
-### Internal Spacing Rhythm
+### Container & Overflow Rules
 
-Component interiors rely on compact vertical and horizontal padding (`space-md` for standard cards, `space-lg` for primary visual charts) to sustain enterprise information density without visual crowding.
+- **No Unstyled Card Overflow:** Cards and tables must handle internal overflowing content gracefully using scroll containers (`overflow-x-auto` with styled scrollbars) or text truncation (`truncate`). Content must never push past the parent container bounds or trigger viewport horizontal scroll.
 
 ## Elevation & Depth
 
-Visual hierarchy does not rely on heavy drop shadows. Instead, depth is constructed via **Tonal Stratification**, **Frosted Glass**, and **Hairline Stroke Definition**.
+Depth is constructed via subtle tonal layering and razor-thin hairline borders rather than heavy drop shadows.
 
-### Surface Hierarchy
-
-1. **Level 0 (Canvas):** `#09090b` flat background.
-2. **Level 1 (Bento Tile):** Background `#121215` with a 1px solid `rgba(255, 255, 255, 0.08)` outline. Subdued ambient glow under hovered surfaces (`0 8px 24px -4px rgba(0, 0, 0, 0.6)`).
-3. **Level 2 (Popovers, Command Palette & Menus):** Semi-transparent `#18181b` with `backdrop-filter: blur(16px)` and an elevated perimeter border of `rgba(255, 255, 255, 0.14)`.
-4. **Level 3 (Modal Dialogs):** `#18181b` positioned above a `rgba(0, 0, 0, 0.75)` backdrop blur overlay (`blur(8px)`), bounded by `0 20px 32px -8px rgba(0, 0, 0, 0.8)`.
-
-### Inner Stroke Reflections
-
-Cards feature an optional top-edge specular highlight: `box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06)`. This mimics hardware-milled precision edges seen in top-tier executive tools.
+- **Level 0 (App Canvas):** Flat `#0C0D12` obsidian canvas.
+- **Level 1 (Cards & Bento Modules):** `#14161F` surface bounded by a 1px solid `#222536` stroke with specular highlight (`inset 0 1px 0 0 rgba(255, 255, 255, 0.07)`).
+- **Level 2 (Dropdowns & Popovers):** `#1B1E2B` with `box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3)` and 1px `#222536` border.
+- **Level 3 (Modal Dialogs):** `#14161F` elevated above a `rgba(0, 0, 0, 0.65)` backdrop overlay, bounded by `0 8px 24px -4px rgba(0, 0, 0, 0.6)`.
 
 ## Shapes
 
-The design system maintains a refined, technical geometry. Soft corner radii (`0.375rem` to `0.5rem`) are used consistently across cards and controls to maintain an authoritative, developer-grade feel.
+A clean, modern geometric profile reinforces developer-grade utility.
 
-### Corner Radii Guidelines
-
-- **Base Components (Inputs, Buttons, Dropdowns):** `rounded` (`0.25rem` to `0.375rem`) for a precise, engineered profile.
-- **Bento Modules & Containers:** `rounded-lg` (`0.5rem`) to frame large content groups cleanly.
-- **Status Pills, Tags, & Badges:** Full pill radius (`9999px`) to create an immediate visual contrast against structural rectangular containers.
+- **Inputs, Buttons, Badges (`rounded.sm` / `rounded.md`):** `6px` or `8px` corner radius provides engineered crispness.
+- **Cards, Bento Containers, Tables (`rounded.lg`):** `12px` corner radius delivers consistent container framing.
+- **Status Pills & Chips:** Fully rounded (`rounded-full` / `9999px`) to contrast against rectangular cards.
 
 ## Components
 
 ### Buttons
 
-- **Primary:** Background `#6366f1`, text `#ffffff`, font Inter weight 500. Box shadow: `inset 0 1px 0 rgba(255,255,255,0.2), 0 2px 4px rgba(99,102,241,0.3)`. Hover: `#4f46e5`.
-- **Secondary / Ghost:** Transparent background with 1px border `rgba(255, 255, 255, 0.12)`, text `#e4e4e7`. Hover: Background `#18181b`.
-- **Icon Utility:** Square aspect ratio (`32x32px` or `36x36px`), centered vector glyph, 1px border `rgba(255,255,255,0.08)`, subtle hover brightness shift.
+- **Primary:** Background `#6366F1`, text `#FFFFFF`, font Inter 500 weight, radius `6px` (`rounded.sm`), padding `8px 16px`. Focus ring: `2px solid #6366F1`.
+- **Secondary / Ghost:** Background transparent, border 1px solid `#222536`, text `#E5E1E4`, hover background `#1B1E2B`.
 
-### Bento Analytics Cards
+### Data Cards & Bento Modules
 
-- Formed by a container of `#121215`, wrapped in a 1px border `rgba(255, 255, 255, 0.08)`.
-- Internal layout: Top row with metric title in uppercase (`label-caps`), subtle sparkline or context indicator, followed by large tabular KPI readout (`mono-kpi-lg`). Bottom section highlights delta pill (`+14%` in Emerald with green low-opacity background).
+- Elevated `#14161F` surface, 1px solid `#222536` border with specular hairline, `12px` corner radius, internal padding `16px` to `24px`.
+- Card headers feature uppercase section labels (`Inter 12px font-semibold text-secondary`), followed by large numeric metric readouts (`JetBrains Mono 24px font-semibold text-primary`).
 
-### Badges & Status Indicators
+### Data Tables
 
-- **Operational Status Pills:** JetBrains Mono font (`mono-badge`), padding `2px 8px`, border-radius `9999px`.
-- **Healthy / Live:** Text `#10b981`, background `rgba(16, 185, 129, 0.12)`, border `1px solid rgba(16, 185, 129, 0.25)`. A 6px pulsing dot anchors the left edge.
-- **Neutral / Informational:** Text `#a1a1aa`, background `rgba(255, 255, 255, 0.05)`, border `1px solid rgba(255, 255, 255, 0.08)`.
+- Clean carbon container with `#222536` hairline dividers.
+- Numeric columns right-aligned with JetBrains Mono tabular numbers.
+- Responsive wrapping: below 768px, tables enable horizontal scrolling inside the card container with visible scroll indicators.
 
-### Data Tables & Transaction Ledgers
+## Do's and Don'ts
 
-- Striped or bordered rows using `1px solid rgba(255, 255, 255, 0.04)`.
-- Numeric data columns right-aligned with JetBrains Mono numbers.
-- Hover state: Entire row transitions to `#18181b` in 120ms linear ease.
+### Do's
 
-### Form Inputs & Filters
+- Do maintain high information density with compact spacing (`xs: 4px`, `sm: 8px`, `md: 16px`).
+- Do use tabular lining numbers (`JetBrains Mono`) for all financial, KPI, timestamp, and numeric tabular data.
+- Do collapse the navigation sidebar into a slide-over drawer below 768px.
+- Do enforce zero horizontal scroll across the entire HTML document on mobile and tablet.
+- Do use hairline `#222536` borders with specular highlights for card and module definition.
 
-- Background `#09090b` inset into the card surface, border 1px solid `rgba(255, 255, 255, 0.1)`. Focus state applies a crisp ring: `box-shadow: 0 0 0 1px #6366f1`. Placeholder text styled in muted zinc `#71717a`.
+### Don'ts
+
+- Don't use decorative neon gradients (e.g., purple-to-pink or cyan-to-lime glow effects).
+- Don't allow unstyled card overflow that bleeds outside container boundaries.
+- Don't keep a fixed 240px desktop sidebar visible on viewports narrower than 768px.
+- Don't use heavy, muddy drop shadows to convey depth.
+- Don't mix random border radii across components (strictly adhere to 6px, 8px, and 12px).

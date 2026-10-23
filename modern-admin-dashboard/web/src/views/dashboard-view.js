@@ -184,8 +184,8 @@ export class DashboardView {
             <span class="transaction-txid font-mono">${tx.txId}</span>
             <span class="transaction-user">${tx.user}</span>
           </div>
-          <span class="transaction-date font-mono">${formatDate(tx.date)}</span>
-          <span class="transaction-amount-badge font-mono">+${formatCurrency(tx.amount)}</span>
+          <span class="transaction-date font-mono tabular-nums">${formatDate(tx.date)}</span>
+          <span class="transaction-amount-badge font-mono tabular-nums">+${formatCurrency(tx.amount)}</span>
         </div>
       `,
       )
@@ -194,11 +194,11 @@ export class DashboardView {
     contentEl.innerHTML = `
       <div class="dashboard-grid">
         <!-- Row 1: 4 Executive Bento KPI StatCards (3 Cols Each) -->
-        <div class="bento-card col-span-3 statbox-card stagger-item" data-testid="statbox-emails">
+        <div class="bento-card col-span-3 statbox-card specular-border stagger-item" id="statbox-emails" data-testid="statbox-emails">
           <div class="statbox-top">
             <div>
               <span class="statbox-subtitle font-mono text-muted uppercase tracking-wider text-[11px]">EMAILS SENT</span>
-              <div class="statbox-value font-mono font-bold" id="kpi-emails-val">${formatCurrency(invoicedRevenue)}</div>
+              <div class="statbox-value font-mono font-bold tabular-nums" id="kpi-emails-val">${formatCurrency(invoicedRevenue)}</div>
             </div>
             <div class="progress-gauge-wrapper">
               <svg class="progress-gauge" viewBox="0 0 36 36">
@@ -209,19 +209,23 @@ export class DashboardView {
             </div>
           </div>
           <div class="statbox-bottom">
-            <div class="statbox-badge font-mono" style="color: var(--color-secondary);">
+            <div class="statbox-badge font-mono tabular-nums" style="color: var(--color-secondary);">
               <span class="material-symbols-outlined" style="font-size: 14px;">trending_up</span>
               <span>+14.2%</span>
             </div>
             <span class="statbox-subtitle">Emails Sent</span>
           </div>
+          <div class="statbox-submetric">
+            <span class="statbox-submetric-label">INVOICED TOTAL</span>
+            <span class="statbox-submetric-val font-mono tabular-nums">${summary.invoicedRevenue?.count ?? 0} Invoices</span>
+          </div>
         </div>
 
-        <div class="bento-card col-span-3 statbox-card stagger-item" data-testid="statbox-sales">
+        <div class="bento-card col-span-3 statbox-card specular-border stagger-item" id="statbox-sales" data-testid="statbox-sales">
           <div class="statbox-top">
             <div>
               <span class="statbox-subtitle font-mono text-muted uppercase tracking-wider text-[11px]">SALES OBTAINED</span>
-              <div class="statbox-value font-mono font-bold" id="kpi-sales-val">${formatCurrency(txVolume)}</div>
+              <div class="statbox-value font-mono font-bold tabular-nums" id="kpi-sales-val">${formatCurrency(txVolume)}</div>
             </div>
             <div class="progress-gauge-wrapper">
               <svg class="progress-gauge" viewBox="0 0 36 36">
@@ -232,19 +236,23 @@ export class DashboardView {
             </div>
           </div>
           <div class="statbox-bottom">
-            <div class="statbox-badge font-mono" style="color: var(--color-secondary);">
+            <div class="statbox-badge font-mono tabular-nums" style="color: var(--color-secondary);">
               <span class="material-symbols-outlined" style="font-size: 14px;">trending_up</span>
               <span>+21.4%</span>
             </div>
             <span class="statbox-subtitle">Sales Obtained</span>
           </div>
+          <div class="statbox-submetric">
+            <span class="statbox-submetric-label">TX VOLUME</span>
+            <span class="statbox-submetric-val font-mono tabular-nums">${summary.transactionVolume?.count ?? 0} Transactions</span>
+          </div>
         </div>
 
-        <div class="bento-card col-span-3 statbox-card stagger-item" data-testid="statbox-clients">
+        <div class="bento-card col-span-3 statbox-card specular-border stagger-item" id="statbox-clients" data-testid="statbox-clients">
           <div class="statbox-top">
             <div>
               <span class="statbox-subtitle font-mono text-muted uppercase tracking-wider text-[11px]">NEW CLIENTS</span>
-              <div class="statbox-value font-mono font-bold" id="kpi-clients-val">${activeContacts.toLocaleString()}</div>
+              <div class="statbox-value font-mono font-bold tabular-nums" id="kpi-clients-val">${activeContacts.toLocaleString()}</div>
             </div>
             <div class="progress-gauge-wrapper">
               <svg class="progress-gauge" viewBox="0 0 36 36">
@@ -255,52 +263,60 @@ export class DashboardView {
             </div>
           </div>
           <div class="statbox-bottom">
-            <div class="statbox-badge font-mono" style="color: var(--color-secondary);">
+            <div class="statbox-badge font-mono tabular-nums" style="color: var(--color-secondary);">
               <span class="material-symbols-outlined" style="font-size: 14px;">trending_up</span>
               <span>+8.1%</span>
             </div>
             <span class="statbox-subtitle">New Clients</span>
           </div>
+          <div class="statbox-submetric">
+            <span class="statbox-submetric-label">ACTIVE CONTACTS</span>
+            <span class="statbox-submetric-val font-mono tabular-nums">${activeContacts} Active</span>
+          </div>
         </div>
 
-        <div class="bento-card col-span-3 statbox-card stagger-item" data-testid="statbox-traffic">
+        <div class="bento-card col-span-3 statbox-card specular-border stagger-item" id="statbox-traffic" data-testid="statbox-traffic">
           <div class="statbox-top">
             <div>
               <span class="statbox-subtitle font-mono text-muted uppercase tracking-wider text-[11px]">TRAFFIC RECEIVED</span>
-              <div class="statbox-value font-mono font-bold" id="kpi-traffic-val">${teamMembers.toLocaleString()}</div>
+              <div class="statbox-value font-mono font-bold tabular-nums" id="kpi-traffic-val">${teamMembers.toLocaleString()}</div>
             </div>
             <div class="progress-gauge-wrapper">
               <svg class="progress-gauge" viewBox="0 0 36 36">
                 <path class="gauge-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--bg-surface-high)" stroke-width="3"></path>
                 <path class="gauge-fill" pathLength="100" data-target-offset="36" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--color-primary-action)" stroke-dasharray="100 100" stroke-dashoffset="100" stroke-linecap="round" stroke-width="3"></path>
               </svg>
-              <span class="material-symbols-outlined progress-gauge-icon" style="color: var(--color-primary-action);">traffic</span>
+              <span class="material-symbols-outlined progress-gauge-icon" style="color: var(--color-primary-action);">hub</span>
             </div>
           </div>
           <div class="statbox-bottom">
-            <div class="statbox-badge font-mono" style="color: var(--color-secondary);">
+            <div class="statbox-badge font-mono tabular-nums" style="color: var(--color-secondary);">
               <span class="material-symbols-outlined" style="font-size: 14px;">trending_up</span>
               <span>+43.5%</span>
             </div>
             <span class="statbox-subtitle">Traffic Received</span>
           </div>
+          <div class="statbox-submetric">
+            <span class="statbox-submetric-label">TEAM OPERATORS</span>
+            <span class="statbox-submetric-val font-mono tabular-nums">${teamMembers} Active</span>
+          </div>
         </div>
 
         <!-- Row 2: Revenue Generated Multi-Series Chart (8 cols) & Recent Transactions (4 cols) -->
-        <div class="bento-card col-span-8 dashboard-card-inner stagger-item" data-testid="card-revenue-chart">
+        <div class="bento-card col-span-8 dashboard-card-inner specular-border stagger-item" data-testid="card-revenue-chart">
           <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-hairline);">
             <div>
               <span class="card-title-eyebrow font-mono text-[11px] text-muted uppercase tracking-wider">Revenue Generated</span>
               <div style="display: flex; align-items: baseline; gap: 0.75rem; margin-top: 0.15rem;">
-                <h2 id="revenue-headline-val" class="card-title font-mono font-bold text-2xl text-secondary" style="margin: 0; color: var(--color-secondary);">$59,342.32</h2>
-                <span class="badge-yoy font-mono text-xs px-2 py-0.5 rounded border border-secondary" style="color: var(--color-secondary); background: rgba(78, 222, 163, 0.08); border-color: rgba(78, 222, 163, 0.25);">+18.4% YOY</span>
+                <h2 id="revenue-headline-val" class="card-title font-mono font-bold text-2xl tabular-nums" style="margin: 0; color: var(--color-secondary);">$59,342.32</h2>
+                <span class="badge-yoy font-mono text-xs px-2 py-0.5 rounded border tabular-nums" style="color: var(--color-secondary); background: var(--color-success-subtle); border-color: var(--color-success-border);">+18.4% YOY</span>
               </div>
             </div>
             <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
               <div class="series-legend-chips">
-                <span class="series-chip"><span class="series-chip-dot" style="background: var(--color-primary);"></span> ARR</span>
-                <span class="series-chip"><span class="series-chip-dot" style="background: var(--color-secondary);"></span> MRR</span>
-                <span class="series-chip"><span class="series-chip-dot" style="background: var(--color-error-light);"></span> Expansion</span>
+                <span class="series-chip"><span class="series-chip-dot" style="background: var(--color-primary);"></span> Yield Telemetry</span>
+                <span class="series-chip"><span class="series-chip-dot" style="background: var(--color-secondary);"></span> Mesh Throughput</span>
+                <span class="series-chip"><span class="series-chip-dot" style="background: var(--color-error-light);"></span> Inflow Latency</span>
               </div>
               <div class="timeframe-pill-group" id="timeframe-pill-group">
                 <button type="button" class="timeframe-btn" data-range="1D">1D</button>
@@ -311,16 +327,19 @@ export class DashboardView {
               </div>
             </div>
           </div>
-          <div id="dashboard-line-chart-slot" class="dashboard-chart-container"></div>
+          <div id="dashboard-revenue-chart-slot" class="dashboard-chart-container" data-alias="dashboard-line-chart-slot"></div>
         </div>
 
-        <div class="bento-card col-span-4 transactions-card stagger-item" data-testid="card-recent-transactions">
+        <div class="bento-card col-span-4 transactions-card specular-border stagger-item" data-testid="card-recent-transactions">
           <div class="card-header">
             <div style="display: flex; align-items: center; gap: 0.5rem;">
-              <span class="material-symbols-outlined" style="font-size: 18px; color: var(--color-primary);">receipt_long</span>
-              <h2 class="card-title font-sans font-semibold text-sm" style="margin: 0; color: var(--text-primary);">Recent Transactions</h2>
+              <span class="material-symbols-outlined" style="font-size: 18px; color: var(--color-primary);">history</span>
+              <div>
+                <h2 class="card-title font-sans font-semibold text-sm" style="margin: 0; color: var(--text-primary); line-height: 1.2;">Recent Transactions</h2>
+                <span class="text-label-caps font-label-caps text-muted" style="font-size: 10px;">Active Settlement Ledger</span>
+              </div>
             </div>
-            <span class="font-mono text-xs text-muted">${recentTx.length} total</span>
+            <span class="font-mono text-xs text-muted tabular-nums">${recentTx.length} total</span>
           </div>
           <div class="transactions-list custom-scroll">
             ${txRowsHtml || '<div class="empty-state" style="padding: 1rem; text-align: center; color: var(--text-muted); font-size: 0.8125rem;">No recent transactions recorded.</div>'}
@@ -331,91 +350,101 @@ export class DashboardView {
         </div>
 
         <!-- Row 3: Campaign (4 cols) + Sales Quantity Bar (4 cols) + Geography Traffic (4 cols) -->
-        <div class="bento-card col-span-4 campaign-card stagger-item" data-testid="card-campaign">
+        <div class="bento-card col-span-4 campaign-card specular-border stagger-item" data-testid="card-campaign">
           <div class="card-header">
-            <h2 class="card-title font-mono text-[11px] text-muted uppercase tracking-wider" style="margin: 0;">Campaign</h2>
-            <span class="badge-status font-mono text-[10px] px-2 py-0.5 rounded-full" style="color: var(--color-secondary); background: rgba(78, 222, 163, 0.1);">Active</span>
+            <div>
+              <span class="font-mono text-[10px] text-muted uppercase tracking-wider block">Campaign</span>
+              <h2 class="card-title font-sans font-semibold text-sm" style="margin: 0; color: var(--text-primary);">Fulfillment & Margin</h2>
+            </div>
+            <span class="badge-status font-mono text-[10px] px-2 py-0.5 rounded-full" style="color: var(--color-secondary); background: var(--color-success-subtle); border: 1px solid var(--color-success-border);">Active</span>
           </div>
           <div class="campaign-content">
             <div style="position: relative; width: 140px; height: 140px; display: flex; align-items: center; justify-content: center;">
               <svg style="width: 140px; height: 140px; transform: rotate(-90deg);" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" fill="none" r="40" stroke="var(--bg-surface-high)" stroke-width="8"></circle>
-                <circle class="campaign-ring-fill" cx="50" cy="50" fill="none" r="40" stroke="var(--color-secondary)" stroke-dasharray="251.3 251.3" stroke-dashoffset="251.3" data-target-offset="40.2" stroke-linecap="round" stroke-width="8"></circle>
-                <circle class="campaign-ring-fill" cx="50" cy="50" fill="none" r="40" stroke="var(--color-primary)" stroke-dasharray="50 251.3" stroke-dashoffset="251.3" data-target-offset="-160" stroke-linecap="round" stroke-width="8"></circle>
+                <circle cx="50" cy="50" fill="none" r="42" stroke="var(--bg-surface-high)" stroke-width="8"></circle>
+                <circle class="campaign-ring-fill" cx="50" cy="50" fill="none" r="42" stroke="var(--color-secondary)" stroke-dasharray="264" stroke-dashoffset="264" data-target-offset="52" stroke-linecap="round" stroke-width="8"></circle>
+                <circle class="campaign-ring-fill" cx="50" cy="50" fill="none" r="32" stroke="var(--color-primary)" stroke-dasharray="200" stroke-dashoffset="200" data-target-offset="60" stroke-linecap="round" stroke-width="4"></circle>
               </svg>
               <div style="position: absolute; display: flex; flex-direction: column; align-items: center; text-align: center;">
-                <span class="font-mono font-bold text-xl text-on-surface">84%</span>
-                <span class="text-[10px] text-muted font-sans uppercase tracking-wider">TARGET</span>
+                <span class="font-mono font-bold text-xl tabular-nums" style="color: var(--color-secondary);">88.4%</span>
+                <span class="text-[10px] text-muted font-mono uppercase tracking-wider">EFFICIENCY</span>
               </div>
             </div>
-            <div class="campaign-amount font-mono" style="margin-top: 0.25rem;">$48,352 revenue generated</div>
+            <div class="campaign-amount font-mono tabular-nums" style="margin-top: 0.25rem;">$48,352 revenue generated</div>
             <div class="campaign-desc font-sans text-muted">Includes extra misc expenditures and recurring client quotas.</div>
           </div>
           <div class="campaign-footer font-sans">
             <div>
-              <div class="text-[11px] text-muted font-mono">Target</div>
-              <div class="font-mono font-semibold text-sm text-primary">$57,500</div>
+              <div class="text-[10px] text-muted font-mono uppercase">Target Yield</div>
+              <div class="font-mono font-semibold text-sm text-primary tabular-nums">$52,000.00</div>
             </div>
             <div style="width: 1px; background: var(--border-hairline);"></div>
             <div>
-              <div class="text-[11px] text-muted font-mono">Efficiency</div>
-              <div class="font-mono font-semibold text-sm" style="color: var(--color-secondary);">+12.4%</div>
+              <div class="text-[10px] text-muted font-mono uppercase">Gross Margin</div>
+              <div class="font-mono font-semibold text-sm tabular-nums" style="color: var(--color-secondary);">92.8%</div>
             </div>
           </div>
         </div>
 
-        <div class="bento-card col-span-4 dashboard-card-inner stagger-item" data-testid="card-sales-chart">
+        <div class="bento-card col-span-4 dashboard-card-inner specular-border stagger-item" data-testid="card-sales-chart">
           <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-hairline);">
-            <h2 class="card-title font-mono text-[11px] text-muted uppercase tracking-wider" style="margin: 0;">Sales Quantity</h2>
-            <div style="display: flex; align-items: center; gap: 0.4rem;">
-              <span class="pulse-indicator-dot" style="background: var(--color-primary);"></span>
-              <span class="font-mono text-[11px] text-muted">Q3 / Q4</span>
+            <div>
+              <span class="font-mono text-[10px] text-muted uppercase tracking-wider block">Sales Quantity</span>
+              <h2 class="card-title font-sans font-semibold text-sm" style="margin: 0; color: var(--text-primary);">Regional Distribution</h2>
             </div>
+            <span class="font-mono text-[11px] px-2 py-0.5 rounded tabular-nums" style="color: var(--color-primary); background: var(--color-primary-subtle); border: 1px solid var(--color-primary-border);">${(summary.invoicedRevenue?.count || 0) + (summary.transactionVolume?.count || 0)} Units</span>
           </div>
           <div id="dashboard-bar-chart-slot" class="dashboard-chart-container"></div>
+          <div style="margin-top: 0.5rem; padding-top: 0.4rem; border-top: 1px solid var(--border-hairline); display: flex; justify-content: space-between; font-size: 0.75rem;">
+            <span class="text-muted">Active Cluster Nodes</span>
+            <span class="font-mono font-semibold tabular-nums" style="color: var(--color-secondary);">99.4% Synchronized</span>
+          </div>
         </div>
 
-        <div class="bento-card col-span-4 dashboard-card-inner stagger-item" data-testid="card-geography-chart">
+        <div class="bento-card col-span-4 dashboard-card-inner specular-border stagger-item" data-testid="card-geography-chart">
           <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-hairline);">
-            <h2 class="card-title font-mono text-[11px] text-muted uppercase tracking-wider" style="margin: 0;">Geography Based Traffic</h2>
+            <div>
+              <span class="font-mono text-[10px] text-muted uppercase tracking-wider block">Geography Based Traffic</span>
+              <h2 class="card-title font-sans font-semibold text-sm" style="margin: 0; color: var(--text-primary);">Telemetry Routing</h2>
+            </div>
             <span class="material-symbols-outlined" style="font-size: 18px; color: var(--text-muted);">public</span>
           </div>
           <div id="dashboard-geo-chart-slot" class="dashboard-geo-container"></div>
           <div class="geo-country-table">
             <div class="geo-country-row">
               <span class="geo-country-name font-sans">
-                <span class="pulse-indicator-dot" style="background: var(--color-secondary);"></span>
+                <span class="pulse-indicator-dot live-dot" style="background: var(--color-secondary);"></span>
                 United States
               </span>
-              <span class="geo-country-pct font-mono">48.2%</span>
+              <span class="geo-country-pct font-mono tabular-nums">48.2%</span>
             </div>
             <div class="geo-country-row">
               <span class="geo-country-name font-sans">
-                <span class="pulse-indicator-dot" style="background: var(--color-primary);"></span>
+                <span class="pulse-indicator-dot live-dot" style="background: var(--color-primary);"></span>
                 Germany
               </span>
-              <span class="geo-country-pct font-mono">22.4%</span>
+              <span class="geo-country-pct font-mono tabular-nums">22.4%</span>
             </div>
             <div class="geo-country-row">
               <span class="geo-country-name font-sans">
-                <span class="pulse-indicator-dot" style="background: var(--color-tertiary);"></span>
+                <span class="pulse-indicator-dot live-dot" style="background: var(--color-tertiary);"></span>
                 United Kingdom
               </span>
-              <span class="geo-country-pct font-mono">16.1%</span>
+              <span class="geo-country-pct font-mono tabular-nums">16.1%</span>
             </div>
             <div class="geo-country-row">
               <span class="geo-country-name font-sans">
                 <span class="pulse-indicator-dot" style="background: var(--color-error-light);"></span>
                 Japan
               </span>
-              <span class="geo-country-pct font-mono">13.3%</span>
+              <span class="geo-country-pct font-mono tabular-nums">13.3%</span>
             </div>
           </div>
-          <div class="geo-footer font-mono">
+          <div class="geo-footer font-mono tabular-nums">
             <span>Global Edge Nodes: 18 Active</span>
             <span style="color: var(--color-secondary); display: inline-flex; align-items: center; gap: 0.3rem;">
-              <span class="pulse-indicator-dot" style="background: var(--color-secondary);"></span>
-              18ms latency
+              <span class="pulse-indicator-dot live-dot" style="background: var(--color-secondary);"></span>
+              14.2ms / 48% load
             </span>
           </div>
         </div>
@@ -423,7 +452,9 @@ export class DashboardView {
     `;
 
     // Mount child mini-charts with Executive Kinetic Carbon theme
-    const lineSlot = contentEl.querySelector("#dashboard-line-chart-slot");
+    const lineSlot =
+      contentEl.querySelector("#dashboard-revenue-chart-slot") ||
+      contentEl.querySelector("#dashboard-line-chart-slot");
     if (lineSlot && charts.revenueLine) {
       this.lineChartComponent = new ChartComponent({
         type: "line",
@@ -543,13 +574,13 @@ export class DashboardView {
     // Filter points based on timeframe to morph the spline curve
     let sliceLen = 12;
     let targetRevenue = 59342.32;
-    if (range === "1D") {
+    if (range === "1D" || range === "24H") {
       sliceLen = 3;
       targetRevenue = 4820.5;
     } else if (range === "7D") {
       sliceLen = 5;
       targetRevenue = 16340.2;
-    } else if (range === "1M") {
+    } else if (range === "1M" || range === "30D") {
       sliceLen = 8;
       targetRevenue = 59342.32;
     } else if (range === "1Y") {

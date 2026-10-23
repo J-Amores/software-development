@@ -108,15 +108,30 @@ export class AppTopbar extends HTMLElement {
 
     this.innerHTML = `
       <header class="topbar-container glassmorphic-header" role="banner" style="position: sticky; top: 0; z-index: 30; height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; background: var(--bg-surface-lowest); border-bottom: 1px solid var(--border-subtle); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
-        <!-- Left: Quick Search with ⌘K palette hook -->
-        <div class="topbar-left" style="display: flex; align-items: center; gap: 1rem; width: 340px; position: relative;">
+        <!-- Left: Mobile Menu Toggle, Workspace Selector & Quick Search with ⌘K palette hook -->
+        <div class="topbar-left" style="display: flex; align-items: center; gap: 0.75rem; position: relative; max-width: 440px; flex: 1;">
+          <button 
+            type="button" 
+            class="topbar-mobile-toggle" 
+            id="mobile-sidebar-toggle" 
+            aria-label="Toggle navigation drawer"
+          >
+            <span class="material-symbols-outlined" style="font-size: 20px;">menu</span>
+          </button>
+
+          <div class="topbar-workspace font-mono text-xs px-2.5 py-1 rounded bg-surface border border-subtle" id="topbar-workspace-selector" title="Active Workspace" style="display: inline-flex; align-items: center; gap: 0.35rem; flex-shrink: 0;">
+            <span class="font-bold" style="color: var(--text-primary);">ADMIN OPS</span>
+            <span class="text-muted">/</span>
+            <span class="font-semibold" style="color: var(--color-primary); font-size: 10px;">Production</span>
+          </div>
+
           <div class="search-input-wrapper" style="position: relative; width: 100%;">
             <span class="material-symbols-outlined" style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); font-size: 18px; color: var(--text-muted); pointer-events: none;">search</span>
             <input 
               type="text" 
               id="global-search-input" 
               class="topbar-search-input font-sans text-xs" 
-              placeholder="Search metrics, telemetry, nodes... (⌘K)" 
+              placeholder="Search telemetry, TX hash, node ID... (⌘K)" 
               aria-label="Search dashboard and navigate routes"
               autocomplete="off"
               style="width: 100%; height: 36px; padding: 0 2.5rem 0 2.25rem; background: var(--bg-surface-low); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); color: var(--text-primary); font-size: 0.8125rem; outline: none; transition: border-color var(--transition-fast);"
@@ -136,10 +151,9 @@ export class AppTopbar extends HTMLElement {
 
         <!-- Right: Telemetry pill, Actions, Operator profile -->
         <div class="topbar-right" style="display: flex; align-items: center; gap: 0.85rem;">
-          <!-- Live Telemetry Pill -->
-          <div class="topbar-health-pill" id="topbar-health-pill" style="display: flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.65rem; border-radius: var(--radius-full); background: var(--bg-surface); border: 1px solid var(--border-subtle); font-family: var(--font-mono); font-size: 0.7rem; color: var(--color-secondary);">
-            <span class="pulse-indicator" style="color: var(--color-secondary);"><span class="pulse-indicator-dot"></span></span>
-            <span id="topbar-health-text">API: 99.98%</span>
+          <div class="topbar-health-pill font-mono tabular-nums" id="topbar-health-pill" style="display: flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.65rem; border-radius: var(--radius-full); background: var(--bg-surface); border: 1px solid var(--border-subtle); font-size: 0.7rem; color: var(--color-secondary);">
+            <span class="pulse-indicator" style="color: var(--color-secondary);"><span class="pulse-indicator-dot live-dot"></span></span>
+            <span id="topbar-health-text">API: Live</span>
           </div>
 
           <!-- Utility Icons -->
@@ -210,6 +224,14 @@ export class AppTopbar extends HTMLElement {
   }
 
   setupListeners() {
+    // Mobile navigation drawer toggle (decoupled event)
+    const mobileToggle = this.querySelector("#mobile-sidebar-toggle");
+    if (mobileToggle) {
+      mobileToggle.addEventListener("click", () => {
+        window.dispatchEvent(new CustomEvent("sidebar:toggle"));
+      });
+    }
+
     // Theme toggle button
     const toggleBtn = this.querySelector("#theme-toggle");
     if (toggleBtn) {
@@ -363,7 +385,8 @@ export class AppTopbar extends HTMLElement {
       const healthText = this.querySelector("#topbar-health-text");
       if (healthText) {
         if (health.status === "ok") {
-          const latency = health.database?.latencyMs ? `${health.database.latencyMs}ms` : "99.98%";
+          const latency =
+            health.database?.latencyMs != null ? `${health.database.latencyMs}ms` : "Live";
           healthText.textContent = `API: ${latency}`;
         } else {
           healthText.textContent = "API: Degraded";

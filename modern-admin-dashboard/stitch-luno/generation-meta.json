@@ -1,0 +1,367 @@
+{
+  "projectId": "10764928151662706548",
+  "sessionId": "15821177835734727249",
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "screenshot": {
+              "name": "projects/10764928151662706548/files/a6fdba2824084c7a8b7e7b9b10b8d9ef",
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1VNpUbqSdLupL_p6iipuosQRBUHFJ2p16DhtcCxmPFjgS2ejc5UYI8mBPZWJr27FdjrZccz4bZRDvJqUhgrnUbwGFQYf3xq73OFz4cRwyKG8aBwC6DiCXP9RSGkIczpDDNKtqfV0qz4vq7pZIBw1q6pcIRzQu84r_CKwmR2jr6EBk-CNjuQhBGxaEqWvjMHycLelVFuSfaW5cXOtS_gySzMnSBgvjQXSt8idMf6j7MN2xRaqJM2PrCUajA"
+            },
+            "htmlCode": {
+              "name": "projects/10764928151662706548/files/da6cc50a317e45649b2137b29b631c49",
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzRiZDcxZGM4ODllODQxZDFiZTg2MWNjMmM2NzU5MDdkEgoSBhCzl4icIxgBkgEkCgpwcm9qZWN0X2lkEhZCFDEwNzY0OTI4MTUxNjYyNzA2NTQ4&filename=&opi=96797242",
+              "mimeType": "text/html"
+            },
+            "id": "c0df0d27085b4c01a515a783bbb5d638",
+            "generatedBy": "figaro_agent",
+            "width": "2560",
+            "height": "2682",
+            "title": "LUNO Executive Operations Dashboard",
+            "prompt": "High-end Awwwards-caliber Executive Admin Operations Dashboard inspired by LUNO Admin Dashboard Template and Linear/Raycast design precision.\n\nColor & Atmosphere:\n- Deep luxury dark mode baseline: Canvas #0c0d12, Bento cards #14161f, elevated nested surfaces #1b1e2b, subtle hairline borders 1px solid rgba(255,255,255,0.07).\n- Vibrant accents: Electric indigo #6366f1, emerald jade #10b981 for positive yields/active nodes, amber glow #f59e0b for pending telemetry/warnings, and violet glow.\n- Modern glassmorphism highlights with subtle inset glow (box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.06)).\n- Typography: Inter font for crisp hierarchy and UI labels, paired with JetBrains Mono (font-mono tabular-nums) for all financial metrics, hashes, server latencies, and KPIs.\n\nLayout & Component Architecture (Desktop):\n1. Precision Collapsible Sidebar (Left, 260px):\n   - Header with workspace switcher: \"LUNO OPS\" / \"Enterprise Cloud\" with dual-tone glowing badge \"v3.2 PRO\".\n   - Quick action pill: \"+ Deploy Cluster\" with subtle indigo gradient.\n   - Grouped navigation links with refined micro-icons:\n     - CORE: Dashboard (Active with emerald/indigo pill indicator), Live Telemetry, Nodes & Clusters, Security Vault.\n     - OPERATIONS: Team Directory, Billing & Invoices, Audit Trail, API Keys.\n     - ANALYTICS: Revenue Matrix, Geographic Traffic, System Logs.\n   - Footer: System health indicator (\"All 32 Nodes Healthy • 12ms\"), Operator profile chip with avatar and status dot.\n\n2. Command Header (Top sticky glass bar):\n   - Quick search input with keyboard badge: \"Search infrastructure, transactions, hash... ⌘K\".\n   - Node status live pill: \"Global Mesh: 99.994% Uptime\" with pulsing emerald indicator.\n   - Trailing actions: Real-time latency badge (\"14ms SG-1\"), Quick notifications bell with amber unread badge, Theme toggle, and \"Export Analytics\" CTA button.\n\n3. 12-Column Executive Bento Grid Dashboard:\n   - Row 1 (KPI Stat Matrix - 4 Bento Cards):\n     * Card 1: Total Revenue ($1,842,950.40) +24.8% MoM trend badge, radial mini sparkline gauge in emerald.\n     * Card 2: Active Nodes / Compute (1,428 / 1,500 cores) 95.2% load, dual-track SVG radial gauge ring in electric indigo.\n     * Card 3: Inflow Velocity ($348,210.00 settled) +18.4% WoW, micro bar sparkline with amber highlight.\n     * Card 4: Global Requests (84.6M reqs) 99.98% SLA, circular target meter with emerald tick.\n   \n   - Row 2 (Primary Visualizations - 8 cols + 4 cols):\n     * Left (8 cols): Executive Revenue & Compute Throughput multi-series smooth curved chart with gradient area under the curves (Electric Indigo for Gross Yield, Emerald Jade for Net Profit, Amber for Operating Cost). Includes interactive timeframe pills (24H, 7D, 30D, 1Y, ALL) and metric legend with real-time cursor highlight.\n     * Right (4 cols): Real-Time Infrastructure Ledger / Recent Settlements with monospace transaction IDs (`#TX-9481e`, `#TX-8832a`), client badges, colored settlement pills (\"Settled\", \"Validating\", \"Optimized\"), and JetBrains Mono currency tags.\n\n   - Row 3 (Deep Intelligence & Performance - 3 Bento Cards, 4 cols each):\n     * Card A (4 cols): Target Fulfillment & Margin Efficiency: Large futuristic circular radial SVG donut gauge (88.4% Efficiency) with breakdown sub-metrics (EBITDA, Cloud OPEX, Gross Margin) in tabular mono.\n     * Card B (4 cols): Regional Compute Load & Node Latency: Tiered horizontal multi-tone performance bars for US-East (Virginia), EU-West (Frankfurt), AP-East (Tokyo), and SA-East (São Paulo) with micro latency meters (12ms, 24ms, 82ms).\n     * Card C (4 cols): Active Incident SLA & Security Guard: Clean security score ring (100% Zero Breach SLA), live threat telemetry counter, and quick \"Run Diagnostic\" trigger button.\n\nCraft & Details:\n- Seamless spacing, refined micro-badges, pill tags, and sleek hover states.\n- High-end Awwwards aesthetic: polished dark theme, zero clutter, elite typography balance.",
+            "name": "projects/10764928151662706548/screens/c0df0d27085b4c01a515a783bbb5d638",
+            "theme": {
+              "colorMode": "DARK",
+              "font": "INTER",
+              "roundness": "ROUND_FOUR",
+              "customColor": "#6366f1",
+              "headlineFont": "INTER",
+              "bodyFont": "INTER",
+              "labelFont": "JETBRAINS_MONO",
+              "namedColors": {
+                "surface_bright": "#39393b",
+                "on_tertiary": "#00354a",
+                "surface_container_highest": "#353437",
+                "on_tertiary_fixed_variant": "#004c69",
+                "surface_container_high": "#2a2a2c",
+                "secondary": "#4edea3",
+                "background": "#131315",
+                "surface_variant": "#353437",
+                "on_surface": "#e5e1e4",
+                "surface_container_low": "#1c1b1d",
+                "tertiary_container": "#009bd1",
+                "surface_tint": "#c0c1ff",
+                "primary_fixed": "#e1e0ff",
+                "inverse_surface": "#e5e1e4",
+                "tertiary_fixed": "#c4e7ff",
+                "secondary_container": "#00a572",
+                "secondary_fixed": "#6ffbbe",
+                "on_secondary_fixed_variant": "#005236",
+                "inverse_primary": "#494bd6",
+                "on_primary_container": "#0d0096",
+                "surface_container_lowest": "#0e0e10",
+                "on_error_container": "#ffdad6",
+                "error": "#ffb4ab",
+                "on_primary_fixed": "#07006c",
+                "on_secondary_fixed": "#002113",
+                "on_surface_variant": "#c7c4d7",
+                "on_secondary": "#003824",
+                "on_secondary_container": "#00311f",
+                "on_primary_fixed_variant": "#2f2ebe",
+                "primary_fixed_dim": "#c0c1ff",
+                "on_tertiary_fixed": "#001e2c",
+                "tertiary_fixed_dim": "#7bd0ff",
+                "on_tertiary_container": "#002d40",
+                "outline_variant": "#464554",
+                "surface": "#131315",
+                "inverse_on_surface": "#313032",
+                "tertiary": "#7bd0ff",
+                "primary": "#c0c1ff",
+                "on_background": "#e5e1e4",
+                "on_error": "#690005",
+                "on_primary": "#1000a9",
+                "surface_dim": "#131315",
+                "secondary_fixed_dim": "#4edea3",
+                "surface_container": "#201f22",
+                "error_container": "#93000a",
+                "outline": "#908fa0",
+                "primary_container": "#8083ff"
+              },
+              "colorVariant": "FIDELITY",
+              "overridePrimaryColor": "#6366f1",
+              "overrideSecondaryColor": "#10b981",
+              "overrideTertiaryColor": "#38bdf8",
+              "overrideNeutralColor": "#09090b",
+              "spacingScale": 2,
+              "typography": {
+                "headline-lg": {
+                  "fontFamily": "Inter",
+                  "fontSize": "24px",
+                  "fontWeight": "600",
+                  "lineHeight": "32px"
+                },
+                "headline-sm": {
+                  "fontFamily": "Inter",
+                  "fontSize": "16px",
+                  "fontWeight": "600",
+                  "lineHeight": "24px"
+                },
+                "display-hero-mobile": {
+                  "fontFamily": "Inter",
+                  "fontSize": "30px",
+                  "fontWeight": "600",
+                  "lineHeight": "38px"
+                },
+                "body-lg": {
+                  "fontFamily": "Inter",
+                  "fontSize": "15px",
+                  "fontWeight": "400",
+                  "lineHeight": "22px"
+                },
+                "body-md": {
+                  "fontFamily": "Inter",
+                  "fontSize": "13px",
+                  "fontWeight": "400",
+                  "lineHeight": "18px"
+                },
+                "mono-badge": {
+                  "fontFamily": "JetBrains Mono",
+                  "fontSize": "11px",
+                  "fontWeight": "500",
+                  "lineHeight": "14px"
+                },
+                "mono-data-table": {
+                  "fontFamily": "JetBrains Mono",
+                  "fontSize": "12px",
+                  "fontWeight": "400",
+                  "lineHeight": "16px"
+                },
+                "label-caps": {
+                  "fontFamily": "Inter",
+                  "fontSize": "11px",
+                  "fontWeight": "600",
+                  "lineHeight": "14px"
+                },
+                "display-hero": {
+                  "fontFamily": "Inter",
+                  "fontSize": "40px",
+                  "fontWeight": "600",
+                  "lineHeight": "48px"
+                },
+                "mono-kpi-md": {
+                  "fontFamily": "JetBrains Mono",
+                  "fontSize": "20px",
+                  "fontWeight": "500",
+                  "lineHeight": "26px"
+                },
+                "body-sm": {
+                  "fontFamily": "Inter",
+                  "fontSize": "12px",
+                  "fontWeight": "400",
+                  "lineHeight": "16px"
+                },
+                "headline-md": {
+                  "fontFamily": "Inter",
+                  "fontSize": "20px",
+                  "fontWeight": "600",
+                  "lineHeight": "28px"
+                },
+                "mono-kpi-lg": {
+                  "fontFamily": "JetBrains Mono",
+                  "fontSize": "28px",
+                  "fontWeight": "600",
+                  "lineHeight": "34px"
+                }
+              },
+              "spacing": {
+                "space-md": "0.75rem",
+                "gutter": "1rem",
+                "space-sm": "0.5rem",
+                "gutter-lg": "1.25rem",
+                "space-lg": "1.25rem",
+                "margin": "1.5rem",
+                "margin-mobile": "1rem",
+                "space-xl": "1.75rem",
+                "space-xs": "0.25rem"
+              },
+              "headlineFontFamily": "Inter",
+              "bodyFontFamily": "Inter",
+              "labelFontFamily": "JetBrains Mono"
+            },
+            "deviceType": "DESKTOP",
+            "screenType": "DESIGN",
+            "screenMetadata": { "agentType": "PRO_AGENT", "status": "COMPLETE" },
+            "designSystem": {
+              "name": "assets/62405202ad52495dac008f1548569a0e",
+              "designSystem": {
+                "displayName": "Executive Kinetic Carbon",
+                "styleGuidelines": "## Brand & Style\n\nThis design system embodies high-velocity operational command and executive precision. Engineered for enterprise leadership, quantitative analysts, and system operators, the aesthetic synthesizes the focused utility of developer platforms like Linear and Raycast with the refined polish of Stripe.\n\n### Core Tenets\n- **Obsidian Density & Clarity:** High information density without visual noise. Data stands unhindered against deep carbon backdrops.\n- **Micro-Engineered Craft:** Hairline dividers, subtle inner glow reflections, and crisp typographic hierarchy signal elite engineering quality.\n- **Tactile Fluidity:** Every state transition feels immediate, crisp, and predictable, invoking confidence during critical operational monitoring.\n\n### Visual Aesthetic\nMinimalist Modern with Glassmorphic Precision. Surfaces are structured in layered dark carbon tiers accented by razor-thin borders, subtle backdrop blur filters, and vibrant luminescence reserved strictly for status updates, actionable data paths, and vital enterprise metrics.\n\n## Layout & Spacing\n\nThe layout model is driven by an asymmetric Bento-box modular grid. Information is organized in high-utility spatial modules designed to maximize screen real estate and prioritize cognitive throughput.\n\n### Grid & Layout Rules\n- **Desktop (1280px+):** Fixed 240px or 280px left navigation sidebar paired with a 12-column fluid grid canvas using `1.25rem` (`20px`) gutters. Bento blocks span flexible units (e.g., 3-col KPI cards, 8-col chart modules, 4-col real-time transaction ledgers).\n- **Tablet (768px - 1279px):** Sidebar collapses to an icon rail (64px) or slide-over drawer. Bento grid shifts to an 8-column layout with `1rem` gutters.\n- **Mobile (\u003c768px):** Single-column stacked stream with `margin-mobile` of `1rem`. Secondary telemetry panes wrap cleanly under main metric aggregates.\n\n### Internal Spacing Rhythm\nComponent interiors rely on compact vertical and horizontal padding (`space-md` for standard cards, `space-lg` for primary visual charts) to sustain enterprise information density without visual crowding.\n\n## Elevation & Depth\n\nVisual hierarchy does not rely on heavy drop shadows. Instead, depth is constructed via **Tonal Stratification**, **Frosted Glass**, and **Hairline Stroke Definition**.\n\n### Surface Hierarchy\n1. **Level 0 (Canvas):** `#09090b` flat background.\n2. **Level 1 (Bento Tile):** Background `#121215` with a 1px solid `rgba(255, 255, 255, 0.08)` outline. Subdued ambient glow under hovered surfaces (`0 8px 24px -4px rgba(0, 0, 0, 0.6)`).\n3. **Level 2 (Popovers, Command Palette & Menus):** Semi-transparent `#18181b` with `backdrop-filter: blur(16px)` and an elevated perimeter border of `rgba(255, 255, 255, 0.14)`.\n4. **Level 3 (Modal Dialogs):** `#18181b` positioned above a `rgba(0, 0, 0, 0.75)` backdrop blur overlay (`blur(8px)`), bounded by `0 20px 32px -8px rgba(0, 0, 0, 0.8)`.\n\n### Inner Stroke Reflections\nCards feature an optional top-edge specular highlight: `box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06)`. This mimics hardware-milled precision edges seen in top-tier executive tools.\n\n## Components\n\n### Buttons\n- **Primary:** Background `#6366f1`, text `#ffffff`, font Inter weight 500. Box shadow: `inset 0 1px 0 rgba(255,255,255,0.2), 0 2px 4px rgba(99,102,241,0.3)`. Hover: `#4f46e5`.\n- **Secondary / Ghost:** Transparent background with 1px border `rgba(255, 255, 255, 0.12)`, text `#e4e4e7`. Hover: Background `#18181b`.\n- **Icon Utility:** Square aspect ratio (`32x32px` or `36x36px`), centered vector glyph, 1px border `rgba(255,255,255,0.08)`, subtle hover brightness shift.\n\n### Bento Analytics Cards\n- Formed by a container of `#121215`, wrapped in a 1px border `rgba(255, 255, 255, 0.08)`.\n- Internal layout: Top row with metric title in uppercase (`label-caps`), subtle sparkline or context indicator, followed by large tabular KPI readout (`mono-kpi-lg`). Bottom section highlights delta pill (`+14%` in Emerald with green low-opacity background).\n\n### Badges & Status Indicators\n- **Operational Status Pills:** JetBrains Mono font (`mono-badge`), padding `2px 8px`, border-radius `9999px`.\n- **Healthy / Live:** Text `#10b981`, background `rgba(16, 185, 129, 0.12)`, border `1px solid rgba(16, 185, 129, 0.25)`. A 6px pulsing dot anchors the left edge.\n- **Neutral / Informational:** Text `#a1a1aa`, background `rgba(255, 255, 255, 0.05)`, border `1px solid rgba(255, 255, 255, 0.08)`.\n\n### Data Tables & Transaction Ledgers\n- Striped or bordered rows using `1px solid rgba(255, 255, 255, 0.04)`.\n- Numeric data columns right-aligned with JetBrains Mono numbers.\n- Hover state: Entire row transitions to `#18181b` in 120ms linear ease.\n\n### Form Inputs & Filters\n- Background `#09090b` inset into the card surface, border 1px solid `rgba(255, 255, 255, 0.1)`. Focus state applies a crisp ring: `box-shadow: 0 0 0 1px #6366f1`. Placeholder text styled in muted zinc `#71717a`.",
+                "theme": {
+                  "colorMode": "DARK",
+                  "font": "INTER",
+                  "roundness": "ROUND_FOUR",
+                  "customColor": "#6366f1",
+                  "headlineFont": "INTER",
+                  "bodyFont": "INTER",
+                  "labelFont": "JETBRAINS_MONO",
+                  "namedColors": {
+                    "on_error": "#690005",
+                    "on_primary_fixed": "#07006c",
+                    "inverse_primary": "#494bd6",
+                    "secondary_fixed": "#6ffbbe",
+                    "primary_fixed_dim": "#c0c1ff",
+                    "on_secondary_fixed_variant": "#005236",
+                    "secondary_container": "#00a572",
+                    "inverse_on_surface": "#313032",
+                    "on_tertiary_fixed": "#001e2c",
+                    "on_secondary": "#003824",
+                    "tertiary": "#7bd0ff",
+                    "on_surface_variant": "#c7c4d7",
+                    "outline": "#908fa0",
+                    "surface_container_high": "#2a2a2c",
+                    "on_tertiary_container": "#002d40",
+                    "on_background": "#e5e1e4",
+                    "inverse_surface": "#e5e1e4",
+                    "surface_container_lowest": "#0e0e10",
+                    "tertiary_fixed_dim": "#7bd0ff",
+                    "primary": "#c0c1ff",
+                    "surface_dim": "#131315",
+                    "surface_container": "#201f22",
+                    "on_primary": "#1000a9",
+                    "on_primary_container": "#0d0096",
+                    "surface_variant": "#353437",
+                    "surface": "#131315",
+                    "primary_container": "#8083ff",
+                    "tertiary_fixed": "#c4e7ff",
+                    "primary_fixed": "#e1e0ff",
+                    "on_tertiary": "#00354a",
+                    "on_primary_fixed_variant": "#2f2ebe",
+                    "outline_variant": "#464554",
+                    "surface_tint": "#c0c1ff",
+                    "error_container": "#93000a",
+                    "on_error_container": "#ffdad6",
+                    "on_tertiary_fixed_variant": "#004c69",
+                    "secondary": "#4edea3",
+                    "secondary_fixed_dim": "#4edea3",
+                    "on_secondary_fixed": "#002113",
+                    "on_surface": "#e5e1e4",
+                    "surface_container_low": "#1c1b1d",
+                    "surface_bright": "#39393b",
+                    "background": "#131315",
+                    "surface_container_highest": "#353437",
+                    "on_secondary_container": "#00311f",
+                    "tertiary_container": "#009bd1",
+                    "error": "#ffb4ab"
+                  },
+                  "designMd": "---\nname: Executive Kinetic Carbon\ncolors:\n  surface: '#131315'\n  surface-dim: '#131315'\n  surface-bright: '#39393b'\n  surface-container-lowest: '#0e0e10'\n  surface-container-low: '#1c1b1d'\n  surface-container: '#201f22'\n  surface-container-high: '#2a2a2c'\n  surface-container-highest: '#353437'\n  on-surface: '#e5e1e4'\n  on-surface-variant: '#c7c4d7'\n  inverse-surface: '#e5e1e4'\n  inverse-on-surface: '#313032'\n  outline: '#908fa0'\n  outline-variant: '#464554'\n  surface-tint: '#c0c1ff'\n  primary: '#c0c1ff'\n  on-primary: '#1000a9'\n  primary-container: '#8083ff'\n  on-primary-container: '#0d0096'\n  inverse-primary: '#494bd6'\n  secondary: '#4edea3'\n  on-secondary: '#003824'\n  secondary-container: '#00a572'\n  on-secondary-container: '#00311f'\n  tertiary: '#7bd0ff'\n  on-tertiary: '#00354a'\n  tertiary-container: '#009bd1'\n  on-tertiary-container: '#002d40'\n  error: '#ffb4ab'\n  on-error: '#690005'\n  error-container: '#93000a'\n  on-error-container: '#ffdad6'\n  primary-fixed: '#e1e0ff'\n  primary-fixed-dim: '#c0c1ff'\n  on-primary-fixed: '#07006c'\n  on-primary-fixed-variant: '#2f2ebe'\n  secondary-fixed: '#6ffbbe'\n  secondary-fixed-dim: '#4edea3'\n  on-secondary-fixed: '#002113'\n  on-secondary-fixed-variant: '#005236'\n  tertiary-fixed: '#c4e7ff'\n  tertiary-fixed-dim: '#7bd0ff'\n  on-tertiary-fixed: '#001e2c'\n  on-tertiary-fixed-variant: '#004c69'\n  background: '#131315'\n  on-background: '#e5e1e4'\n  surface-variant: '#353437'\ntypography:\n  display-hero:\n    fontFamily: Inter\n    fontSize: 40px\n    fontWeight: '600'\n    lineHeight: 48px\n  display-hero-mobile:\n    fontFamily: Inter\n    fontSize: 30px\n    fontWeight: '600'\n    lineHeight: 38px\n  headline-lg:\n    fontFamily: Inter\n    fontSize: 24px\n    fontWeight: '600'\n    lineHeight: 32px\n  headline-md:\n    fontFamily: Inter\n    fontSize: 20px\n    fontWeight: '600'\n    lineHeight: 28px\n  headline-sm:\n    fontFamily: Inter\n    fontSize: 16px\n    fontWeight: '600'\n    lineHeight: 24px\n  body-lg:\n    fontFamily: Inter\n    fontSize: 15px\n    fontWeight: '400'\n    lineHeight: 22px\n  body-md:\n    fontFamily: Inter\n    fontSize: 13px\n    fontWeight: '400'\n    lineHeight: 18px\n  body-sm:\n    fontFamily: Inter\n    fontSize: 12px\n    fontWeight: '400'\n    lineHeight: 16px\n  mono-kpi-lg:\n    fontFamily: JetBrains Mono\n    fontSize: 28px\n    fontWeight: '600'\n    lineHeight: 34px\n  mono-kpi-md:\n    fontFamily: JetBrains Mono\n    fontSize: 20px\n    fontWeight: '500'\n    lineHeight: 26px\n  mono-data-table:\n    fontFamily: JetBrains Mono\n    fontSize: 12px\n    fontWeight: '400'\n    lineHeight: 16px\n  mono-badge:\n    fontFamily: JetBrains Mono\n    fontSize: 11px\n    fontWeight: '500'\n    lineHeight: 14px\n  label-caps:\n    fontFamily: Inter\n    fontSize: 11px\n    fontWeight: '600'\n    lineHeight: 14px\nrounded:\n  sm: 0.125rem\n  DEFAULT: 0.25rem\n  md: 0.375rem\n  lg: 0.5rem\n  xl: 0.75rem\n  full: 9999px\nspacing:\n  gutter: 1rem\n  gutter-lg: 1.25rem\n  margin: 1.5rem\n  margin-mobile: 1rem\n  space-xs: 0.25rem\n  space-sm: 0.5rem\n  space-md: 0.75rem\n  space-lg: 1.25rem\n  space-xl: 1.75rem\n---\n\n## Brand & Style\n\nThis design system embodies high-velocity operational command and executive precision. Engineered for enterprise leadership, quantitative analysts, and system operators, the aesthetic synthesizes the focused utility of developer platforms like Linear and Raycast with the refined polish of Stripe.\n\n### Core Tenets\n- **Obsidian Density & Clarity:** High information density without visual noise. Data stands unhindered against deep carbon backdrops.\n- **Micro-Engineered Craft:** Hairline dividers, subtle inner glow reflections, and crisp typographic hierarchy signal elite engineering quality.\n- **Tactile Fluidity:** Every state transition feels immediate, crisp, and predictable, invoking confidence during critical operational monitoring.\n\n### Visual Aesthetic\nMinimalist Modern with Glassmorphic Precision. Surfaces are structured in layered dark carbon tiers accented by razor-thin borders, subtle backdrop blur filters, and vibrant luminescence reserved strictly for status updates, actionable data paths, and vital enterprise metrics.\n\n## Colors\n\nThe color architecture is built around an uncompromising dark carbon baseline, engineered with an inverted crisp slate counterpart for light mode.\n\n### Dark Mode Palette (Default)\n- **Base Canvas (`#09090b`):** Deep zinc/carbon canvas minimizing eye strain while emphasizing illuminated metrics.\n- **Card Surface (`#121215`):** Elevated container layer providing soft separation from the primary background.\n- **Interactive Surface / Hover (`#18181b`):** Dynamic feedback color for table rows, clickable list items, and active states.\n- **Hairline Border (`rgba(255, 255, 255, 0.08)`): Crisp 1px structural framing.\n- **Primary Accent (`#6366f1`):** Electric Indigo for key actions, primary interactive selections, and focal analytics points.\n- **Secondary / Metric Health (`#10b981`):** Vivid Emerald designating positive momentum, live operational health, and fiscal gains.\n- **Warning / Alert (`#f59e0b` & `#ef4444`):** Controlled amber and crimson hues utilized sparingly for anomalies and operational bottlenecks.\n\n### Light Mode Contrast Tier\n- **Canvas Base (`#f8fafc`):** Crisp alabaster slate foundation.\n- **Elevated Card (`#ffffff`):** Pure white container surfaces framed with `rgba(0, 0, 0, 0.08)` borders and soft micro-drop shadows.\n- **Interactive / Hover (`#f1f5f9`):** Subtle neutral tint for tactile feedback.\n\n## Typography\n\nTypography establishes an intentional distinction between human interface navigation and raw computational telemetry.\n\n### Font Pairing Strategy\n- **Inter:** Drives all navigational labels, structural section headers, and prose content. Its neutral, engineered curves ensure uncompromised legibility across complex multi-panel dashboard layouts.\n- **JetBrains Mono:** Dedicated to numeric KPIs, telemetry status, financial values, dates, and tabular tables. Must always be styled with `font-feature-settings: \"tnum\" on, \"zero\" on` to guarantee rigid vertical alignment across rapidly recalculating rows.\n\n### Header Casing & Metric Weighting\nCategory eyebrows and sidebar sub-group titles utilize `label-caps` in uppercase with letter spacing of `+0.06em`. Numeric metric headers prioritize bold weights (`600`) to let users scan large bento dashboards effortlessly.\n\n## Layout & Spacing\n\nThe layout model is driven by an asymmetric Bento-box modular grid. Information is organized in high-utility spatial modules designed to maximize screen real estate and prioritize cognitive throughput.\n\n### Grid & Layout Rules\n- **Desktop (1280px+):** Fixed 240px or 280px left navigation sidebar paired with a 12-column fluid grid canvas using `1.25rem` (`20px`) gutters. Bento blocks span flexible units (e.g., 3-col KPI cards, 8-col chart modules, 4-col real-time transaction ledgers).\n- **Tablet (768px - 1279px):** Sidebar collapses to an icon rail (64px) or slide-over drawer. Bento grid shifts to an 8-column layout with `1rem` gutters.\n- **Mobile (\u003c768px):** Single-column stacked stream with `margin-mobile` of `1rem`. Secondary telemetry panes wrap cleanly under main metric aggregates.\n\n### Internal Spacing Rhythm\nComponent interiors rely on compact vertical and horizontal padding (`space-md` for standard cards, `space-lg` for primary visual charts) to sustain enterprise information density without visual crowding.\n\n## Elevation & Depth\n\nVisual hierarchy does not rely on heavy drop shadows. Instead, depth is constructed via **Tonal Stratification**, **Frosted Glass**, and **Hairline Stroke Definition**.\n\n### Surface Hierarchy\n1. **Level 0 (Canvas):** `#09090b` flat background.\n2. **Level 1 (Bento Tile):** Background `#121215` with a 1px solid `rgba(255, 255, 255, 0.08)` outline. Subdued ambient glow under hovered surfaces (`0 8px 24px -4px rgba(0, 0, 0, 0.6)`).\n3. **Level 2 (Popovers, Command Palette & Menus):** Semi-transparent `#18181b` with `backdrop-filter: blur(16px)` and an elevated perimeter border of `rgba(255, 255, 255, 0.14)`.\n4. **Level 3 (Modal Dialogs):** `#18181b` positioned above a `rgba(0, 0, 0, 0.75)` backdrop blur overlay (`blur(8px)`), bounded by `0 20px 32px -8px rgba(0, 0, 0, 0.8)`.\n\n### Inner Stroke Reflections\nCards feature an optional top-edge specular highlight: `box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06)`. This mimics hardware-milled precision edges seen in top-tier executive tools.\n\n## Shapes\n\nThe design system maintains a refined, technical geometry. Soft corner radii (`0.375rem` to `0.5rem`) are used consistently across cards and controls to maintain an authoritative, developer-grade feel.\n\n### Corner Radii Guidelines\n- **Base Components (Inputs, Buttons, Dropdowns):** `rounded` (`0.25rem` to `0.375rem`) for a precise, engineered profile.\n- **Bento Modules & Containers:** `rounded-lg` (`0.5rem`) to frame large content groups cleanly.\n- **Status Pills, Tags, & Badges:** Full pill radius (`9999px`) to create an immediate visual contrast against structural rectangular containers.\n\n## Components\n\n### Buttons\n- **Primary:** Background `#6366f1`, text `#ffffff`, font Inter weight 500. Box shadow: `inset 0 1px 0 rgba(255,255,255,0.2), 0 2px 4px rgba(99,102,241,0.3)`. Hover: `#4f46e5`.\n- **Secondary / Ghost:** Transparent background with 1px border `rgba(255, 255, 255, 0.12)`, text `#e4e4e7`. Hover: Background `#18181b`.\n- **Icon Utility:** Square aspect ratio (`32x32px` or `36x36px`), centered vector glyph, 1px border `rgba(255,255,255,0.08)`, subtle hover brightness shift.\n\n### Bento Analytics Cards\n- Formed by a container of `#121215`, wrapped in a 1px border `rgba(255, 255, 255, 0.08)`.\n- Internal layout: Top row with metric title in uppercase (`label-caps`), subtle sparkline or context indicator, followed by large tabular KPI readout (`mono-kpi-lg`). Bottom section highlights delta pill (`+14%` in Emerald with green low-opacity background).\n\n### Badges & Status Indicators\n- **Operational Status Pills:** JetBrains Mono font (`mono-badge`), padding `2px 8px`, border-radius `9999px`.\n- **Healthy / Live:** Text `#10b981`, background `rgba(16, 185, 129, 0.12)`, border `1px solid rgba(16, 185, 129, 0.25)`. A 6px pulsing dot anchors the left edge.\n- **Neutral / Informational:** Text `#a1a1aa`, background `rgba(255, 255, 255, 0.05)`, border `1px solid rgba(255, 255, 255, 0.08)`.\n\n### Data Tables & Transaction Ledgers\n- Striped or bordered rows using `1px solid rgba(255, 255, 255, 0.04)`.\n- Numeric data columns right-aligned with JetBrains Mono numbers.\n- Hover state: Entire row transitions to `#18181b` in 120ms linear ease.\n\n### Form Inputs & Filters\n- Background `#09090b` inset into the card surface, border 1px solid `rgba(255, 255, 255, 0.1)`. Focus state applies a crisp ring: `box-shadow: 0 0 0 1px #6366f1`. Placeholder text styled in muted zinc `#71717a`.",
+                  "colorVariant": "FIDELITY",
+                  "overridePrimaryColor": "#6366f1",
+                  "overrideSecondaryColor": "#10b981",
+                  "overrideTertiaryColor": "#38bdf8",
+                  "overrideNeutralColor": "#09090b",
+                  "spacingScale": 2,
+                  "typography": {
+                    "headline-sm": {
+                      "fontFamily": "Inter",
+                      "fontSize": "16px",
+                      "fontWeight": "600",
+                      "lineHeight": "24px"
+                    },
+                    "body-lg": {
+                      "fontFamily": "Inter",
+                      "fontSize": "15px",
+                      "fontWeight": "400",
+                      "lineHeight": "22px"
+                    },
+                    "headline-lg": {
+                      "fontFamily": "Inter",
+                      "fontSize": "24px",
+                      "fontWeight": "600",
+                      "lineHeight": "32px"
+                    },
+                    "body-md": {
+                      "fontFamily": "Inter",
+                      "fontSize": "13px",
+                      "fontWeight": "400",
+                      "lineHeight": "18px"
+                    },
+                    "mono-badge": {
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": "11px",
+                      "fontWeight": "500",
+                      "lineHeight": "14px"
+                    },
+                    "mono-kpi-md": {
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": "20px",
+                      "fontWeight": "500",
+                      "lineHeight": "26px"
+                    },
+                    "label-caps": {
+                      "fontFamily": "Inter",
+                      "fontSize": "11px",
+                      "fontWeight": "600",
+                      "lineHeight": "14px"
+                    },
+                    "body-sm": {
+                      "fontFamily": "Inter",
+                      "fontSize": "12px",
+                      "fontWeight": "400",
+                      "lineHeight": "16px"
+                    },
+                    "mono-data-table": {
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": "12px",
+                      "fontWeight": "400",
+                      "lineHeight": "16px"
+                    },
+                    "display-hero": {
+                      "fontFamily": "Inter",
+                      "fontSize": "40px",
+                      "fontWeight": "600",
+                      "lineHeight": "48px"
+                    },
+                    "display-hero-mobile": {
+                      "fontFamily": "Inter",
+                      "fontSize": "30px",
+                      "fontWeight": "600",
+                      "lineHeight": "38px"
+                    },
+                    "headline-md": {
+                      "fontFamily": "Inter",
+                      "fontSize": "20px",
+                      "fontWeight": "600",
+                      "lineHeight": "28px"
+                    },
+                    "mono-kpi-lg": {
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": "28px",
+                      "fontWeight": "600",
+                      "lineHeight": "34px"
+                    }
+                  },
+                  "spacing": {
+                    "gutter-lg": "1.25rem",
+                    "space-xl": "1.75rem",
+                    "margin": "1.5rem",
+                    "space-xs": "0.25rem",
+                    "gutter": "1rem",
+                    "space-lg": "1.25rem",
+                    "space-sm": "0.5rem",
+                    "margin-mobile": "1rem",
+                    "space-md": "0.75rem"
+                  },
+                  "headlineFontFamily": "Inter",
+                  "bodyFontFamily": "Inter",
+                  "labelFontFamily": "JetBrains Mono"
+                }
+              },
+              "version": "1"
+            }
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "I have created the **LUNO Executive Operations Dashboard** (LUNO Executive Operations Dashboard), elevating the modern LUNO Admin design system to an Awwwards-caliber, high-density executive experience.\n\n### Key Architectural & Design Highlights:\n\n1. **Color Chemistry & Materiality**:\n   - **Base Palette**: Custom deep zinc/carbon canvas (`#0c0d12`), layered onto `#14161f` Bento cards and `#1b1e2b` nested interactive surfaces.\n   - **Accents**: High-vibrancy Electric Indigo (`#6366f1`), Emerald Jade (`#10b981`) for positive SLA and telemetry yields, and Amber Glow (`#f59e0b`) for active node queues.\n   - **Micro-elevation**: Subtle `1px` borders (`rgba(255,255,255,0.07)`) with inset edge highlights to give cards crisp tactile depth without visual clutter.\n\n2. **Typography System**:\n   - **Inter**: Crisp, clean hierarchy for all section tags, navigation items, and contextual UI labels.\n   - **JetBrains Mono (`font-mono tabular-nums`)**: Applied systematically to financial figures (`$59,342.32`, `$48,352`), transaction hashes (`51034szv`), timestamps, and edge cluster latencies (`14ms`, `18ms`).\n\n3. **Bento Grid Layout**:\n   - **Row 1 (Executive Stat Matrix)**: 4 compact KPI cards with radial mini gauges, trend indicators (`+14% MoM`, `+21%`, `+5%`, `+43%`), and secondary tracking sub-metrics.\n   - **Row 2 (Central Visualizations)**:\n     - *Left (8 cols)*: **Revenue & Telemetry Trajectory** multi-series spline chart with subtle glowing area fills (*Yield Telemetry, Mesh Throughput, Inflow Latency*) and `24H / 7D / 30D / 1Y` timeframe toggles.\n     - *Right (4 cols)*: **Recent Transactions & Ledger** list featuring monospace transaction hashes, customer entities, and right-aligned currency amounts.\n   - **Row 3 (Operations & Edge Intelligence)**:\n     - *Card 1*: **Fulfillment & Margin Gauge** with an 88.4% radial SVG meter and target vs. margin sub-panels.\n     - *Card 2*: **Sales Quantity & Regional Distribution** dual-tone categorical bar chart with active cluster synchronization status.\n     - *Card 3*: **Geography Based Traffic** global node topology map with live edge telemetry readouts.\n\n4. **Navigation & Infrastructure Shell**:\n   - Collapsible left sidebar with categorized sections (*Operational Core, Pages & Workflows*), a `+ Deploy Node` primary action, and bottom system operator profile with active node telemetry.\n   - Sticky command header with `⌘K` global search, live mesh status pill (`99.994%`), theme toggles, and notification alerts."
+    },
+    { "suggestion": "Add an interactive live node topology modal or cluster inspector drawer" },
+    {
+      "suggestion": "Create the matching high-density Ledger & Invoices view with the same LUNO aesthetic"
+    },
+    { "suggestion": "Generate the light mode executive counterpart for this LUNO dashboard" }
+  ]
+}

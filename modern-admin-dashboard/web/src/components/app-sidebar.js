@@ -11,6 +11,21 @@ export class AppSidebar extends HTMLElement {
   connectedCallback() {
     this.render();
     this.setupListeners();
+    this._sidebarToggleHandler = () => {
+      const isOpen = this.classList.toggle("drawer-open");
+      const backdrop = document.querySelector("#sidebar-backdrop");
+      if (backdrop) {
+        backdrop.classList.toggle("active", isOpen);
+      }
+    };
+    window.addEventListener("sidebar:toggle", this._sidebarToggleHandler);
+  }
+
+  disconnectedCallback() {
+    if (this._sidebarToggleHandler) {
+      window.removeEventListener("sidebar:toggle", this._sidebarToggleHandler);
+      this._sidebarToggleHandler = null;
+    }
   }
 
   toggleCollapse() {
@@ -43,10 +58,10 @@ export class AppSidebar extends HTMLElement {
         <div class="sidebar-header">
           <div class="sidebar-brand-wrapper">
             <div style="display: flex; align-items: center; gap: 0.4rem;">
-              <span class="pulse-indicator" style="color: var(--color-secondary);"><span class="pulse-indicator-dot"></span></span>
+              <span class="pulse-indicator" style="color: var(--color-secondary);"><span class="pulse-indicator-dot live-dot"></span></span>
               <span class="sidebar-brand font-mono font-bold tracking-wider">ADMIN OPS</span>
             </div>
-            <div class="sidebar-brand-subtitle font-mono text-muted">Enterprise Suite • v2.4</div>
+            <div class="sidebar-brand-subtitle font-mono text-muted">Enterprise Suite • v3.2</div>
           </div>
           <button 
             type="button" 
@@ -151,8 +166,8 @@ export class AppSidebar extends HTMLElement {
           </div>
 
           <div class="sidebar-footer">
-            <a href="/form" class="sidebar-cta-btn">
-              <span class="material-symbols-outlined" style="font-size: 16px;">add_circle</span>
+            <a href="/form" class="sidebar-cta-btn specular-border">
+              <span class="material-symbols-outlined" style="font-size: 16px; color: var(--color-secondary);">add_circle</span>
               <span class="sidebar-label">Deploy Node</span>
             </a>
             <div class="sidebar-footer-links">
