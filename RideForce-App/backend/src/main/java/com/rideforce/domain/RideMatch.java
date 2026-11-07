@@ -1,5 +1,6 @@
 package com.rideforce.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.time.Instant;
@@ -43,6 +44,7 @@ public class RideMatch {
         this.id = id;
     }
 
+    @JsonIgnore
     public Rider getRider() {
         return rider;
     }
@@ -51,6 +53,7 @@ public class RideMatch {
         this.rider = rider;
     }
 
+    @JsonIgnore
     public Driver getDriver() {
         return driver;
     }
@@ -67,6 +70,16 @@ public class RideMatch {
     @JsonProperty("driverId")
     public Long getDriverId() {
         return driver != null ? driver.getId() : null;
+    }
+
+    @JsonProperty("riderName")
+    public String getRiderName() {
+        return rider != null ? rider.getName() : null;
+    }
+
+    @JsonProperty("driverName")
+    public String getDriverName() {
+        return driver != null ? driver.getName() : null;
     }
 
     public String getStatus() {
