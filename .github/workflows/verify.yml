@@ -3,11 +3,11 @@ name: RideForce Verification
 on:
   push:
     paths:
-      - 'RideForce-App/**'
+      - 'rideforce-app/**'
       - '.github/workflows/verify.yml'
   pull_request:
     paths:
-      - 'RideForce-App/**'
+      - 'rideforce-app/**'
       - '.github/workflows/verify.yml'
 
 jobs:
@@ -20,7 +20,7 @@ jobs:
 
       - name: Run ShellCheck
         run: |
-          if [ -d "RideForce-App" ]; then cd RideForce-App; fi
+          if [ -d "rideforce-app" ]; then cd rideforce-app; fi
           shellcheck scripts/*.sh
 
   backend-tests:
@@ -39,7 +39,7 @@ jobs:
 
       - name: Run Maven Tests
         run: |
-          if [ -d "RideForce-App" ]; then cd RideForce-App; fi
+          if [ -d "rideforce-app" ]; then cd rideforce-app; fi
           cd backend
           mvn test
 
@@ -53,23 +53,23 @@ jobs:
 
       - name: Start Docker Compose Stack
         run: |
-          if [ -d "RideForce-App" ]; then cd RideForce-App; fi
+          if [ -d "rideforce-app" ]; then cd rideforce-app; fi
           cp .env.example .env
           docker compose up -d --build
 
       - name: Run Platform Verification Script
         run: |
-          if [ -d "RideForce-App" ]; then cd RideForce-App; fi
+          if [ -d "rideforce-app" ]; then cd rideforce-app; fi
           bash scripts/verify.sh
 
       - name: Output Container Logs on Failure
         if: failure()
         run: |
-          if [ -d "RideForce-App" ]; then cd RideForce-App; fi
+          if [ -d "rideforce-app" ]; then cd rideforce-app; fi
           docker compose logs
 
       - name: Teardown Stack
         if: always()
         run: |
-          if [ -d "RideForce-App" ]; then cd RideForce-App; fi
+          if [ -d "rideforce-app" ]; then cd rideforce-app; fi
           docker compose down -v
