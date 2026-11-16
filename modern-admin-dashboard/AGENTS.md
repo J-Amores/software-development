@@ -1,24 +1,27 @@
 # Agent Instructions
 
-## Agent skills
+Skills come from the Home Repo at `../home` (linked as `.claude/skills/`
+and `.agents/skills/`). Their generic conventions live in
+`../home/skills/matt-pocock/setup-matt-pocock-skills/`. This file records
+only what is specific to this project.
 
-### Issue tracker
+## Skill configuration
 
-Issues and specs live as local markdown files under `.scratch/<feature-slug>/`. See `docs/agents/issue-tracker.md`.
+- **Project root:** `modern-admin-dashboard/`, a folder of the
+  `software-development` git repo. Every path below is relative to it, not
+  to the git root.
+- **Context mode:** single-context.
+- **Glossary:** `GLOSSARY.md`.
+- **ADRs:** `docs/adr/`.
+- **Issue tracker:** local markdown, one directory per feature under
+  `.scratch/<feature-slug>/`; spec at `.scratch/<feature-slug>/spec.md`,
+  tickets at `.scratch/<feature-slug>/issues/<NN>-<slug>.md`.
+- **Triage roles:** the five canonical strings, unmapped
+  (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`,
+  `wontfix`), recorded as a `Status:` line in each issue file.
 
-### Triage labels
+## Design docs
 
-Five canonical triage roles (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
-
-### Domain docs
-
-Single-context (`GLOSSARY.md` and `docs/adr/` at the repo root). See `docs/agents/domain.md`.
-
-### UI Development & Stitch Design Audit Gate
-
-- **Pre-requisite Context:** All future agent interactions MUST read `docs/brief.md` (specifications & view states) and `DESIGN.md` (tokens & styling rules) before writing or refactoring any UI markup, styling, or frontend components.
-- **Mandatory Quality Gate:** You MUST execute the design review gate defined in the stitch-review skill across the three mandatory viewports:
-  - **Desktop:** `1440 x 900`
-  - **Tablet:** `768 x 1024`
-  - **Mobile:** `375 x 812`
-- **Zero Tolerance Policy:** Zero horizontal scroll (`scrollWidth <= clientWidth`) on mobile/tablet and zero token drift are required. No UI issue, feature branch, or pull request may be marked complete until all P0 (layout breakage/overflow) and P1 (token drift) items are fully resolved and verified.
+Read `docs/brief.md` (specifications and view states) and `DESIGN.md`
+(tokens and styling rules) before writing or refactoring UI markup,
+styling, or frontend components.
