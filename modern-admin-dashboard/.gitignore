@@ -18,3 +18,10 @@ pnpm-debug.log*
 .worktrees/
 test-results/
 playwright-report/
+
+# Local development docs (agent config, glossary, ADRs, specs) — not published
+/AGENTS.md
+/GLOSSARY.md
+/DESIGN.md
+/docs/
+/.scratch/
