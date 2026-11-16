@@ -1,0 +1,141 @@
+{
+  "id": "airport-corridor",
+  "name": "Airport Corridor",
+  "unitKm": 0.04,
+  "avgSpeedKmh": 28,
+  "curbLaneZ": -5.6,
+  "corridorLaneZ": 1,
+  "pickupPoints": [
+    {
+      "label": "Door 1 · Arrivals",
+      "x": -18,
+      "z": -8.4
+    },
+    {
+      "label": "Door 2 · Arrivals",
+      "x": -10,
+      "z": -8.4
+    },
+    {
+      "label": "Door 3 · Intl",
+      "x": -2,
+      "z": -8.4
+    },
+    {
+      "label": "Door 4 · Intl",
+      "x": 6,
+      "z": -8.4
+    },
+    {
+      "label": "Door 5 · Domestic",
+      "x": 14,
+      "z": -8.4
+    }
+  ],
+  "stagingSlots": [
+    {
+      "x": 13.5,
+      "z": 8.5
+    },
+    {
+      "x": 16.1,
+      "z": 8.5
+    },
+    {
+      "x": 18.7,
+      "z": 8.5
+    },
+    {
+      "x": 21.3,
+      "z": 8.5
+    },
+    {
+      "x": 23.9,
+      "z": 8.5
+    },
+    {
+      "x": 26.5,
+      "z": 8.5
+    },
+    {
+      "x": 13.5,
+      "z": 11.9
+    },
+    {
+      "x": 16.1,
+      "z": 11.9
+    },
+    {
+      "x": 18.7,
+      "z": 11.9
+    },
+    {
+      "x": 21.3,
+      "z": 11.9
+    },
+    {
+      "x": 23.9,
+      "z": 11.9
+    },
+    {
+      "x": 26.5,
+      "z": 11.9
+    },
+    {
+      "x": 13.5,
+      "z": 15.3
+    },
+    {
+      "x": 16.1,
+      "z": 15.3
+    },
+    {
+      "x": 18.7,
+      "z": 15.3
+    },
+    {
+      "x": 21.3,
+      "z": 15.3
+    },
+    {
+      "x": 23.9,
+      "z": 15.3
+    },
+    {
+      "x": 26.5,
+      "z": 15.3
+    }
+  ],
+  "exits": {
+    "east": {
+      "x": 36,
+      "z": 1
+    },
+    "west": {
+      "x": -36,
+      "z": 1
+    }
+  },
+  "destinations": [
+    {
+      "label": "Downtown Core",
+      "exit": "east"
+    },
+    {
+      "label": "Harbor District",
+      "exit": "west"
+    },
+    {
+      "label": "Convention Center",
+      "exit": "east"
+    },
+    {
+      "label": "University Hill",
+      "exit": "west"
+    },
+    {
+      "label": "Tech Park North",
+      "exit": "east"
+    }
+  ]
+}

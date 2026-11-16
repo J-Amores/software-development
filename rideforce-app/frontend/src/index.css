@@ -1,11 +1,56 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-canvas: #121212;
+  --color-card: #181818;
+  --color-raised: #1f1f1f;
+  --color-line: #3a3834;
+  --color-available: #4ade80;
+  --color-enroute: #fbbf24;
+  --color-ontrip: #fb7185;
+  --color-rider: #38bdf8;
+  --color-ink: #ece9e4;
+  --color-muted: #a19c94;
+  --color-faint: #6e6962;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
 
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  background-color: #0f172a;
-  color: #f8fafc;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
 }
+
+.glass {
+  background: color-mix(in srgb, var(--color-card) 72%, transparent);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
+}
+
+@keyframes dlq-flash {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(251 113 133 / 0); }
+  50% { box-shadow: 0 0 0 4px rgb(251 113 133 / 0.25); }
+}
+.dlq-flash { animation: dlq-flash 1.4s ease-in-out infinite; }
+
+@keyframes radar-sweep { to { transform: rotate(360deg); } }
+.radar-sweep { animation: radar-sweep 3.2s linear infinite; transform-origin: 50% 50%; }

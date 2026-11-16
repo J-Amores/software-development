@@ -1,12 +1,17 @@
-.agents/
-.impeccable/
-PRODUCT.md
-docs/
-.env
-target/
-backend/target/
 node_modules/
-frontend/node_modules/
 dist/
-frontend/dist/
-skills-lock.json
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+.terraform/
+*.tfstate*
+.aws-emulator/
+.env
+.DS_Store
+
+# Local development docs (agent config, glossary, ADRs) — not published
+/agents/
+/docs/
+/AGENTS.md
+/GLOSSARY.md

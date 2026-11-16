@@ -1,19 +1,12 @@
-# Build stage
-FROM node:22-alpine AS builder
+FROM node:22-alpine AS build
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
+COPY package.json package-lock.json ./
+RUN npm ci
 COPY . .
+ARG VITE_DISPATCH_GATEWAY=http
+ENV VITE_DISPATCH_GATEWAY=$VITE_DISPATCH_GATEWAY
 RUN npm run build
 
-# Production stage
-FROM nginx:alpine
-COPY --from=builder /app/dist /usr/share/nginx/html
+FROM nginx:1.27-alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-EXPOSE 80
-
-HEALTHCHECK --interval=5s --timeout=3s --retries=5 --start-period=5s \
-  CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:80/ || exit 1
-
-CMD ["nginx", "-g", "daemon off;"]
+COPY --from=build /app/dist /usr/share/nginx/html
