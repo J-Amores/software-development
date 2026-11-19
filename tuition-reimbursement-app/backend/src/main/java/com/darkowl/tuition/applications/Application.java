@@ -4,6 +4,7 @@ import com.darkowl.tuition.people.Person;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -106,9 +107,9 @@ class Application implements Persistable<UUID> {
   void submit(Person applicant, LocalDate today, Instant at) {
     requireADraft();
     Course entered = course == null ? EMPTY_COURSE : course;
-    List<String> missing = entered.detailsMissingForSubmission();
+    List<String> missing = detailsMissingForSubmission(entered);
     if (!missing.isEmpty()) {
-      throw ApplicationRefused.courseDetailsMissing(missing);
+      throw ApplicationRefused.detailsMissing(missing);
     }
     if (entered.hasStartedBy(today)) {
       throw ApplicationRefused.theCourseHasAlreadyStarted();
@@ -165,6 +166,28 @@ class Application implements Persistable<UUID> {
   @Override
   public boolean isNew() {
     return justStarted;
+  }
+
+  /**
+   * What an Applicant still has to enter before submitting, each named the way the
+   * contract names the field, so a screen can point at the one at fault.
+   *
+   * <p>The Course knows which of its own details are missing; the Eligible Cost is
+   * the Application's, and submission needs it too. Pre-approval is a decision
+   * about the Eligible Cost — an Approved Amount can be no more than the lower of
+   * it and the Applicant's Remaining Allowance — so an Application without one
+   * could never be pre-approved. A Draft may still be saved without it, which is
+   * what makes it a Draft.
+   */
+  private List<String> detailsMissingForSubmission(Course entered) {
+    List<String> missing = new ArrayList<>();
+    for (String detail : entered.detailsMissingForSubmission()) {
+      missing.add("course." + detail);
+    }
+    if (eligibleCost == null) {
+      missing.add("eligibleCost");
+    }
+    return missing;
   }
 
   private void requireADraft() {
