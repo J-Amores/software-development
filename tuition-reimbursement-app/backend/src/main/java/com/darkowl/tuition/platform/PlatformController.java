@@ -8,8 +8,6 @@ import java.time.Clock;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.simple.JdbcClient;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RestController;
 import software.amazon.awssdk.services.s3.S3Client;
 
@@ -51,25 +49,12 @@ class PlatformController implements PlatformApi {
 
   /**
    * The signed-in Person, as the backend reads them from their token: never from a
-   * request parameter, so a caller cannot claim to be someone else. The contract
-   * gives this operation no parameters, so the token comes from the security
-   * context the resource server has already validated.
+   * request parameter, so a caller cannot claim to be someone else.
    */
   @Override
   public ResponseEntity<Me> getMe() {
-    Jwt token = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    return ResponseEntity.ok(
-        new Me(token.getSubject(), displayName(token), token.getClaimAsString("email")));
-  }
-
-  private static String displayName(Jwt token) {
-    String given = token.getClaimAsString("given_name");
-    String family = token.getClaimAsString("family_name");
-    if (given != null && family != null) {
-      return given + " " + family;
-    }
-    String username = token.getClaimAsString("cognito:username");
-    return username != null ? username : token.getSubject();
+    SignedInPerson person = SignedInPerson.current();
+    return ResponseEntity.ok(new Me(person.personId(), person.displayName(), person.email()));
   }
 
   private void flywayHasRun() {

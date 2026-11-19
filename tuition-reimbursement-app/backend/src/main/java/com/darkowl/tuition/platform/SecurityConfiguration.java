@@ -63,11 +63,15 @@ class SecurityConfiguration {
     // The identity token is what carries the Person's name and email, so an
     // access token for the same user is not accepted in its place.
     validators.add(new JwtClaimValidator<String>("token_use", "id"::equals));
-    if (oidc.audience() != null && !oidc.audience().isBlank()) {
-      validators.add(
-          new JwtClaimValidator<List<String>>(
-              JwtClaimNames.AUD, audience -> audience != null && audience.contains(oidc.audience())));
+    // A token issued for a different app client is not for us. The audience is
+    // required configuration: a deployment that did not set it would accept any
+    // client's tokens.
+    if (oidc.audience() == null || oidc.audience().isBlank()) {
+      throw new IllegalStateException("app.oidc.audience must name the app client these tokens are for");
     }
+    validators.add(
+        new JwtClaimValidator<List<String>>(
+            JwtClaimNames.AUD, audience -> audience != null && audience.contains(oidc.audience())));
     return new DelegatingOAuth2TokenValidator<>(validators);
   }
 

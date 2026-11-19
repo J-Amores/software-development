@@ -12,6 +12,6 @@ if [ -n "${SEED_ENV:-}" ]; then
   done
   # shellcheck source=/dev/null
   . "$SEED_ENV"
-  export VITE_COGNITO_USER_POOL_ID VITE_COGNITO_CLIENT_ID
+  export VITE_COGNITO_CLIENT_ID
 fi
 exec "$@"

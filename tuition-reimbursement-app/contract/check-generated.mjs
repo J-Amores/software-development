@@ -1,29 +1,24 @@
-// Fails when the generated client in the repository is not what the contract
-// produces right now, so the frontend can never drift from the contract
-// (ADR 0004). Run by CI and by `npm run check`.
+// Fails when anything generated from the contract and committed to the repository
+// is not what the contract produces right now, so neither the frontend's client
+// nor the demo's mock can drift from it (ADR 0004). Run by CI and `npm run check`.
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { readFileSync } from "node:fs";
 
-const committed = "../web/src/api/generated/schema.d.ts";
-const scratch = mkdtempSync(join(tmpdir(), "contract-check-"));
-const fresh = join(scratch, "schema.d.ts");
+const generated = [
+  "../web/src/api/generated/schema.d.ts",
+  "../web/src/mocks/generated/handlers.ts",
+];
 
-try {
-  execFileSync("npx", ["openapi-typescript", "openapi.yaml", "-o", fresh], {
-    stdio: ["ignore", "ignore", "inherit"],
-  });
-  const before = readFileSync(committed, "utf8");
-  const after = readFileSync(fresh, "utf8");
-  if (before !== after) {
-    console.error(
-      `${committed} is not what contract/openapi.yaml generates.\n` +
-        "Run `npm --prefix contract run generate` and commit the result; never hand-edit it.",
-    );
-    process.exit(1);
-  }
-  console.log("Generated client matches the contract.");
-} finally {
-  rmSync(scratch, { recursive: true, force: true });
+const before = generated.map((file) => readFileSync(file, "utf8"));
+execFileSync("npm", ["run", "generate"], { stdio: ["ignore", "ignore", "inherit"] });
+const after = generated.map((file) => readFileSync(file, "utf8"));
+
+const stale = generated.filter((_, index) => before[index] !== after[index]);
+if (stale.length > 0) {
+  console.error(
+    `Not what contract/openapi.yaml generates:\n  ${stale.join("\n  ")}\n` +
+      "Run `npm --prefix contract run generate` and commit the result; never hand-edit it.",
+  );
+  process.exit(1);
 }
+console.log(`Everything generated from the contract is current (${generated.length} file(s)).`);

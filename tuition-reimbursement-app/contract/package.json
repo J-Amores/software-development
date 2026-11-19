@@ -6,11 +6,14 @@
   "description": "The OpenAPI contract and the commands that lint it and generate from it",
   "scripts": {
     "lint": "spectral lint openapi.yaml --fail-severity warn",
-    "generate": "openapi-typescript openapi.yaml -o ../web/src/api/generated/schema.d.ts",
-    "check": "node check-generated.mjs"
+    "generate": "npm run generate:client && npm run generate:mock",
+    "check": "node check-generated.mjs",
+    "generate:client": "openapi-typescript openapi.yaml -o ../web/src/api/generated/schema.d.ts",
+    "generate:mock": "node generate-mock.mjs"
   },
   "devDependencies": {
     "@stoplight/spectral-cli": "6.17.1",
-    "openapi-typescript": "7.13.0"
+    "openapi-typescript": "7.13.0",
+    "yaml": "2.8.1"
   }
 }

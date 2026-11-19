@@ -10,6 +10,9 @@ on:
       - 'tuition-reimbursement-app/**'
       - '.github/workflows/tuition.yml'
 
+# Every step runs in the same container the developer runs it in, so nothing
+# depends on what the runner image happens to have installed (home repo rule:
+# reproducible execution).
 defaults:
   run:
     working-directory: tuition-reimbursement-app
@@ -18,11 +21,9 @@ jobs:
   contract:
     name: Contract is the source of truth
     runs-on: ubuntu-latest
+    container: node:22-alpine
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
       - name: Install the contract's tools
         run: npm --prefix contract install --no-audit --no-fund
       - name: Lint the OpenAPI spec
@@ -30,15 +31,23 @@ jobs:
       - name: Check the generated client matches the contract
         run: npm --prefix contract run check
 
+  scripts:
+    name: Scripts lint
+    runs-on: ubuntu-latest
+    container: koalaman/shellcheck-alpine:stable
+    steps:
+      - uses: actions/checkout@v4
+      - run: shellcheck dev tools/ci/*.sh tools/aws-emulator/seed.sh backend/entrypoint.sh web/e2e/*.sh web/entrypoint.sh
+
   guards:
     name: Tests read-only, and SQL Aurora DSQL supports
     runs-on: ubuntu-latest
     steps:
+      # These two guards are shell and git only: the runner's own git is what
+      # reads the history, so there is nothing to containerize.
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Shellcheck the scripts
-        run: shellcheck dev tools/ci/*.sh tools/aws-emulator/seed.sh backend/entrypoint.sh web/e2e/*.sh web/entrypoint.sh
       - name: No commit weakens a test to make code pass
         working-directory: .
         run: |
@@ -57,53 +66,45 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '25'
-          cache: 'maven'
       - name: Start the AWS Emulator
+        # The same service definition the developer runs, so the emulator is
+        # configured in one place only (docker-compose.yml).
         run: |
           mkdir -p "$HOME/.aws/emulator/9297"
-          docker build -t aws-emulator tools/aws-emulator
-          docker run -d --rm --name aws-emulator \
-            -e EMULATOR_TELEMETRY=off \
-            --cap-drop ALL --security-opt no-new-privileges --read-only \
-            -p 127.0.0.1:9297:9297 \
-            -v "$HOME/.aws/emulator/9297:/home/emulator/.aws/emulator/9297" \
-            aws-emulator
-          for _ in $(seq 60); do
-            curl -sf --cacert "$HOME/.aws/emulator/9297/ca.pem" \
-              https://127.0.0.1:9297/__admin/health && break
-            sleep 1
-          done
+          docker compose up --build -d --wait aws-emulator
       - name: Run the suite
-        # Postgres comes from Testcontainers, so no service container is needed.
-        # No real AWS credentials are in the environment: without the endpoint
-        # below, a call would go to live AWS.
-        env:
-          AWS_ENDPOINT_URL: https://127.0.0.1:9297
-          AWS_CA_BUNDLE: /home/runner/.aws/emulator/9297/ca.pem
-          AWS_SHARED_CREDENTIALS_FILE: /home/runner/.aws/emulator/9297/emulator_credentials
-          AWS_REGION: us-east-1
-          AWS_EC2_METADATA_DISABLED: 'true'
+        # Maven and the JDK come from the image, not the runner. Postgres comes
+        # from Testcontainers, which reaches the runner's Docker socket. No real
+        # AWS credentials are in the environment: without the endpoint below, a
+        # call would go to live AWS.
         run: |
-          unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_PROFILE
-          cd backend && mvn -B verify
+          docker run --rm \
+            -v "$PWD":/w -w /w/backend \
+            -v "$HOME/.m2":/root/.m2 \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v "$HOME/.aws/emulator/9297":/emulator:ro \
+            -e AWS_ENDPOINT_URL=https://127.0.0.1:9297 \
+            -e AWS_CA_BUNDLE=/emulator/ca.pem \
+            -e AWS_SHARED_CREDENTIALS_FILE=/emulator/emulator_credentials \
+            -e AWS_REGION=us-east-1 \
+            -e AWS_EC2_METADATA_DISABLED=true \
+            -e TESTCONTAINERS_HOST_OVERRIDE=host.docker.internal \
+            --add-host host.docker.internal:host-gateway \
+            --network container:tuition-aws-emulator \
+            maven:3.9.12-eclipse-temurin-25 mvn -B verify
+      - name: Container logs on failure
+        if: failure()
+        run: docker compose logs
       - name: Stop the emulator
         if: always()
-        run: docker stop aws-emulator || true
+        run: docker compose down -v || true
 
   frontend:
     name: Frontend
     runs-on: ubuntu-latest
+    container: node:22-alpine
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-          cache-dependency-path: tuition-reimbursement-app/web/package-lock.json
       - run: npm --prefix web ci --no-audit --no-fund
       - name: Typecheck
         run: npm --prefix web run typecheck

@@ -25,17 +25,6 @@ else
   aws s3api create-bucket --bucket "$DOCUMENTS_BUCKET" >/dev/null
   echo "created bucket $DOCUMENTS_BUCKET"
 fi
-# Uploads and downloads go straight from the browser to S3 through presigned URLs
-# (ticket 06), which needs the frontend's origin to be allowed.
-aws s3api put-bucket-cors --bucket "$DOCUMENTS_BUCKET" --cors-configuration '{
-  "CORSRules": [{
-    "AllowedHeaders": ["*"],
-    "AllowedMethods": ["GET", "PUT", "HEAD"],
-    "AllowedOrigins": ["http://localhost:5173"],
-    "ExposeHeaders": ["ETag"]
-  }]
-}' >/dev/null 2>&1 || echo "note: the emulator did not accept a CORS configuration; ticket 06 will revisit"
-
 # ── Cognito: the user pool, this app's client, and the demo people ────────────
 POOL_ID=$(aws cognito-idp list-user-pools --max-results 60 \
   --query "UserPools[?Name=='$USER_POOL_NAME'].Id | [0]" --output text)
@@ -98,7 +87,6 @@ APP_OIDC_ISSUER=$ISSUER
 APP_OIDC_JWK_SET_URI=$ISSUER/.well-known/jwks.json
 APP_OIDC_AUDIENCE=$CLIENT_ID
 APP_S3_DOCUMENTS_BUCKET=$DOCUMENTS_BUCKET
-VITE_COGNITO_USER_POOL_ID=$POOL_ID
 VITE_COGNITO_CLIENT_ID=$CLIENT_ID
 ENV
 echo "wrote $STATE_FILE"

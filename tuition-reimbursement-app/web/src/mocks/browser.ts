@@ -1,5 +1,5 @@
 import { setupWorker } from "msw/browser";
-import { handlers } from "./handlers";
+import { handlers } from "./generated/handlers";
 
 /**
  * Starts the mock in the browser. The same handlers power demo mode and the

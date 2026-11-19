@@ -11,8 +11,10 @@ every layer, with no domain behavior in it (ticket 01).
 ## Run it
 
 Everything runs locally, in Docker, against real Postgres and the AWS Emulator. No
-build, test or demo reaches live AWS (ADR 0003). You need Docker; you do not need a
-JDK, Node or an AWS account.
+build, test or demo reaches live AWS (ADR 0003). Docker is all you need for the app
+and its tests: no JDK, no Node and no AWS account. The one exception is
+`./dev round-trip`, which drives a real browser through the `agent-browser` CLI and
+so needs that on the host (`npm i -g agent-browser && agent-browser install`).
 
 ```bash
 ./dev up          # Postgres, the AWS Emulator, the backend and the frontend
@@ -62,3 +64,6 @@ the variables).
   (ADR 0007). `tools/ci/check-dsql-sql.sh` enforces it.
 - The app reads the current date and time from an injected clock, never from
   `Instant.now()`, so tests can set it.
+- **`./dev round-trip` is a gate, not a convenience.** It is the skeleton's only
+  test (ADR 0008) and runs locally rather than in CI, by the project owner's
+  decision, so it has to be run by hand before the skeleton is called working.
