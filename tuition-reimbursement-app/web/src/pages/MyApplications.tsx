@@ -4,6 +4,25 @@ import { api } from "../api/client";
 import type { components } from "../api/generated/schema";
 import { statusWord } from "../applications/status";
 import { readableDate } from "../time/plainDates";
+import { Alert, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle,
+} from "@/components/ui/empty";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 type ApplicationSummary = components["schemas"]["ApplicationSummary"];
 
@@ -34,10 +53,10 @@ export function MyApplications() {
   if (problem) {
     return (
       <>
-        <h1>My Applications</h1>
-        <p role="alert" className="refusal">
-          {problem}
-        </p>
+        <h1 className="font-heading text-2xl font-medium tracking-tight">My Applications</h1>
+        <Alert variant="destructive">
+          <AlertTitle>{problem}</AlertTitle>
+        </Alert>
       </>
     );
   }
@@ -45,8 +64,8 @@ export function MyApplications() {
   if (applications === null) {
     return (
       <>
-        <h1>My Applications</h1>
-        <p role="status" aria-live="polite">
+        <h1 className="font-heading text-2xl font-medium tracking-tight">My Applications</h1>
+        <p className="text-sm text-muted-foreground" role="status" aria-live="polite">
           Reading your Applications…
         </p>
       </>
@@ -56,66 +75,88 @@ export function MyApplications() {
   if (applications.length === 0) {
     return (
       <>
-        <h1>My Applications</h1>
-        <p className="lede">
-          You have nothing here yet. Start an Application to have the tuition for a Course
-          reimbursed: enter the Course, keep it as a Draft for as long as you need, and submit it
-          before the Course starts.
-        </p>
-        <p>
-          <Link to="/applications/new" className="call">
-            Start an Application
-          </Link>
-        </p>
+        <h1 className="font-heading text-2xl font-medium tracking-tight">My Applications</h1>
+        <Empty className="border">
+          <EmptyHeader>
+            <EmptyTitle>You have nothing here yet</EmptyTitle>
+            <EmptyDescription>
+              Start an Application to have the tuition for a Course reimbursed: enter the Course,
+              keep it as a Draft for as long as you need, and submit it before the Course starts.
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Link to="/applications/new" className={buttonVariants()}>
+              Start an Application
+            </Link>
+          </EmptyContent>
+        </Empty>
       </>
     );
   }
 
   return (
     <>
-      <h1>My Applications</h1>
+      <h1 className="font-heading text-2xl font-medium tracking-tight">My Applications</h1>
       <p>
-        <Link to="/applications/new" className="call">
+        <Link to="/applications/new" className={buttonVariants()}>
           Start an Application
         </Link>
       </p>
-      {/* The wrapper is focusable and named so that it can be scrolled from the
-          keyboard when the columns do not fit (responsive-table). */}
-      <div tabIndex={0} role="region" aria-labelledby="my-applications-caption" className="table-wrap">
-        <table>
-          <caption id="my-applications-caption" className="visually-hidden">
-            Every Application you have, and where each one stands
-          </caption>
-          <thead>
-            <tr>
-              <th scope="col">Course</th>
-              <th scope="col">Institution</th>
-              <th scope="col">Starts</th>
-              <th scope="col">Eligible Cost</th>
-              <th scope="col">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {applications.map((application) => (
-              <tr key={application.applicationId}>
-                <th scope="row">
-                  <Link to={`/applications/${application.applicationId}`}>
-                    {application.courseTitle ?? "A Draft with no Course title yet"}
-                  </Link>
-                </th>
-                {/* `data-column` is the column's name for the stacked layout the
-                    stylesheet falls back to when the columns no longer fit. */}
-                <td data-column="Institution">{application.courseInstitution ?? NOT_YET}</td>
-                <td data-column="Starts">
-                  {application.courseStartDate ? readableDate(application.courseStartDate) : NOT_YET}
-                </td>
-                <td data-column="Eligible Cost">{application.eligibleCost ?? NOT_YET}</td>
-                <td data-column="Status">{statusWord(application.status)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {/* The element that scrolls is focusable and named, so that it can be
+          scrolled from the keyboard when the columns do not fit, and it is the
+          container the stylesheet measures to decide when each Application
+          becomes a block instead (responsive-table). */}
+      <Table
+        container={{
+          tabIndex: 0,
+          role: "region",
+          "aria-labelledby": "my-applications-caption",
+          className: "@container",
+        }}
+      >
+        <TableCaption id="my-applications-caption" className="sr-only">
+          Every Application you have, and where each one stands
+        </TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead scope="col">Course</TableHead>
+            <TableHead scope="col">Institution</TableHead>
+            <TableHead scope="col">Starts</TableHead>
+            <TableHead scope="col">Eligible Cost</TableHead>
+            <TableHead scope="col">Status</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {applications.map((application) => (
+            <TableRow key={application.applicationId}>
+              <TableHead scope="row" className="font-normal">
+                <Link
+                  to={`/applications/${application.applicationId}`}
+                  className="underline underline-offset-4 hover:text-primary"
+                >
+                  {application.courseTitle ?? "A Draft with no Course title yet"}
+                </Link>
+              </TableHead>
+              {/* `data-column` is the column's name for the stacked layout the
+                  stylesheet falls back to when the columns no longer fit. */}
+              <TableCell data-column="Institution">
+                {application.courseInstitution ?? NOT_YET}
+              </TableCell>
+              <TableCell data-column="Starts">
+                {application.courseStartDate ? readableDate(application.courseStartDate) : NOT_YET}
+              </TableCell>
+              <TableCell data-column="Eligible Cost">
+                {application.eligibleCost ?? NOT_YET}
+              </TableCell>
+              <TableCell data-column="Status">
+                <Badge variant={application.status === "draft" ? "secondary" : "default"}>
+                  {statusWord(application.status)}
+                </Badge>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </>
   );
 }
