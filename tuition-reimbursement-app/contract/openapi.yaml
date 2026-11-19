@@ -1,0 +1,108 @@
+openapi: 3.1.0
+info:
+  title: Tuition Reimbursement API
+  version: 0.1.0
+  description: >-
+    The source of truth for the HTTP API (ADR 0004). The backend implements it,
+    and the TypeScript client and the in-browser mock API are generated from it.
+    Endpoints are added one slice at a time; changing an existing endpoint is a
+    deliberate, separate commit with a reason (ADR 0008).
+servers:
+  - url: /api
+    description: The API, reached through the frontend's origin
+tags:
+  - name: platform
+    description: Operations that prove the system is up and who is signed in
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      tags: [platform]
+      summary: Report whether the system's dependencies are reachable
+      description: >-
+        Reports each dependency the app cannot work without, separately, so a
+        failure says which one is down, and the instant the app's clock reads.
+        Open to anyone: it is what tells a developer or a deployment that the
+        system is up.
+      security: []
+      responses:
+        "200":
+          description: Every dependency is reachable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Health"
+        "503":
+          description: At least one dependency is unreachable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Health"
+  /me:
+    get:
+      operationId: getMe
+      tags: [platform]
+      summary: The signed-in Person's identity, read from their token
+      description: >-
+        Answers who the caller is, taken from the claims in their token and never
+        from a request parameter, so nobody can ask about someone else.
+      responses:
+        "200":
+          description: The signed-in Person
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Me"
+        "401":
+          description: No valid token was presented
+components:
+  securitySchemes:
+    cognito:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: A Cognito-issued JWT, validated as a standard OIDC resource server
+  schemas:
+    Health:
+      type: object
+      description: The reachability of each dependency, and the time the clock reads
+      required: [status, postgres, s3, time]
+      properties:
+        status:
+          type: string
+          enum: [up, down]
+          description: up only when every dependency is reachable
+        postgres:
+          $ref: "#/components/schemas/DependencyStatus"
+        s3:
+          $ref: "#/components/schemas/DependencyStatus"
+        time:
+          type: string
+          format: date-time
+          description: The instant the application's injected clock reads
+    DependencyStatus:
+      type: object
+      description: Whether one dependency is reachable
+      required: [reachable]
+      properties:
+        reachable:
+          type: boolean
+        detail:
+          type: string
+          description: Why it is unreachable, absent when it is
+    Me:
+      type: object
+      description: The signed-in Person, as the backend read them from their token
+      required: [personId, name, email]
+      properties:
+        personId:
+          type: string
+          description: The subject claim of the token, the Person's stable identifier
+        name:
+          type: string
+          description: The Person's display name
+        email:
+          type: string
+          format: email
+security:
+  - cognito: []

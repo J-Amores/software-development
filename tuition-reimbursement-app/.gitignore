@@ -1,0 +1,13 @@
+# Backend build output
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# Generated from contract/openapi.yaml. The TypeScript client IS committed, so a
+# contract change shows up in review; CI regenerates it and fails on any
+# difference (contract/check-generated.mjs). Never hand-edit it. The backend's
+# generated interfaces are build output, so they are not.
+backend/target/generated-sources/
+
+# Local environment
+.env
+.env.local

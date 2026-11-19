@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: tuition-reimbursement
+  datasource:
+    url: ${APP_DB_URL}
+    username: ${APP_DB_USERNAME}
+    password: ${APP_DB_PASSWORD}
+  flyway:
+    enabled: true
+    # No tables yet: Flyway runs and creates only its own history table, which is
+    # what the walking skeleton proves (ticket 01).
+    baseline-on-migrate: true
+    fail-on-missing-locations: false
+  threads:
+    virtual:
+      enabled: true
+
+server:
+  # The contract serves the API under /api, and CloudFront routes /api to the
+  # Lambda, so no path rewriting happens anywhere.
+  servlet:
+    context-path: /api
+
+app:
+  employer:
+    name: ${APP_EMPLOYER_NAME:Dark Owl Records}
+    currency: ${APP_EMPLOYER_CURRENCY:USD}
+    time-zone: ${APP_EMPLOYER_TIME_ZONE:America/New_York}
+  oidc:
+    issuer: ${APP_OIDC_ISSUER}
+    jwk-set-uri: ${APP_OIDC_JWK_SET_URI}
+    audience: ${APP_OIDC_AUDIENCE:}
+  s3:
+    endpoint: ${APP_S3_ENDPOINT:}
+    documents-bucket: ${APP_S3_DOCUMENTS_BUCKET:tuition-documents}
+    path-style-access: ${APP_S3_PATH_STYLE_ACCESS:false}
+
+logging:
+  level:
+    org.springframework.security: INFO

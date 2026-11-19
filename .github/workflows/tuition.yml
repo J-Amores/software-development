@@ -1,0 +1,115 @@
+name: Tuition Reimbursement Verification
+
+on:
+  push:
+    paths:
+      - 'tuition-reimbursement-app/**'
+      - '.github/workflows/tuition.yml'
+  pull_request:
+    paths:
+      - 'tuition-reimbursement-app/**'
+      - '.github/workflows/tuition.yml'
+
+defaults:
+  run:
+    working-directory: tuition-reimbursement-app
+
+jobs:
+  contract:
+    name: Contract is the source of truth
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install the contract's tools
+        run: npm --prefix contract install --no-audit --no-fund
+      - name: Lint the OpenAPI spec
+        run: npm --prefix contract run lint
+      - name: Check the generated client matches the contract
+        run: npm --prefix contract run check
+
+  guards:
+    name: Tests read-only, and SQL Aurora DSQL supports
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Shellcheck the scripts
+        run: shellcheck dev tools/ci/*.sh tools/aws-emulator/seed.sh backend/entrypoint.sh web/e2e/*.sh web/entrypoint.sh
+      - name: No commit weakens a test to make code pass
+        working-directory: .
+        run: |
+          base="${{ github.event.pull_request.base.sha || github.event.before }}"
+          if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ]; then
+            echo "No base commit to compare against; nothing to check."
+            exit 0
+          fi
+          tuition-reimbursement-app/tools/ci/check-tests-read-only.sh "$base...${{ github.sha }}"
+      - name: Every migration stays inside Aurora DSQL's SQL
+        working-directory: .
+        run: tuition-reimbursement-app/tools/ci/check-dsql-sql.sh
+
+  backend:
+    name: Backend, against real Postgres and the AWS Emulator
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '25'
+          cache: 'maven'
+      - name: Start the AWS Emulator
+        run: |
+          mkdir -p "$HOME/.aws/emulator/9297"
+          docker build -t aws-emulator tools/aws-emulator
+          docker run -d --rm --name aws-emulator \
+            -e EMULATOR_TELEMETRY=off \
+            --cap-drop ALL --security-opt no-new-privileges --read-only \
+            -p 127.0.0.1:9297:9297 \
+            -v "$HOME/.aws/emulator/9297:/home/emulator/.aws/emulator/9297" \
+            aws-emulator
+          for _ in $(seq 60); do
+            curl -sf --cacert "$HOME/.aws/emulator/9297/ca.pem" \
+              https://127.0.0.1:9297/__admin/health && break
+            sleep 1
+          done
+      - name: Run the suite
+        # Postgres comes from Testcontainers, so no service container is needed.
+        # No real AWS credentials are in the environment: without the endpoint
+        # below, a call would go to live AWS.
+        env:
+          AWS_ENDPOINT_URL: https://127.0.0.1:9297
+          AWS_CA_BUNDLE: /home/runner/.aws/emulator/9297/ca.pem
+          AWS_SHARED_CREDENTIALS_FILE: /home/runner/.aws/emulator/9297/emulator_credentials
+          AWS_REGION: us-east-1
+          AWS_EC2_METADATA_DISABLED: 'true'
+        run: |
+          unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_PROFILE
+          cd backend && mvn -B verify
+      - name: Stop the emulator
+        if: always()
+        run: docker stop aws-emulator || true
+
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: tuition-reimbursement-app/web/package-lock.json
+      - run: npm --prefix web ci --no-audit --no-fund
+      - name: Typecheck
+        run: npm --prefix web run typecheck
+      - name: Test
+        run: npm --prefix web test
+      - name: Build, and build demo mode
+        run: |
+          npm --prefix web run build
+          npm --prefix web run build:demo

@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# One command for the whole system, locally. Nothing here reaches live AWS
+# (ADR 0003): Postgres and the AWS Emulator run in containers beside the app.
+set -euo pipefail
+cd "$(dirname "$0")"
+
+# The emulator writes this run's credentials and certificate here, and the host's
+# AWS CLI reads them from the same place. Created first, or Docker creates it
+# owned by root and nothing can read it.
+mkdir -p "$HOME/.aws/emulator/9297"
+
+case "${1:-up}" in
+  up)
+    docker compose up --build "${@:2}"
+    ;;
+  demo)
+    # The public demo's build: the same frontend against the mock, no backend.
+    docker compose --profile demo up --build web-demo "${@:2}"
+    ;;
+  down)
+    docker compose --profile demo down --remove-orphans "${@:2}"
+    ;;
+  logs)
+    docker compose logs -f "${@:2}"
+    ;;
+  test)
+    # The backend's suite, in a container: no JDK needed on the host.
+    docker run --rm -v "$PWD":/w -w /w/backend -v "$HOME/.m2":/root/.m2 \
+      maven:3.9.12-eclipse-temurin-25 mvn -B verify
+    ;;
+  round-trip)
+    # The walking skeleton's only test (ADR 0008). Needs the stack to be up.
+    exec web/e2e/round-trip.sh
+    ;;
+  *)
+    echo "usage: ./dev [up|demo|down|logs|test|round-trip]" >&2
+    exit 64
+    ;;
+esac

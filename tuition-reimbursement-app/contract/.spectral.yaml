@@ -1,0 +1,12 @@
+extends: ["spectral:oas"]
+rules:
+  # Every operation is reached by name from the generated client, so the name is required.
+  operation-operationId: error
+  operation-description: error
+  operation-tag-defined: error
+  # Example payloads would duplicate the Faker fixtures that seed the mock (ADR 0005).
+  oas3-valid-media-example: off
+  # The contract is read by this repository's own backend, client and mock, not
+  # published to third parties, and a contact would mean committing a personal
+  # address.
+  info-contact: off

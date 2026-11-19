@@ -1,0 +1,4 @@
+Migrations arrive one slice at a time, introduced by the tests that need them,
+never ahead of time. Each file holds exactly one DDL statement and no DML, which
+is all Aurora DSQL allows in a transaction (ADR 0007). The walking skeleton has
+none: Flyway runs and creates only its own history table.

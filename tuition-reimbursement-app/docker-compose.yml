@@ -1,0 +1,136 @@
+# The whole system, locally, in one command: `./dev up`.
+#
+# Everything except demo mode shares the emulator container's network namespace,
+# so every service reaches the emulator at https://localhost:9297, the one name
+# its TLS certificate covers (ADR 0009). That is why the published ports all sit
+# on the aws-emulator service.
+name: tuition-reimbursement
+
+services:
+  aws-emulator:
+    build: tools/aws-emulator
+    container_name: tuition-aws-emulator
+    environment:
+      EMULATOR_TELEMETRY: "off"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    ports:
+      # Loopback only, never 0.0.0.0: these are the emulator (9297), Postgres,
+      # the backend and the frontend, all in this one namespace.
+      - "127.0.0.1:9297:9297"
+      - "127.0.0.1:5432:5432"
+      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:5173:5173"
+    volumes:
+      # The host gets this run's config, credentials and ca.pem, so the AWS CLI on
+      # the host can talk to the same emulator.
+      - ${HOME}/.aws/emulator/9297:/home/emulator/.aws/emulator/9297
+
+  postgres:
+    image: postgres:18-alpine
+    network_mode: "service:aws-emulator"
+    depends_on:
+      aws-emulator:
+        condition: service_started
+    environment:
+      POSTGRES_DB: tuition
+      POSTGRES_USER: tuition
+      POSTGRES_PASSWORD: tuition
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tuition -d tuition"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    volumes:
+      - postgres-data:/var/lib/postgresql
+
+  # Provisions S3, Cognito and Secrets Manager on every boot, idempotently, and
+  # writes the ids it created to /state/seed.env for the services that need them.
+  seed:
+    image: amazon/aws-cli:latest
+    network_mode: "service:aws-emulator"
+    depends_on:
+      aws-emulator:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "/seed.sh"]
+    environment:
+      AWS_ENDPOINT_URL: https://localhost:9297
+      AWS_CA_BUNDLE: /emulator/ca.pem
+      AWS_SHARED_CREDENTIALS_FILE: /emulator/emulator_credentials
+      AWS_REGION: us-east-1
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_EC2_METADATA_DISABLED: "true"
+      AWS_PAGER: ""
+      DOCUMENTS_BUCKET: tuition-documents
+      APP_DB_PASSWORD: tuition
+    volumes:
+      - ./tools/aws-emulator/seed.sh:/seed.sh:ro
+      - ${HOME}/.aws/emulator/9297:/emulator:ro
+      - local-state:/state
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    network_mode: "service:aws-emulator"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      seed:
+        condition: service_completed_successfully
+    environment:
+      APP_DB_URL: jdbc:postgresql://localhost:5432/tuition
+      APP_DB_USERNAME: tuition
+      APP_DB_PASSWORD: tuition
+      APP_S3_ENDPOINT: https://localhost:9297
+      APP_S3_PATH_STYLE_ACCESS: "true"
+      APP_EMPLOYER_NAME: Dark Owl Records
+      APP_EMPLOYER_CURRENCY: USD
+      APP_EMPLOYER_TIME_ZONE: America/New_York
+      AWS_REGION: us-east-1
+      AWS_SHARED_CREDENTIALS_FILE: /emulator/emulator_credentials
+      EMULATOR_CA: /emulator/ca.pem
+      SEED_ENV: /state/seed.env
+    volumes:
+      - ${HOME}/.aws/emulator/9297:/emulator:ro
+      - local-state:/state:ro
+
+  web:
+    build:
+      context: web
+      dockerfile: Dockerfile
+    network_mode: "service:aws-emulator"
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+    environment:
+      SEED_ENV: /state/seed.env
+    volumes:
+      - ./web/src:/app/src:ro
+      - ./web/public:/app/public:ro
+      - ./web/index.html:/app/index.html:ro
+      - ./web/vite.config.ts:/app/vite.config.ts:ro
+      - local-state:/state:ro
+
+  # Demo mode needs no backend and no AWS at all: the same frontend against the
+  # mock generated from the contract (ADR 0005). Started by `./dev demo`.
+  web-demo:
+    build:
+      context: web
+      dockerfile: Dockerfile
+    profiles: ["demo"]
+    command: ["npm", "run", "dev:demo", "--", "--host", "0.0.0.0", "--port", "5174"]
+    environment:
+      VITE_DEMO_MODE: "true"
+    ports:
+      - "127.0.0.1:5174:5174"
+    volumes:
+      - ./web/src:/app/src:ro
+      - ./web/public:/app/public:ro
+      - ./web/index.html:/app/index.html:ro
+      - ./web/vite.config.ts:/app/vite.config.ts:ro
+
+volumes:
+  postgres-data:
+  local-state:

@@ -1,0 +1,124 @@
+/* The walking skeleton's styling is deliberately plain: the Program's screens and
+   their design arrive with their own slices. */
+:root {
+  --ink: #16161d;
+  --paper: #fbfbfd;
+  --muted: #5c5c6b;
+  --line: #d9d9e3;
+  --error: #b3261e;
+  --accent: #1f3a93;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #ececf1;
+    --paper: #16161d;
+    --muted: #a3a3b2;
+    --line: #35354a;
+    --error: #f2b8b5;
+    --accent: #9db2f0;
+  }
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: var(--paper);
+  color: var(--ink);
+  font: 1rem/1.5 system-ui, sans-serif;
+}
+
+.panel {
+  width: min(28rem, 100%);
+  display: grid;
+  gap: 1rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  letter-spacing: -0.01em;
+}
+
+.lede,
+.muted {
+  margin: 0;
+  color: var(--muted);
+}
+
+.stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.25rem;
+}
+
+label {
+  font-weight: 600;
+}
+
+input {
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: canvas;
+  color: inherit;
+  font: inherit;
+}
+
+/* :is() keeps the rule working where :user-invalid is not supported: in a plain
+   selector list, one unsupported selector drops the whole rule. */
+input:is(:user-invalid) {
+  border-color: var(--error);
+}
+
+.error-msg {
+  display: none;
+  color: var(--error);
+  font-size: 0.875rem;
+}
+
+input:is(:user-invalid) ~ .error-msg {
+  display: block;
+}
+
+button {
+  padding: 0.6rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  background: var(--accent);
+  color: var(--paper);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.rejection {
+  margin: 0;
+  color: var(--error);
+}
+
+/* Hides content visually but keeps it in the accessibility tree. */
+.visually-hidden:where(:not(:focus-within, :active)) {
+  position: absolute !important;
+  clip-path: inset(50%) !important;
+  overflow: hidden !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  white-space: nowrap !important;
+}

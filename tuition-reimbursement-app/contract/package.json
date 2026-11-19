@@ -1,0 +1,16 @@
+{
+  "name": "@tuition/contract",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "The OpenAPI contract and the commands that lint it and generate from it",
+  "scripts": {
+    "lint": "spectral lint openapi.yaml --fail-severity warn",
+    "generate": "openapi-typescript openapi.yaml -o ../web/src/api/generated/schema.d.ts",
+    "check": "node check-generated.mjs"
+  },
+  "devDependencies": {
+    "@stoplight/spectral-cli": "6.17.1",
+    "openapi-typescript": "7.13.0"
+  }
+}
