@@ -175,6 +175,14 @@ legend {
   gap: 0.75rem;
 }
 
+/* Submitting is the thing the Applicant came to do; saving a Draft is the way
+   out of it, so only one of the two is the loud button. */
+.actions button:not(.call) {
+  border-color: var(--line);
+  background: transparent;
+  color: var(--ink);
+}
+
 /* The one refused-request region: what the Program would not accept, and why. */
 .refusal {
   margin: 0;
