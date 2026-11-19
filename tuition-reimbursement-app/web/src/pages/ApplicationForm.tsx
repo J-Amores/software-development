@@ -374,7 +374,7 @@ export function ApplicationForm() {
               never Eligible Costs.
             </FieldDescription>
             <Input
-              className="peer"
+              className={REQUIRED_FIELD}
               type="text"
               id="eligibleCost"
               name="eligibleCost"
