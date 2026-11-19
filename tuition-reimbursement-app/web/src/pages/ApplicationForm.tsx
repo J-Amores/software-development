@@ -219,7 +219,7 @@ export function ApplicationForm() {
         <Alert variant="destructive" className="w-full max-w-2xl">
           {missing.length > 0 && (
             <>
-              <AlertTitle>Add these Course details before submitting:</AlertTitle>
+              <AlertTitle>Add these before submitting:</AlertTitle>
               <AlertDescription>
                 <ul className="flex list-disc flex-col gap-1 ps-5">
                   {missing.map((message) => (
