@@ -24,9 +24,38 @@ case "${1:-up}" in
     docker compose logs -f "${@:2}"
     ;;
   test)
-    # The backend's suite, in a container: no JDK needed on the host.
-    docker run --rm -v "$PWD":/w -w /w/backend -v "$HOME/.m2":/root/.m2 \
-      maven:3.9.12-eclipse-temurin-25 mvn -B verify
+    # The backend's suite, in a container: no JDK needed on the host. CI runs this
+    # very command, so the suite is configured in one place only.
+    #
+    # Seam 1 calls the real app against real Postgres and the AWS Emulator, so the
+    # container needs three things beyond Maven and the JDK: the Docker socket, for
+    # Testcontainers to start Postgres; the emulator's network namespace, because
+    # https://localhost:9297 is the only address its certificate covers (ADR 0009);
+    # and an address at which it can reach the ports Testcontainers publishes on
+    # the host, since inside that namespace localhost is the emulator, not the host.
+    #
+    # Start the emulator first: `./dev up`, or `docker compose up -d --wait
+    # aws-emulator` for the emulator alone, which is all the suite needs.
+    if docker info --format '{{.OperatingSystem}}' | grep -qi 'docker desktop'; then
+      # Docker Desktop resolves this inside every container, and routes it to the
+      # host; the bridge gateway does not reach the ephemeral ports.
+      host_address=host.docker.internal
+    else
+      host_address=$(docker network inspect bridge -f '{{(index .IPAM.Config 0).Gateway}}')
+    fi
+    docker run --rm \
+      -v "$PWD":/w -w /w/backend \
+      -v "$HOME/.m2":/root/.m2 \
+      -v /var/run/docker.sock:/var/run/docker.sock \
+      -v "$HOME/.aws/emulator/9297":/emulator:ro \
+      -e AWS_ENDPOINT_URL=https://127.0.0.1:9297 \
+      -e AWS_CA_BUNDLE=/emulator/ca.pem \
+      -e AWS_SHARED_CREDENTIALS_FILE=/emulator/emulator_credentials \
+      -e AWS_REGION=us-east-1 \
+      -e AWS_EC2_METADATA_DISABLED=true \
+      -e TESTCONTAINERS_HOST_OVERRIDE="$host_address" \
+      --network container:tuition-aws-emulator \
+      maven:3.9.12-eclipse-temurin-25 mvn -B verify "${@:2}"
     ;;
   round-trip)
     # The walking skeleton's only test (ADR 0008). Needs the stack to be up.

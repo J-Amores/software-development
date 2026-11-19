@@ -73,25 +73,17 @@ jobs:
           mkdir -p "$HOME/.aws/emulator/9297"
           docker compose up --build -d --wait aws-emulator
       - name: Run the suite
-        # Maven and the JDK come from the image, not the runner. Postgres comes
-        # from Testcontainers, which reaches the runner's Docker socket. No real
-        # AWS credentials are in the environment: without the endpoint below, a
-        # call would go to live AWS.
-        run: |
-          docker run --rm \
-            -v "$PWD":/w -w /w/backend \
-            -v "$HOME/.m2":/root/.m2 \
-            -v /var/run/docker.sock:/var/run/docker.sock \
-            -v "$HOME/.aws/emulator/9297":/emulator:ro \
-            -e AWS_ENDPOINT_URL=https://127.0.0.1:9297 \
-            -e AWS_CA_BUNDLE=/emulator/ca.pem \
-            -e AWS_SHARED_CREDENTIALS_FILE=/emulator/emulator_credentials \
-            -e AWS_REGION=us-east-1 \
-            -e AWS_EC2_METADATA_DISABLED=true \
-            -e TESTCONTAINERS_HOST_OVERRIDE=host.docker.internal \
-            --add-host host.docker.internal:host-gateway \
-            --network container:tuition-aws-emulator \
-            maven:3.9.12-eclipse-temurin-25 mvn -B verify
+        # The same command the developer runs, so the suite is configured in one
+        # place only (./dev). Maven and the JDK come from the image, not the
+        # runner; Postgres comes from Testcontainers, which reaches the runner's
+        # Docker socket. No real AWS credentials are in the environment: without
+        # the emulator's endpoint, a call would go to live AWS.
+        #
+        # This step used to pass `--add-host host.docker.internal:host-gateway`
+        # for the address of the host. Docker refuses that together with
+        # `--network container:`, so ./dev works out a reachable host address and
+        # passes it as TESTCONTAINERS_HOST_OVERRIDE instead.
+        run: ./dev test
       - name: Container logs on failure
         if: failure()
         run: docker compose logs
