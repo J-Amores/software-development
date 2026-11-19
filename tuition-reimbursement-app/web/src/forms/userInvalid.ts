@@ -7,18 +7,20 @@
  * from `aria-describedby` only while it is shown: text that `aria-describedby`
  * points at is announced even when it is hidden.
  */
+const DESCRIBED_BY = "aria-describedby";
+
 export function syncUserInvalidWithAria(form: HTMLFormElement): () => void {
   const fields = () => form.querySelectorAll<HTMLInputElement>("input, select, textarea");
 
   const linkError = (field: HTMLElement, shown: boolean) => {
     const errorId = field.dataset.error;
     if (!errorId) return;
-    const ids = (field.getAttribute("aria-describedby") ?? "")
+    const ids = (field.getAttribute(DESCRIBED_BY) ?? "")
       .split(/\s+/)
       .filter((id) => id && id !== errorId);
     if (shown) ids.push(errorId);
-    if (ids.length > 0) field.setAttribute("aria-describedby", ids.join(" "));
-    else field.removeAttribute("aria-describedby");
+    if (ids.length > 0) field.setAttribute(DESCRIBED_BY, ids.join(" "));
+    else field.removeAttribute(DESCRIBED_BY);
   };
 
   // `:user-invalid` is the browser's own record of whether the Person has had a go

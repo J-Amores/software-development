@@ -98,6 +98,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: npm --prefix web ci --no-audit --no-fund
+      - name: Lint
+        run: npm --prefix web run lint
       - name: Typecheck
         run: npm --prefix web run typecheck
       - name: Test
