@@ -102,7 +102,7 @@ class ApplicationsController implements ApplicationsApi {
   private Person applicant() {
     SignedInPerson signedIn = SignedInPerson.current();
     return people.personWithSubject(
-        signedIn.personId(), signedIn.displayName(), signedIn.email());
+        signedIn.tokenSubject(), signedIn.displayName(), signedIn.email());
   }
 
   private Application mine(UUID applicationId) {
