@@ -21,9 +21,22 @@ export function syncUserInvalidWithAria(form: HTMLFormElement): () => void {
     else field.removeAttribute("aria-describedby");
   };
 
+  // `:user-invalid` is the browser's own record of whether the Person has had a go
+  // at a field yet, and there is no other way to read it. A DOM that does not know
+  // the selector throws rather than answering, and the frontend's tests run in one
+  // of those, so a field there is simply never reported as invalid: what the
+  // Applicant is told about a refused Application is the form's own doing, not this.
+  const userInvalid = (field: HTMLElement): boolean => {
+    try {
+      return field.matches(":user-invalid");
+    } catch {
+      return false;
+    }
+  };
+
   const sync = (target: EventTarget | null) => {
     if (!(target instanceof HTMLElement) || !target.matches("input, select, textarea")) return;
-    const invalid = target.matches(":user-invalid");
+    const invalid = userInvalid(target);
     target.setAttribute("aria-invalid", invalid ? "true" : "false");
     linkError(target, invalid);
   };
