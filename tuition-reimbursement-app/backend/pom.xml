@@ -120,6 +120,15 @@
       <artifactId>testcontainers-postgresql</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- Seam 1 signs in as a real Person, so the suite provisions its own Cognito
+         user pool, app client and Applicants in the AWS Emulator and asks it for
+         identity tokens. Tests only: the app never calls Cognito, it validates
+         the tokens Cognito issued. -->
+    <dependency>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>cognitoidentityprovider</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
