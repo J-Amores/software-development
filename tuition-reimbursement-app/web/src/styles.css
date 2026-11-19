@@ -1,319 +1,186 @@
-/* The styling stays deliberately plain: it is the Program's behavior that each
-   slice brings, and the design arrives with its own. */
-:root {
-  --ink: #16161d;
-  --paper: #fbfbfd;
-  --muted: #5c5c6b;
-  --line: #d9d9e3;
-  --error: #b3261e;
-  --accent: #1f3a93;
-  color-scheme: light dark;
-}
+/* The one stylesheet. Tailwind and the shadcn/ui registry are the design system
+   (ADR 0010): a screen's own styling lives in utility classes on the screen, and
+   the primitives it is built from live in `src/components/ui/`.
+   What is left here is what utilities cannot carry: the design tokens, and the
+   handful of rules that need a selector no class can stand in for. */
+@import "tailwindcss";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --ink: #ececf1;
-    --paper: #16161d;
-    --muted: #a3a3b2;
-    --line: #35354a;
-    --error: #f2b8b5;
-    --accent: #9db2f0;
+/* The Program has no theme switch: it follows the Person's own system setting, so
+   the `dark:` variant any primitive carries is the media query, not a class
+   someone has to put on `<html>`. */
+@custom-variant dark {
+  @media (prefers-color-scheme: dark) {
+    @slot;
   }
 }
 
-body {
-  margin: 0;
-  min-height: 100dvh;
-  display: grid;
-  /* Sign-in is one small card and centres; a list of Applications is as long as
-     it is and starts at the top. */
-  place-items: start center;
-  padding: 1rem;
-  background: var(--paper);
-  color: var(--ink);
-  font: 1rem/1.5 system-ui, sans-serif;
+@theme inline {
+    --font-heading: var(--font-sans);
+    --font-sans: 'Geist Variable', sans-serif;
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-.panel {
-  width: min(28rem, 100%);
-  display: grid;
-  gap: 1rem;
-  align-self: center;
+:root {
+    /* Declared here as well as in the document's `<meta>`, because the root
+       element is what decides the colour of the viewport's own surfaces: the
+       canvas, the scrollbars and the native date picker (dark-mode). */
+    color-scheme: light dark;
+
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+    --primary: oklch(0.205 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+    --chart-1: oklch(0.87 0 0);
+    --chart-2: oklch(0.556 0 0);
+    --chart-3: oklch(0.439 0 0);
+    --chart-4: oklch(0.371 0 0);
+    --chart-5: oklch(0.269 0 0);
+    --radius: 0.625rem;
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar-primary: oklch(0.205 0 0);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent-foreground: oklch(0.205 0 0);
+    --sidebar-border: oklch(0.922 0 0);
+    --sidebar-ring: oklch(0.708 0 0);
 }
 
-.app {
-  width: min(60rem, 100%);
-  display: grid;
-  gap: 1.5rem;
-  align-content: start;
+/* The same tokens as the Person's system reads them in the dark. Written as a
+   media query rather than with `light-dark()` so that the values stay plain
+   colours: Tailwind's opacity modifiers mix these tokens through `color-mix()`,
+   and a `light-dark()` nested in there is not resolved everywhere yet. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.205 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.922 0 0);
+    --primary-foreground: oklch(0.205 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.556 0 0);
+    --chart-1: oklch(0.87 0 0);
+    --chart-2: oklch(0.556 0 0);
+    --chart-3: oklch(0.439 0 0);
+    --chart-4: oklch(0.371 0 0);
+    --chart-5: oklch(0.269 0 0);
+    --sidebar: oklch(0.205 0 0);
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-primary: oklch(0.488 0.243 264.376);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-accent-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(1 0 0 / 10%);
+    --sidebar-ring: oklch(0.556 0 0);
+  }
 }
 
-.app main {
-  display: grid;
-  gap: 1rem;
-  justify-items: start;
-}
-
-.masthead {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.5rem 1rem;
-  padding-block-end: 1rem;
-  border-block-end: 1px solid var(--line);
-}
-
-.brand {
-  margin: 0;
-  font-weight: 600;
-}
-
-.who {
-  margin: 0;
-  margin-inline-start: auto;
-  color: var(--muted);
-  font-size: 0.875rem;
-}
-
-h1 {
-  margin: 0;
-  font-size: 1.5rem;
-  letter-spacing: -0.01em;
-}
-
-h2 {
-  margin: 0.5rem 0 0;
-  font-size: 1.125rem;
-}
-
-.lede,
-.muted {
-  margin: 0;
-  color: var(--muted);
-}
-
-.stack {
-  display: grid;
-  gap: 1rem;
-}
-
-.field {
-  display: grid;
-  gap: 0.25rem;
-}
-
-label {
-  font-weight: 600;
-}
-
-input {
-  padding: 0.6rem 0.7rem;
-  border: 1px solid var(--line);
-  border-radius: 0.5rem;
-  background: canvas;
-  color: inherit;
-  font: inherit;
-}
-
-/* :is() keeps the rule working where :user-invalid is not supported: in a plain
-   selector list, one unsupported selector drops the whole rule. */
-input:is(:user-invalid) {
-  border-color: var(--error);
-}
-
-.error-msg {
-  display: none;
-  color: var(--error);
-  font-size: 0.875rem;
-}
-
-input:is(:user-invalid) ~ .error-msg {
-  display: block;
-}
-
-button {
-  padding: 0.6rem 1rem;
-  border: 1px solid transparent;
-  border-radius: 0.5rem;
-  background: var(--accent);
-  color: var(--paper);
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-button:disabled {
-  opacity: 0.6;
-  cursor: progress;
-}
-
-.rejection {
-  margin: 0;
-  color: var(--error);
-}
-
-.hint {
-  color: var(--muted);
-  font-size: 0.875rem;
-}
-
-fieldset {
-  margin: 0;
-  padding: 1rem;
-  border: 1px solid var(--line);
-  border-radius: 0.5rem;
-}
-
-legend {
-  padding-inline: 0.35rem;
-  font-weight: 600;
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-/* Submitting is the thing the Applicant came to do; saving a Draft is the way
-   out of it, so only one of the two is the loud button. */
-.actions button:not(.call) {
-  border-color: var(--line);
-  background: transparent;
-  color: var(--ink);
-}
-
-/* The one refused-request region: what the Program would not accept, and why. */
-.refusal {
-  margin: 0;
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--error);
-  border-radius: 0.5rem;
-  color: var(--error);
-}
-
-.refusal p,
-.refusal ul {
-  margin: 0.25rem 0;
-}
-
-a {
-  color: var(--accent);
-}
-
-a.call {
-  font-weight: 600;
-}
-
-/* Focusable and scrollable, so the columns can be reached from the keyboard when
-   they do not all fit. */
-.table-wrap {
-  overflow: auto;
-  max-inline-size: 100%;
-  inline-size: 100%;
-  container-type: inline-size;
-}
-
-table {
-  inline-size: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  text-align: start;
-}
-
-th,
-td {
-  padding: 0.5rem 0.75rem;
-  border-block-end: 1px solid var(--line);
-  text-align: start;
-  vertical-align: baseline;
-}
-
-thead th {
-  position: sticky;
-  inset-block-start: 0;
-  background: var(--paper);
-  font-size: 0.875rem;
-  color: var(--muted);
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply min-h-dvh bg-background text-foreground;
+    }
+  html {
+    @apply font-sans;
+    }
 }
 
 /* Narrow enough that the columns no longer fit: each Application becomes a block
-   with its column names in front of its values. */
-@container (width < 38rem) {
-  table,
-  thead,
-  tbody,
-  tr,
-  th,
-  td {
-    display: block;
+   with its column names in front of its values (responsive-table). The column
+   name comes from the cell's own `data-column` through `attr()`, which is the one
+   part of this no utility class can carry — a class cannot read an attribute off
+   the element it sits on. */
+@layer components {
+  @container (width < 38rem) {
+    [data-slot="table"],
+    [data-slot="table-header"],
+    [data-slot="table-body"],
+    [data-slot="table-row"],
+    [data-slot="table-head"],
+    [data-slot="table-cell"],
+    [data-slot="table-body"] th {
+      display: block;
+    }
+
+    [data-slot="table-header"] {
+      display: none;
+    }
+
+    [data-slot="table-body"] [data-slot="table-row"] {
+      margin-block-end: 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+    }
+
+    [data-slot="table-cell"][data-column]::before {
+      content: attr(data-column) ": ";
+      color: var(--muted-foreground);
+    }
   }
-
-  thead {
-    display: none;
-  }
-
-  tbody tr {
-    margin-block-end: 1rem;
-    border: 1px solid var(--line);
-    border-radius: 0.5rem;
-  }
-
-  tbody th,
-  tbody td {
-    border-block-end: 0;
-  }
-
-  tbody td::before {
-    content: attr(data-column) ": ";
-    color: var(--muted);
-  }
-}
-
-.details {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.25rem 1rem;
-  margin: 0;
-}
-
-.details dt {
-  color: var(--muted);
-}
-
-.details dd {
-  margin: 0;
-}
-
-.status {
-  margin: 0;
-  font-weight: 600;
-}
-
-.timeline {
-  display: grid;
-  gap: 0.75rem;
-  margin: 0;
-  padding-inline-start: 1.25rem;
-}
-
-.timeline p {
-  margin: 0;
-}
-
-.timeline .reason {
-  color: var(--muted);
-}
-
-/* Hides content visually but keeps it in the accessibility tree. */
-.visually-hidden:where(:not(:focus-within, :active)) {
-  position: absolute !important;
-  clip-path: inset(50%) !important;
-  overflow: hidden !important;
-  width: 1px !important;
-  height: 1px !important;
-  margin: -1px !important;
-  padding: 0 !important;
-  border: 0 !important;
-  white-space: nowrap !important;
 }

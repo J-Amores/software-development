@@ -1,3 +1,5 @@
+import { fileURLToPath } from "node:url";
+import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
 
@@ -13,7 +15,12 @@ import { defineConfig } from "vitest/config";
  * and so that one command's worth of configuration is not split in two.
  */
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
+  resolve: {
+    // The one import alias, which is also what `components.json` tells the shadcn
+    // CLI to write into every component it adds.
+    alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
+  },
   test: {
     environment: "jsdom",
     // The app calls the API at the relative path `/api`, so the document needs an
