@@ -5,6 +5,11 @@
 // handler whose fixture does not exist yet, and the frontend stops typechecking
 // until someone writes it — the mock cannot quietly fall behind the backend.
 //
+// Each fixture is handed the request and the path parameters, and may be async, so
+// that the mock can answer from state the caller has changed rather than from canned
+// data: a Draft saved through the mock is read back as it was entered. Demo mode
+// needs exactly that (ADR 0005), and so do the frontend's tests of it (seam 3).
+//
 // Run by `npm --prefix contract run generate`. Never hand-edit the output.
 import { readFileSync, writeFileSync } from "node:fs";
 import { parse } from "yaml";
@@ -35,7 +40,8 @@ operations.sort((a, b) => a.operationId.localeCompare(b.operationId));
 const handlers = operations
   .map(
     ({ path, method, operationId, status }) =>
-      `  http.${method}("${path}", ({ response }) => response(${status}).json(fixtures.${operationId}())),`,
+      `  http.${method}("${path}", async ({ response, request, params }) =>\n` +
+      `    response(${status}).json(await fixtures.${operationId}({ request, params: params as FixtureParams }))),`,
   )
   .join("\n");
 
@@ -48,6 +54,12 @@ import type { paths } from "../../api/generated/schema";
 import * as fixtures from "../fixtures";
 
 const http = createOpenApiHttp<paths>({ baseUrl: "${baseUrl}" });
+
+/**
+ * The path parameters a fixture may read. msw types them per path, so the one
+ * generated call site widens them to the single shape every fixture accepts.
+ */
+type FixtureParams = Record<string, string | readonly string[]>;
 
 /** One handler per operation the contract describes, in operationId order. */
 export const handlers = [

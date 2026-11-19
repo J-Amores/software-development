@@ -44,6 +44,80 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/applications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * The signed-in Person's own Applications
+         * @description Lists every Application the signed-in Person is the Applicant of, with each one's current status. It never contains anyone else's Application, and the Person is taken from the token rather than a parameter.
+         */
+        get: operations["listApplications"];
+        put?: never;
+        /**
+         * Start an Application as a Draft
+         * @description Starts an Application for the signed-in Person, who becomes its Applicant. It begins as a Draft, so the Course details may be incomplete and may be filled in over several visits; completeness is only required at submission.
+         */
+        post: operations["createApplication"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/applications/{applicationId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The Application this operation is about */
+                applicationId: components["parameters"]["ApplicationId"];
+            };
+            cookie?: never;
+        };
+        /**
+         * One Application with its Timeline
+         * @description Reads one Application: its Course details, its current status and its Timeline, the ordered list of Status Changes with who made each one, when and why. Only the Applicant may read it in this slice.
+         */
+        get: operations["getApplication"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Change a Draft
+         * @description Replaces the Course details and Eligible Cost of a Draft the signed-in Person is the Applicant of. Only a Draft can be changed, so an Application that has already been submitted is refused.
+         */
+        patch: operations["updateApplication"];
+        trace?: never;
+    };
+    "/applications/{applicationId}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The Application this operation is about */
+                applicationId: components["parameters"]["ApplicationId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Submit a Draft for Pre-approval
+         * @description Moves a Draft to Submitted and records the Status Change, with the Applicant as actor and the time from the application's clock. The Program requires Pre-approval before the Course starts, so an Application whose Course start date is today or earlier is refused and stays a Draft. Every required Course detail must be present.
+         */
+        post: operations["submitApplication"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -78,9 +152,114 @@ export interface components {
             /** Format: email */
             email: string;
         };
+        /**
+         * @description An amount of money in the Employer's single currency, as an exact decimal with two places. It is a string rather than a number so that no amount ever passes through a binary float: an Approved Amount and a Reimbursed Amount have to be exact to the cent.
+         * @example 1250.00
+         */
+        Amount: string;
+        /**
+         * @description Where an Application stands. This slice produces only draft and submitted; the rest of the lifecycle arrives with the slices that make those Status Changes possible.
+         * @enum {string}
+         */
+        ApplicationStatus: "draft" | "submitted";
+        /** @description The single class an Application is for. Every field is optional here because a Draft is filled in over time; submission is what requires the Course to be complete. */
+        Course: {
+            /** @description The school or college teaching the Course */
+            institution?: string;
+            /** @description What the Course is called */
+            title?: string;
+            /**
+             * Format: date
+             * @description The day the Course starts. The Program requires Pre-approval first, so an Application can only be submitted before this day.
+             */
+            startDate?: string;
+            /**
+             * Format: date
+             * @description The day the Course ends, which later starts the Completion Window
+             */
+            endDate?: string;
+            cost?: components["schemas"]["Amount"];
+            /** @description The degree program the Course belongs to, where it belongs to one */
+            degreeProgram?: string;
+        };
+        /** @description The Course details and Eligible Cost an Applicant enters on a Draft */
+        ApplicationDraft: {
+            course: components["schemas"]["Course"];
+            eligibleCost?: components["schemas"]["Amount"];
+        };
+        /** @description One recorded move of an Application from one status to another: who made it, when, and why. One entry of a Timeline. */
+        StatusChange: {
+            from?: components["schemas"]["ApplicationStatus"];
+            to: components["schemas"]["ApplicationStatus"];
+            /** @description The display name of the Person who made the Status Change, or the system where the system made it */
+            actorName: string;
+            /**
+             * Format: date-time
+             * @description The instant it was made, from the application's injected clock
+             */
+            at: string;
+            /** @description Why it was made. Required for Rejected and Returned, which this slice does not reach, so it is normally absent here. */
+            reason?: string;
+        };
+        /** @description One Application as it appears in the Applicant's own list: enough to recognise it and see where it stands, without its Timeline */
+        ApplicationSummary: {
+            /** Format: uuid */
+            applicationId: string;
+            status: components["schemas"]["ApplicationStatus"];
+            /** @description Absent while the Draft has no Course title yet */
+            courseTitle?: string;
+            /** @description Absent while the Draft has no institution yet */
+            courseInstitution?: string;
+            /**
+             * Format: date
+             * @description Absent while the Draft has no Course start date yet
+             */
+            courseStartDate?: string;
+            eligibleCost?: components["schemas"]["Amount"];
+            /**
+             * Format: date-time
+             * @description When the Application last changed
+             */
+            updatedAt: string;
+        };
+        /** @description One Application in full, with its Course details and its Timeline */
+        Application: {
+            /** Format: uuid */
+            applicationId: string;
+            status: components["schemas"]["ApplicationStatus"];
+            course: components["schemas"]["Course"];
+            eligibleCost?: components["schemas"]["Amount"];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /** @description Every Status Change on this Application, oldest first */
+            timeline: components["schemas"]["StatusChange"][];
+        };
+        /** @description Why a request was refused, in the shape of RFC 9457, so that a screen can tell the Applicant what to fix rather than that something went wrong */
+        Problem: {
+            /** @description A short, human-readable summary of the refusal */
+            title: string;
+            /** @description The HTTP status code, repeated so the body stands alone */
+            status: number;
+            /** @description What was wrong with this particular request */
+            detail?: string;
+            /** @description The individual fields at fault, where the refusal is about particular fields, so a form can mark each one */
+            violations?: components["schemas"]["Violation"][];
+        };
+        /** @description One field at fault and what is wrong with it */
+        Violation: {
+            /** @description The field's name in the request body, for example course.startDate */
+            field: string;
+            /** @description What is wrong with it, in the Applicant's language */
+            message: string;
+        };
     };
     responses: never;
-    parameters: never;
+    parameters: {
+        /** @description The Application this operation is about */
+        ApplicationId: string;
+    };
     requestBodies: never;
     headers: never;
     pathItems: never;
@@ -140,6 +319,230 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    listApplications: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The signed-in Person's Applications, most recently changed first */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApplicationSummary"][];
+                };
+            };
+            /** @description No valid token was presented */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    createApplication: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApplicationDraft"];
+            };
+        };
+        responses: {
+            /** @description The Draft as it was recorded */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Application"];
+                };
+            };
+            /** @description The Draft was refused, for example an Eligible Cost above the Course cost */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description No valid token was presented */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getApplication: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The Application this operation is about */
+                applicationId: components["parameters"]["ApplicationId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The Application and its Timeline */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Application"];
+                };
+            };
+            /** @description No valid token was presented */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No such Application, or it belongs to another Person. The two are not distinguished, so nobody can learn that someone else's Application exists. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    updateApplication: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The Application this operation is about */
+                applicationId: components["parameters"]["ApplicationId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApplicationDraft"];
+            };
+        };
+        responses: {
+            /** @description The Draft as it now stands */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Application"];
+                };
+            };
+            /** @description The change was refused, for example an Eligible Cost above the Course cost */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description No valid token was presented */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No such Application, or it belongs to another Person */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description The Application is no longer a Draft */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    submitApplication: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The Application this operation is about */
+                applicationId: components["parameters"]["ApplicationId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The Application, now Submitted, with its Timeline */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Application"];
+                };
+            };
+            /** @description The Application cannot be submitted: a required Course detail is missing, or its Course has already started */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description No valid token was presented */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No such Application, or it belongs to another Person */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description The Application has already been submitted */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
             };
         };
     };
