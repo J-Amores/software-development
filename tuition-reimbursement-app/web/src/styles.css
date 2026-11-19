@@ -1,5 +1,5 @@
-/* The walking skeleton's styling is deliberately plain: the Program's screens and
-   their design arrive with their own slices. */
+/* The styling stays deliberately plain: it is the Program's behavior that each
+   slice brings, and the design arrives with its own. */
 :root {
   --ink: #16161d;
   --paper: #fbfbfd;
@@ -25,7 +25,9 @@ body {
   margin: 0;
   min-height: 100dvh;
   display: grid;
-  place-items: center;
+  /* Sign-in is one small card and centres; a list of Applications is as long as
+     it is and starts at the top. */
+  place-items: start center;
   padding: 1rem;
   background: var(--paper);
   color: var(--ink);
@@ -36,12 +38,52 @@ body {
   width: min(28rem, 100%);
   display: grid;
   gap: 1rem;
+  align-self: center;
+}
+
+.app {
+  width: min(60rem, 100%);
+  display: grid;
+  gap: 1.5rem;
+  align-content: start;
+}
+
+.app main {
+  display: grid;
+  gap: 1rem;
+  justify-items: start;
+}
+
+.masthead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1rem;
+  padding-block-end: 1rem;
+  border-block-end: 1px solid var(--line);
+}
+
+.brand {
+  margin: 0;
+  font-weight: 600;
+}
+
+.who {
+  margin: 0;
+  margin-inline-start: auto;
+  color: var(--muted);
+  font-size: 0.875rem;
 }
 
 h1 {
   margin: 0;
   font-size: 1.5rem;
   letter-spacing: -0.01em;
+}
+
+h2 {
+  margin: 0.5rem 0 0;
+  font-size: 1.125rem;
 }
 
 .lede,
@@ -108,6 +150,159 @@ button:disabled {
 .rejection {
   margin: 0;
   color: var(--error);
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+fieldset {
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+}
+
+legend {
+  padding-inline: 0.35rem;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* Submitting is the thing the Applicant came to do; saving a Draft is the way
+   out of it, so only one of the two is the loud button. */
+.actions button:not(.call) {
+  border-color: var(--line);
+  background: transparent;
+  color: var(--ink);
+}
+
+/* The one refused-request region: what the Program would not accept, and why. */
+.refusal {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--error);
+  border-radius: 0.5rem;
+  color: var(--error);
+}
+
+.refusal p,
+.refusal ul {
+  margin: 0.25rem 0;
+}
+
+a {
+  color: var(--accent);
+}
+
+a.call {
+  font-weight: 600;
+}
+
+/* Focusable and scrollable, so the columns can be reached from the keyboard when
+   they do not all fit. */
+.table-wrap {
+  overflow: auto;
+  max-inline-size: 100%;
+  inline-size: 100%;
+  container-type: inline-size;
+}
+
+table {
+  inline-size: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: start;
+}
+
+th,
+td {
+  padding: 0.5rem 0.75rem;
+  border-block-end: 1px solid var(--line);
+  text-align: start;
+  vertical-align: baseline;
+}
+
+thead th {
+  position: sticky;
+  inset-block-start: 0;
+  background: var(--paper);
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+/* Narrow enough that the columns no longer fit: each Application becomes a block
+   with its column names in front of its values. */
+@container (width < 38rem) {
+  table,
+  thead,
+  tbody,
+  tr,
+  th,
+  td {
+    display: block;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tbody tr {
+    margin-block-end: 1rem;
+    border: 1px solid var(--line);
+    border-radius: 0.5rem;
+  }
+
+  tbody th,
+  tbody td {
+    border-block-end: 0;
+  }
+
+  tbody td::before {
+    content: attr(data-column) ": ";
+    color: var(--muted);
+  }
+}
+
+.details {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem 1rem;
+  margin: 0;
+}
+
+.details dt {
+  color: var(--muted);
+}
+
+.details dd {
+  margin: 0;
+}
+
+.status {
+  margin: 0;
+  font-weight: 600;
+}
+
+.timeline {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding-inline-start: 1.25rem;
+}
+
+.timeline p {
+  margin: 0;
+}
+
+.timeline .reason {
+  color: var(--muted);
 }
 
 /* Hides content visually but keeps it in the accessibility tree. */

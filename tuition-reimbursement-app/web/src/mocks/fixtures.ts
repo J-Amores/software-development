@@ -79,9 +79,14 @@ const seed = (): Application[] => [
 
 let applications: Application[] = seed();
 
-/** Start again from the seeded Applications, discarding anything the caller changed. */
-export const resetApplications = (): void => {
-  applications = seed();
+/**
+ * Start again from the seeded Applications, discarding anything the caller
+ * changed. A caller that needs a different starting point — an Applicant with no
+ * Applications at all, or one whose Timeline has a reason on it — passes the
+ * Applications to start from instead.
+ */
+export const resetApplications = (startingFrom?: readonly Application[]): void => {
+  applications = startingFrom ? startingFrom.map((application) => structuredClone(application)) : seed();
 };
 
 const now = () => new Date().toISOString();
