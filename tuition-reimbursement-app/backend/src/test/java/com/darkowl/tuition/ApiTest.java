@@ -3,6 +3,8 @@ package com.darkowl.tuition;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -164,18 +166,37 @@ abstract class ApiTest {
       }
     }
 
-    /** One field of a JSON object body, by dotted path, absent as a missing node. */
+    /**
+     * One part of the body, by dotted path. A step that is a number is a position
+     * in an array, so {@code timeline.0.actorName} reads the first Status Change's
+     * actor. What is not there comes back as a missing node.
+     */
     public JsonNode at(String path) {
       JsonNode node = json();
       for (String step : path.split("\\.")) {
-        node = node.path(step);
+        node = step.matches("\\d+") ? node.path(Integer.parseInt(step)) : node.path(step);
       }
       return node;
     }
 
+    /** One text field, by the same paths, or null where there is nothing there. */
     public String text(String path) {
       JsonNode node = at(path);
       return node.isMissingNode() || node.isNull() ? null : node.asText();
+    }
+
+    /** An array in the body, as a list, so a test can say how long it is. */
+    public List<JsonNode> list(String path) {
+      List<JsonNode> items = new ArrayList<>();
+      at(path).forEach(items::add);
+      return items;
+    }
+
+    /** The body itself, where the body is an array. */
+    public List<JsonNode> list() {
+      List<JsonNode> items = new ArrayList<>();
+      json().forEach(items::add);
+      return items;
     }
   }
 
