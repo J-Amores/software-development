@@ -27,7 +27,12 @@ record Course(
     BigDecimal cost,
     String degreeProgram) {
 
-  /** Which Course details an Applicant still has to enter before submitting. */
+  /**
+   * Which Course details an Applicant still has to enter before submitting. Not the
+   * whole answer: the Eligible Cost submission also needs belongs to the
+   * Application, not to the Course, so {@link Application} is where the two are put
+   * together.
+   */
   List<String> detailsMissingForSubmission() {
     List<String> missing = new ArrayList<>();
     if (isBlank(institution)) {

@@ -18,8 +18,10 @@ const withATimeline: components["schemas"]["Application"] = {
   eligibleCost: "2950.00",
   createdAt: "2026-11-02T09:15:00Z",
   updatedAt: "2026-11-04T16:40:00Z",
+  // Starting an Application is not a Status Change — nothing moved between
+  // statuses — so the backend records none for it and the Timeline holds only
+  // the move the Applicant actually made.
   timeline: [
-    { to: "draft", actorName: "Ada Lovelace", at: "2026-11-02T09:15:00Z" },
     {
       from: "draft",
       to: "submitted",
@@ -55,14 +57,10 @@ describe("An Application's own screen", () => {
 
     const timeline = screen.getByRole("list", { name: "Timeline" });
     const entries = within(timeline).getAllByRole("listitem");
-    expect(entries).toHaveLength(2);
+    expect(entries).toHaveLength(1);
     expect(entries[0]).toHaveTextContent(
-      "Moved to Draft by Ada Lovelace on 2 November 2026 at 09:15 UTC",
-    );
-    expect(entries[0]).not.toHaveTextContent("Reason:");
-    expect(entries[1]).toHaveTextContent(
       "Moved to Submitted by Ada Lovelace on 4 November 2026 at 16:40 UTC",
     );
-    expect(entries[1]).toHaveTextContent("Reason: The Course starts before the next intake.");
+    expect(entries[0]).toHaveTextContent("Reason: The Course starts before the next intake.");
   });
 });

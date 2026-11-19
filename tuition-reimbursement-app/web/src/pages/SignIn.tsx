@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { signIn, SignInRejected } from "../auth/cognito";
 import { config } from "../config";
+import { ERROR_MESSAGE, REQUIRED_FIELD } from "../forms/fieldClasses";
 import { syncUserInvalidWithAria } from "../forms/userInvalid";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,12 +13,6 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-
-/** A field sign-in needs, and the shape its error message keys off. */
-const REQUIRED_FIELD = "peer user-invalid:border-destructive";
-
-/** Every field's error message, shown by the browser's own `:user-invalid` state. */
-const ERROR_MESSAGE = "hidden text-sm text-destructive peer-user-invalid:block";
 
 /**
  * Sign in with the Employer account. The browser validates the fields and offers

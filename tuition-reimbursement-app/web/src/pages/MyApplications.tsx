@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { api } from "../api/client";
 import type { components } from "../api/generated/schema";
-import { statusWord } from "../applications/status";
+import { statusTone, statusWord } from "../applications/status";
 import { readableDate } from "../time/plainDates";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -26,8 +26,17 @@ import {
 
 type ApplicationSummary = components["schemas"]["ApplicationSummary"];
 
-/** What a Draft shows in a column it has nothing in yet. */
-const NOT_YET = "—";
+/**
+ * What a cell shows where a Draft has nothing entered yet. A dash, because a
+ * column of words repeated down every empty cell is harder to read past than a
+ * column of dashes; the Application's own screen has the room to say it in words.
+ */
+const EMPTY_CELL = "—";
+
+/** The screen's one heading, the same whatever the Applicant's Applications are. */
+const heading = (
+  <h1 className="font-heading text-2xl font-medium tracking-tight">My Applications</h1>
+);
 
 /**
  * The Applicant's own Applications, each with where it stands. An Applicant with
@@ -53,7 +62,7 @@ export function MyApplications() {
   if (problem) {
     return (
       <>
-        <h1 className="font-heading text-2xl font-medium tracking-tight">My Applications</h1>
+        {heading}
         <Alert variant="destructive">
           <AlertTitle>{problem}</AlertTitle>
         </Alert>
@@ -64,7 +73,7 @@ export function MyApplications() {
   if (applications === null) {
     return (
       <>
-        <h1 className="font-heading text-2xl font-medium tracking-tight">My Applications</h1>
+        {heading}
         <p className="text-sm text-muted-foreground" role="status" aria-live="polite">
           Reading your Applications…
         </p>
@@ -75,7 +84,7 @@ export function MyApplications() {
   if (applications.length === 0) {
     return (
       <>
-        <h1 className="font-heading text-2xl font-medium tracking-tight">My Applications</h1>
+        {heading}
         <Empty className="border">
           <EmptyHeader>
             <EmptyTitle>You have nothing here yet</EmptyTitle>
@@ -96,7 +105,7 @@ export function MyApplications() {
 
   return (
     <>
-      <h1 className="font-heading text-2xl font-medium tracking-tight">My Applications</h1>
+      {heading}
       <p>
         <Link to="/applications/new" className={buttonVariants()}>
           Start an Application
@@ -140,16 +149,18 @@ export function MyApplications() {
               {/* `data-column` is the column's name for the stacked layout the
                   stylesheet falls back to when the columns no longer fit. */}
               <TableCell data-column="Institution">
-                {application.courseInstitution ?? NOT_YET}
+                {application.courseInstitution ?? EMPTY_CELL}
               </TableCell>
               <TableCell data-column="Starts">
-                {application.courseStartDate ? readableDate(application.courseStartDate) : NOT_YET}
+                {application.courseStartDate
+                  ? readableDate(application.courseStartDate)
+                  : EMPTY_CELL}
               </TableCell>
               <TableCell data-column="Eligible Cost">
-                {application.eligibleCost ?? NOT_YET}
+                {application.eligibleCost ?? EMPTY_CELL}
               </TableCell>
               <TableCell data-column="Status">
-                <Badge variant={application.status === "draft" ? "secondary" : "default"}>
+                <Badge variant={statusTone(application.status)}>
                   {statusWord(application.status)}
                 </Badge>
               </TableCell>

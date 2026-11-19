@@ -9,11 +9,17 @@ import org.springframework.security.oauth2.jwt.Jwt;
  * validated. Nothing takes a caller's word for who they are, so there is one place
  * that answers the question.
  *
- * @param personId the Person's stable identifier, the token's subject
+ * <p>What this holds is the token's subject, not a Person's key. The two are not
+ * interchangeable: a Person's {@code personId} is the application-generated UUID
+ * every table refers to them by, and the {@code people} module is the only thing
+ * that can turn a subject into one. Naming the accessor after what it holds keeps
+ * a caller from passing one where the other belongs.
+ *
+ * @param tokenSubject the subject claim of their token, stable for their account
  * @param displayName the Person's name as their Employer account records it
  * @param email the Person's work email
  */
-public record SignedInPerson(String personId, String displayName, String email) {
+public record SignedInPerson(String tokenSubject, String displayName, String email) {
 
   /** The Person this request is being made by. */
   public static SignedInPerson current() {

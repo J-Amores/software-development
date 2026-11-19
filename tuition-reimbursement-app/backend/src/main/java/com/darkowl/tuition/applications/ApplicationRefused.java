@@ -56,14 +56,19 @@ class ApplicationRefused extends RuntimeException {
                 "eligibleCost", "This cannot be more than what the Course costs.")));
   }
 
-  static ApplicationRefused courseDetailsMissing(List<String> missing) {
+  /**
+   * What the Applicant has not entered yet, each named the way the contract names
+   * the field, so a screen can point at the one at fault.
+   *
+   * @param missing the contract's own field paths, such as {@code course.title}
+   */
+  static ApplicationRefused detailsMissing(List<String> missing) {
     return new ApplicationRefused(
         HttpStatus.BAD_REQUEST,
         "This Application is not ready to submit",
-        "Every Course detail has to be entered before an Application can be submitted.",
-        missing.stream()
-            .map(detail -> violation("course." + detail, PROMPTS.get(detail)))
-            .toList());
+        "Every Course detail and the Eligible Cost have to be entered before an Application"
+            + " can be submitted.",
+        missing.stream().map(field -> violation(field, PROMPTS.get(field))).toList());
   }
 
   static ApplicationRefused theCourseHasAlreadyStarted() {
@@ -92,12 +97,16 @@ class ApplicationRefused extends RuntimeException {
     return new Violation(field, message);
   }
 
-  /** What to tell the Applicant about each Course detail they have not entered. */
+  /**
+   * What to tell the Applicant about each detail they have not entered, keyed by
+   * the contract's own field path.
+   */
   private static final Map<String, String> PROMPTS =
       Map.of(
-          "institution", "Enter the school or college teaching the Course.",
-          "title", "Enter what the Course is called.",
-          "startDate", "Enter the day the Course starts.",
-          "endDate", "Enter the day the Course ends.",
-          "cost", "Enter what the Course costs.");
+          "course.institution", "Enter the school or college teaching the Course.",
+          "course.title", "Enter what the Course is called.",
+          "course.startDate", "Enter the day the Course starts.",
+          "course.endDate", "Enter the day the Course ends.",
+          "course.cost", "Enter what the Course costs.",
+          "eligibleCost", "Enter the part of the Course cost the Program will reimburse.");
 }

@@ -50,11 +50,16 @@ class PlatformController implements PlatformApi {
   /**
    * The signed-in Person, as the backend reads them from their token: never from a
    * request parameter, so a caller cannot claim to be someone else.
+   *
+   * <p>The contract's {@code Me.personId} is the token's subject, which is what it
+   * says it carries, and what the skeleton has always answered. It is not a
+   * Person's key; the {@code people} module is the only thing that turns a subject
+   * into one.
    */
   @Override
   public ResponseEntity<Me> getMe() {
     SignedInPerson person = SignedInPerson.current();
-    return ResponseEntity.ok(new Me(person.personId(), person.displayName(), person.email()));
+    return ResponseEntity.ok(new Me(person.tokenSubject(), person.displayName(), person.email()));
   }
 
   private void flywayHasRun() {

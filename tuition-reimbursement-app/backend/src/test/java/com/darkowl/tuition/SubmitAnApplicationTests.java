@@ -69,6 +69,33 @@ class SubmitAnApplicationTests extends ApiTest {
   }
 
   /**
+   * 10. Submitting an Application with no Eligible Cost is refused, and it stays a
+   * Draft.
+   *
+   * <p>The Eligible Cost is the part of the Course cost the Program will reimburse,
+   * and Pre-approval is a decision about it: an Approved Amount can be no more than
+   * the lower of the Eligible Cost and the Applicant's Remaining Allowance
+   * (docs/SPEC.md, money rules). Without one there is nothing to pre-approve, so
+   * submission requires it just as it requires the Course details. A Draft may
+   * still be saved without one, which is what makes it a Draft.
+   */
+  @Test
+  void anApplicationWithNoEligibleCostCannotBeSubmitted() {
+    String applicationId =
+        as(LocalAws.ADA)
+            .post("/applications", Drafts.draftOf(Drafts.aCompleteCourse()))
+            .text("applicationId");
+
+    Answer refused = as(LocalAws.ADA).post("/applications/" + applicationId + "/submit");
+
+    assertThat(refused.status()).isEqualTo(400);
+    assertThat(refused.body()).as("the refusal says what is missing").contains("eligibleCost");
+    assertThat(as(LocalAws.ADA).get("/applications/" + applicationId).text("status"))
+        .as("an Application with no Eligible Cost stays a Draft")
+        .isEqualTo("draft");
+  }
+
+  /**
    * 11. Submitting records a Status Change with the Applicant as actor and the time
    * from the injected clock.
    */
