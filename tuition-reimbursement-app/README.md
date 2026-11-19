@@ -1,24 +1,29 @@
 # Tuition Reimbursement
 
 An employer-sponsored program where people apply to have course tuition paid back,
-approved against a yearly per-person allowance. `docs/SPEC.md` is the governing
-specification, `GLOSSARY.md` defines the domain terms, and `docs/adr/` records the
-decisions.
+approved against a yearly per-person allowance. A Manager confirms the Course is
+relevant to the job, a Benefits Coordinator approves an amount against the
+Applicant's Annual Allowance, and approved amounts reach payroll as an export.
+
+Java 25 / Spring Boot 4 backend organized as Spring Modulith domain modules, a
+React 19 / Vite / TypeScript frontend, a contract-first OpenAPI API, and a
+serverless AWS deployment that stays inside the always-free limits. It is
+developed entirely locally, against real Postgres and the AWS Emulator.
 
 Right now the repository holds the walking skeleton: the thinnest path through
-every layer, with no domain behavior in it (ticket 01).
+every layer, with no domain behavior in it.
 
 ## Run it
 
-Everything runs locally, in Docker, against real Postgres and the AWS Emulator. No
-build, test or demo reaches live AWS (ADR 0003). Docker is all you need for the app
-and its tests: no JDK, no Node and no AWS account. The one exception is
-`./dev round-trip`, which drives a real browser through the `agent-browser` CLI and
-so needs that on the host (`npm i -g agent-browser && agent-browser install`).
+Everything runs locally, in Docker. No build, test or demo reaches live AWS, so
+Docker is all you need for the app and its tests: no JDK, no Node and no AWS
+account. The one exception is `./dev round-trip`, which drives a real browser
+through the `agent-browser` CLI and so needs that on the host
+(`npm i -g agent-browser && agent-browser install`).
 
 ```bash
 ./dev up          # Postgres, the AWS Emulator, the backend and the frontend
-./dev demo        # the public demo's build: the frontend against the in-browser mock
+./dev demo        # the frontend against the in-browser mock, with no backend
 ./dev test        # the backend's suite, in a container
 ./dev round-trip  # the skeleton's one test, in a real browser (needs ./dev up)
 ./dev down        # stop everything and drop the volumes
@@ -33,37 +38,43 @@ so needs that on the host (`npm i -g agent-browser && agent-browser install`).
 | https://127.0.0.1:9297 | the AWS Emulator (S3, Cognito, Secrets Manager) |
 
 Sign in as `ada@darkowl.test` with `Passw0rd!2026`. The seed script creates that
-Person, the user pool, the documents bucket and the database secret on every boot
-(`tools/aws-emulator/seed.sh`); the Faker cast of People arrives with ticket 16.
-
-To use the AWS CLI against the same emulator, point it at the files the emulator
-wrote to `~/.aws/emulator/9297/` (the `aws-emulator` skill's `connect` reference has
-the variables).
+Person, the Cognito user pool, the documents bucket and the database secret on
+every boot (`tools/aws-emulator/seed.sh`).
 
 ## Layout
 
 | Area | Holds |
 | --- | --- |
-| `contract/` | `openapi.yaml`, the source of truth for the API, and the commands that lint it and generate from it (ADR 0004) |
-| `backend/` | Java 25 / Spring Boot 4, as Spring Modulith domain modules (ADR 0006) |
-| `web/` | React 19 / Vite / TypeScript, plus the in-browser mock that powers demo mode (ADR 0005) |
-| `infra/` | Terraform for an Employer's own AWS account (ticket 17) |
-| `tools/` | the emulator image and seed script, and the checks CI runs |
-| `docs/` | the spec, the ADRs and the Demo Scenarios |
+| `contract/` | `openapi.yaml`, the source of truth for the API, and the commands that lint it and generate from it |
+| `backend/` | Java 25 / Spring Boot 4, as Spring Modulith domain modules |
+| `web/` | React 19 / Vite / TypeScript, plus the in-browser mock that powers demo mode |
+| `infra/` | Terraform for an Employer's own AWS account |
+| `tools/` | the AWS Emulator image and seed script, and the checks CI runs |
 
-## Working on it
+## How it is built
 
-- `contract/openapi.yaml` comes first. The backend implements interfaces generated
-  from it, so a controller that does not match the contract does not compile, and
-  `npm --prefix contract run generate` regenerates the TypeScript client, which is
-  committed. CI fails if the committed client is not what the contract produces.
-- Tests are the specification and are read-only during implementation (ADR 0008).
-  CI refuses any commit that changes an existing test and production code together.
-- Migrations arrive one slice at a time, one DDL statement per file, no DML, no
-  sequences, triggers or stored procedures: Aurora DSQL allows none of it
-  (ADR 0007). `tools/ci/check-dsql-sql.sh` enforces it.
-- The app reads the current date and time from an injected clock, never from
-  `Instant.now()`, so tests can set it.
-- **`./dev round-trip` is a gate, not a convenience.** It is the skeleton's only
-  test (ADR 0008) and runs locally rather than in CI, by the project owner's
-  decision, so it has to be run by hand before the skeleton is called working.
+- **Contract first.** `contract/openapi.yaml` is the source of truth. The backend
+  implements interfaces generated from it, so a controller that does not match the
+  contract does not compile; the frontend's TypeScript client and the demo's mock
+  handlers are generated from it too. CI regenerates all three and fails if what is
+  committed differs.
+- **Local only.** Docker Compose runs real Postgres and the AWS Emulator, which
+  provides S3, Cognito and Secrets Manager. The Cognito issuer and the S3 endpoint
+  are configuration, so the same build runs locally and on AWS. Deploying is
+  optional and manual; nothing on any other path depends on live AWS.
+- **Tests first, and read-only.** Every behavior gets its test before the code, and
+  during implementation the tests are the specification: only production code
+  changes until they pass. CI refuses any commit that changes an existing test and
+  production code together. The walking skeleton is the one exception, and its only
+  test is the frontend-to-backend round trip.
+- **Aurora DSQL's SQL.** Keys are application-generated UUIDs, every migration holds
+  exactly one DDL statement and no DML, and there are no sequences, triggers or
+  stored procedures. `tools/ci/check-dsql-sql.sh` enforces it, so nothing works
+  locally that would break in AWS.
+- **An injected clock.** The app never calls `Instant.now()`: it reads the current
+  date and time from a clock tests can set, which is how dates, Business Days and
+  deadlines are tested.
+
+Comments in the code cite decisions as ADR numbers. Those records, along with the
+specification, the domain glossary and the tickets, are kept outside this
+repository.

@@ -11,3 +11,14 @@ backend/target/generated-sources/
 # Local environment
 .env
 .env.local
+
+# Local development docs (agent config, glossary, spec, ADRs, tickets) — not
+# published, in line with rideforce-app and modern-admin-dashboard. Every file
+# stays on disk and keeps working for local sessions; only the remote stops
+# carrying them.
+/agents/
+/docs/
+/.scratch/
+/AGENTS.md
+/CLAUDE.md
+/GLOSSARY.md
