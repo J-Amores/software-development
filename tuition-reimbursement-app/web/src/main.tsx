@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { HashRouter } from "react-router";
 import { App } from "./App";
 import { config } from "./config";
 import "./styles.css";
@@ -15,7 +16,12 @@ async function start() {
   if (!root) throw new Error("index.html has no #root to mount into");
   createRoot(root).render(
     <StrictMode>
-      <App />
+      {/* The address is kept in the fragment. The public demo is a static build on
+          a host that serves one file and knows nothing of the app's paths (ADR
+          0005), so a path-shaped address would 404 on reload or on a shared link. */}
+      <HashRouter>
+        <App />
+      </HashRouter>
     </StrictMode>,
   );
 }
