@@ -3,7 +3,9 @@ import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 import { api } from "../api/client";
 import type { components } from "../api/generated/schema";
+import { ERROR_MESSAGE, REQUIRED_FIELD } from "../forms/fieldClasses";
 import { syncUserInvalidWithAria } from "../forms/userInvalid";
+import { AMOUNT_PATTERN } from "../money/amounts";
 import { hasArrived, readableDate, tomorrow } from "../time/plainDates";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -53,21 +55,6 @@ const REQUIRED: ReadonlyArray<{ field: keyof Entered; message: string }> = [
   { field: "cost", message: "Course cost is required." },
   { field: "eligibleCost", message: "Eligible Cost is required." },
 ];
-
-const AMOUNT = "[0-9]+\\.[0-9]{2}";
-
-/**
- * A field the Program needs. `peer` is what its error message reads to know
- * whether the browser has decided the field is wrong yet, and the field marks
- * itself at the same moment (accessible-error-announcement).
- *
- * Tailwind only builds the classes it can read literally in the source, so these
- * are constants rather than anything assembled at runtime.
- */
-const REQUIRED_FIELD = "peer user-invalid:border-destructive";
-
-/** Every field's error message, shown by the browser's own `:user-invalid` state. */
-const ERROR_MESSAGE = "hidden text-sm text-destructive peer-user-invalid:block";
 
 const asDraft = (entered: Entered): ApplicationDraft => ({
   course: {
@@ -342,7 +329,7 @@ export function ApplicationForm() {
                   inputMode="decimal"
                   autoComplete="off"
                   spellCheck={false}
-                  pattern={AMOUNT}
+                  pattern={AMOUNT_PATTERN}
                   required
                   aria-describedby="cost-hint"
                   data-error="cost-error"
@@ -381,7 +368,7 @@ export function ApplicationForm() {
               inputMode="decimal"
               autoComplete="off"
               spellCheck={false}
-              pattern={AMOUNT}
+              pattern={AMOUNT_PATTERN}
               required
               aria-describedby="eligibleCost-hint"
               data-error="eligibleCost-error"
