@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import { api } from "../api/client";
 import type { components } from "../api/generated/schema";
 import { config } from "../config";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 type Me = components["schemas"]["Me"];
 
@@ -32,13 +33,18 @@ export function AppShell({ onSignOut }: { onSignOut: () => void }) {
   }, [onSignOut]);
 
   return (
-    <div className="app">
-      <header className="masthead">
-        <p className="brand">{config.employerName} Tuition Reimbursement</p>
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 p-4">
+      <header className="flex flex-wrap items-center gap-x-6 gap-y-2 border-b pb-4">
+        <p className="font-heading font-medium">{config.employerName} Tuition Reimbursement</p>
         <nav aria-label="Main">
-          <Link to="/">My Applications</Link>
+          {/* A link that looks like a button stays a link: the registry's own
+              variants style it, rather than a Button rendering an anchor and
+              taking the button role with it. */}
+          <Link to="/" className={buttonVariants({ variant: "ghost", size: "sm" })}>
+            My Applications
+          </Link>
         </nav>
-        <p className="who" role="status" aria-live="polite">
+        <p className="ms-auto text-sm text-muted-foreground" role="status" aria-live="polite">
           {person ? (
             <>
               Signed in as <strong data-testid="signed-in-as">{person.name}</strong> ({person.email})
@@ -47,12 +53,12 @@ export function AppShell({ onSignOut }: { onSignOut: () => void }) {
             (problem ?? "Reading your identity…")
           )}
         </p>
-        <button type="button" onClick={onSignOut}>
+        <Button type="button" variant="outline" size="sm" onClick={onSignOut}>
           Sign out
-        </button>
+        </Button>
       </header>
 
-      <main>
+      <main className="flex w-full flex-col items-start gap-4">
         <Outlet />
       </main>
 

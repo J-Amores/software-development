@@ -2,6 +2,16 @@ import { useEffect, useRef, useState } from "react";
 import { signIn, SignInRejected } from "../auth/cognito";
 import { config } from "../config";
 import { syncUserInvalidWithAria } from "../forms/userInvalid";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 
 /**
  * Sign in with the Employer account. The browser validates the fields and offers
@@ -34,52 +44,77 @@ export function SignIn({ onSignedIn }: { onSignedIn: () => void }) {
   }
 
   return (
-    <main className="panel">
-      <h1>Tuition Reimbursement</h1>
-      <p className="lede">Sign in with your {config.employerName} account.</p>
+    <main className="mx-auto flex min-h-dvh w-full max-w-md items-center p-4">
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>
+            <h1>Tuition Reimbursement</h1>
+          </CardTitle>
+          <CardDescription>Sign in with your {config.employerName} account.</CardDescription>
+        </CardHeader>
 
-      <form ref={form} onSubmit={submit} className="stack">
-        <div className="field">
-          <label htmlFor="email">Work email</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            autoComplete="username"
-            spellCheck={false}
-            required
-            data-error="email-error"
-          />
-          <span id="email-error" className="error-msg">
-            Enter the email address your Employer account uses.
-          </span>
-        </div>
+        <CardContent className="flex flex-col gap-5">
+          <form ref={form} onSubmit={submit}>
+            <FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="email">Work email</FieldLabel>
+                {/* `peer` is what the error message below reads to know whether the
+                    browser has decided this field is wrong yet
+                    (accessible-error-announcement). */}
+                <Input
+                  className="peer"
+                  type="email"
+                  id="email"
+                  name="email"
+                  autoComplete="username"
+                  spellCheck={false}
+                  required
+                  data-error="email-error"
+                />
+                <span
+                  id="email-error"
+                  className="hidden text-sm text-destructive peer-user-invalid:block"
+                >
+                  Enter the email address your Employer account uses.
+                </span>
+              </Field>
 
-        <div className="field">
-          <label htmlFor="current-password">Password</label>
-          <input
-            type="password"
-            id="current-password"
-            name="password"
-            autoComplete="current-password"
-            enterKeyHint="done"
-            required
-            data-error="password-error"
-          />
-          <span id="password-error" className="error-msg">
-            Enter your password.
-          </span>
-        </div>
+              <Field>
+                <FieldLabel htmlFor="current-password">Password</FieldLabel>
+                <Input
+                  className="peer"
+                  type="password"
+                  id="current-password"
+                  name="password"
+                  autoComplete="current-password"
+                  enterKeyHint="done"
+                  required
+                  data-error="password-error"
+                />
+                <span
+                  id="password-error"
+                  className="hidden text-sm text-destructive peer-user-invalid:block"
+                >
+                  Enter your password.
+                </span>
+              </Field>
 
-        <button type="submit" disabled={signingIn}>
-          {signingIn ? "Signing in…" : "Sign in"}
-        </button>
-      </form>
+              <Button type="submit" disabled={signingIn}>
+                {signingIn ? "Signing in…" : "Sign in"}
+              </Button>
+            </FieldGroup>
+          </form>
 
-      {/* Cognito's answer is not a field problem, so it is announced on its own. */}
-      <p role="status" aria-live="polite" className={rejection ? "rejection" : "visually-hidden"}>
-        {rejection}
-      </p>
+          {/* Cognito's answer is not a field problem, so it is announced on its own. */}
+          <p
+            role="status"
+            aria-live="polite"
+            className={rejection ? "text-sm text-destructive" : "sr-only"}
+          >
+            {rejection}
+          </p>
+        </CardContent>
+      </Card>
     </main>
   );
 }

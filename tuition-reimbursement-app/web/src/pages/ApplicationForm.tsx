@@ -5,6 +5,17 @@ import { api } from "../api/client";
 import type { components } from "../api/generated/schema";
 import { syncUserInvalidWithAria } from "../forms/userInvalid";
 import { hasArrived, readableDate, tomorrow } from "../time/plainDates";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 
 type ApplicationDraft = components["schemas"]["ApplicationDraft"];
 
@@ -44,6 +55,9 @@ const REQUIRED: ReadonlyArray<{ field: keyof Entered; message: string }> = [
 ];
 
 const AMOUNT = "[0-9]+\\.[0-9]{2}";
+
+/** Every field's error message, shown by the browser's own `:user-invalid` state. */
+const ERROR_MESSAGE = "hidden text-sm text-destructive peer-user-invalid:block";
 
 const asDraft = (entered: Entered): ApplicationDraft => ({
   course: {
@@ -185,7 +199,7 @@ export function ApplicationForm() {
 
   if (!loaded) {
     return (
-      <p role="status" aria-live="polite">
+      <p className="text-sm text-muted-foreground" role="status" aria-live="polite">
         Reading this Draft…
       </p>
     );
@@ -193,177 +207,198 @@ export function ApplicationForm() {
 
   return (
     <>
-      <h1>{applicationId ? "Change this Draft" : "Start an Application"}</h1>
-      <p className="lede">
+      <h1 className="font-heading text-2xl font-medium tracking-tight">
+        {applicationId ? "Change this Draft" : "Start an Application"}
+      </h1>
+      <p className="text-sm text-muted-foreground">
         A Draft is yours alone until you submit it, so you can save it half-finished and come back.
         Everything below is needed before you can submit.
       </p>
 
+      {/* The one place a refused submit is reported, and the only thing on this
+          screen that carries the alert role, so that it is what a test and a
+          screen reader both find (accessible-error-announcement). */}
       {(missing.length > 0 || refusal !== null) && (
-        <div role="alert" className="refusal">
+        <Alert variant="destructive" className="w-full max-w-2xl">
           {missing.length > 0 && (
             <>
-              <p>Add these Course details before submitting:</p>
-              <ul>
-                {missing.map((message) => (
-                  <li key={message}>{message}</li>
-                ))}
-              </ul>
+              <AlertTitle>Add these Course details before submitting:</AlertTitle>
+              <AlertDescription>
+                <ul className="flex list-disc flex-col gap-1 ps-5">
+                  {missing.map((message) => (
+                    <li key={message}>{message}</li>
+                  ))}
+                </ul>
+              </AlertDescription>
             </>
           )}
-          {refusal !== null && <p>{refusal}</p>}
-        </div>
+          {refusal !== null && <AlertTitle>{refusal}</AlertTitle>}
+        </Alert>
       )}
 
-      <form ref={form} onSubmit={onSubmit} className="stack" noValidate>
-        <fieldset className="stack">
-          <legend>Course</legend>
+      <form ref={form} onSubmit={onSubmit} className="w-full max-w-2xl" noValidate>
+        <FieldGroup>
+          <FieldSet>
+            <FieldLegend>Course</FieldLegend>
+            <FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="institution">Institution</FieldLabel>
+                <Input
+                  className="peer"
+                  type="text"
+                  id="institution"
+                  name="institution"
+                  autoComplete="organization"
+                  required
+                  data-error="institution-error"
+                  value={entered.institution}
+                  onChange={change("institution")}
+                />
+                <span id="institution-error" className={ERROR_MESSAGE}>
+                  Error: name the school or college teaching the Course.
+                </span>
+              </Field>
 
-          <div className="field">
-            <label htmlFor="institution">Institution</label>
-            <input
+              <Field>
+                <FieldLabel htmlFor="title">Course title</FieldLabel>
+                <Input
+                  className="peer"
+                  type="text"
+                  id="title"
+                  name="title"
+                  required
+                  data-error="title-error"
+                  value={entered.title}
+                  onChange={change("title")}
+                />
+                <span id="title-error" className={ERROR_MESSAGE}>
+                  Error: enter what the Course is called.
+                </span>
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="startDate">Start date</FieldLabel>
+                <FieldDescription id="startDate-hint">
+                  Pre-approval comes first, so the Course has to start after today.
+                </FieldDescription>
+                {/* The browser's own date field, kept rather than replaced: it
+                    knows the Person's calendar and locale, and it is reachable
+                    from the keyboard a segment at a time. */}
+                <Input
+                  className="peer"
+                  type="date"
+                  id="startDate"
+                  name="startDate"
+                  min={tomorrow()}
+                  required
+                  aria-describedby="startDate-hint"
+                  data-error="startDate-error"
+                  value={entered.startDate}
+                  onChange={change("startDate")}
+                />
+                <span id="startDate-error" className={ERROR_MESSAGE}>
+                  Error: enter the day the Course starts, which must be after today.
+                </span>
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="endDate">End date</FieldLabel>
+                <Input
+                  className="peer"
+                  type="date"
+                  id="endDate"
+                  name="endDate"
+                  min={entered.startDate || tomorrow()}
+                  required
+                  data-error="endDate-error"
+                  value={entered.endDate}
+                  onChange={change("endDate")}
+                />
+                <span id="endDate-error" className={ERROR_MESSAGE}>
+                  Error: enter the day the Course ends.
+                </span>
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="cost">Course cost</FieldLabel>
+                <FieldDescription id="cost-hint">
+                  The whole cost of the Course, to two decimal places, for example 2400.00.
+                </FieldDescription>
+                <Input
+                  className="peer"
+                  type="text"
+                  id="cost"
+                  name="cost"
+                  inputMode="decimal"
+                  autoComplete="off"
+                  spellCheck={false}
+                  pattern={AMOUNT}
+                  required
+                  aria-describedby="cost-hint"
+                  data-error="cost-error"
+                  value={entered.cost}
+                  onChange={change("cost")}
+                />
+                <span id="cost-error" className={ERROR_MESSAGE}>
+                  Error: enter an amount with two decimal places, for example 2400.00.
+                </span>
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="degreeProgram">Degree program (optional)</FieldLabel>
+                <Input
+                  type="text"
+                  id="degreeProgram"
+                  name="degreeProgram"
+                  value={entered.degreeProgram}
+                  onChange={change("degreeProgram")}
+                />
+              </Field>
+            </FieldGroup>
+          </FieldSet>
+
+          <Field>
+            <FieldLabel htmlFor="eligibleCost">Eligible Cost</FieldLabel>
+            <FieldDescription id="eligibleCost-hint">
+              The part of the cost the Program will reimburse: tuition plus required fees. Books are
+              never Eligible Costs.
+            </FieldDescription>
+            <Input
+              className="peer"
               type="text"
-              id="institution"
-              name="institution"
-              autoComplete="organization"
-              required
-              data-error="institution-error"
-              value={entered.institution}
-              onChange={change("institution")}
-            />
-            <span id="institution-error" className="error-msg">
-              Error: name the school or college teaching the Course.
-            </span>
-          </div>
-
-          <div className="field">
-            <label htmlFor="title">Course title</label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              required
-              data-error="title-error"
-              value={entered.title}
-              onChange={change("title")}
-            />
-            <span id="title-error" className="error-msg">
-              Error: enter what the Course is called.
-            </span>
-          </div>
-
-          <div className="field">
-            <label htmlFor="startDate">Start date</label>
-            <span id="startDate-hint" className="hint">
-              Pre-approval comes first, so the Course has to start after today.
-            </span>
-            <input
-              type="date"
-              id="startDate"
-              name="startDate"
-              min={tomorrow()}
-              required
-              aria-describedby="startDate-hint"
-              data-error="startDate-error"
-              value={entered.startDate}
-              onChange={change("startDate")}
-            />
-            <span id="startDate-error" className="error-msg">
-              Error: enter the day the Course starts, which must be after today.
-            </span>
-          </div>
-
-          <div className="field">
-            <label htmlFor="endDate">End date</label>
-            <input
-              type="date"
-              id="endDate"
-              name="endDate"
-              min={entered.startDate || tomorrow()}
-              required
-              data-error="endDate-error"
-              value={entered.endDate}
-              onChange={change("endDate")}
-            />
-            <span id="endDate-error" className="error-msg">
-              Error: enter the day the Course ends.
-            </span>
-          </div>
-
-          <div className="field">
-            <label htmlFor="cost">Course cost</label>
-            <span id="cost-hint" className="hint">
-              The whole cost of the Course, to two decimal places, for example 2400.00.
-            </span>
-            <input
-              type="text"
-              id="cost"
-              name="cost"
+              id="eligibleCost"
+              name="eligibleCost"
               inputMode="decimal"
               autoComplete="off"
               spellCheck={false}
               pattern={AMOUNT}
               required
-              aria-describedby="cost-hint"
-              data-error="cost-error"
-              value={entered.cost}
-              onChange={change("cost")}
+              aria-describedby="eligibleCost-hint"
+              data-error="eligibleCost-error"
+              value={entered.eligibleCost}
+              onChange={change("eligibleCost")}
             />
-            <span id="cost-error" className="error-msg">
-              Error: enter an amount with two decimal places, for example 2400.00.
+            <span id="eligibleCost-error" className={ERROR_MESSAGE}>
+              Error: enter an amount with two decimal places, for example 2250.00.
             </span>
+          </Field>
+
+          {/* Submitting is the thing the Applicant came to do; saving a Draft is
+              the way out of it, so only one of the two is the loud button. */}
+          <div className="flex flex-wrap gap-3">
+            <Button
+              type="submit"
+              variant="outline"
+              onClick={() => (intent.current = "save")}
+              disabled={working}
+            >
+              Save Draft
+            </Button>
+            <Button type="submit" onClick={() => (intent.current = "submit")} disabled={working}>
+              Submit for Pre-approval
+            </Button>
           </div>
-
-          <div className="field">
-            <label htmlFor="degreeProgram">Degree program (optional)</label>
-            <input
-              type="text"
-              id="degreeProgram"
-              name="degreeProgram"
-              value={entered.degreeProgram}
-              onChange={change("degreeProgram")}
-            />
-          </div>
-        </fieldset>
-
-        <div className="field">
-          <label htmlFor="eligibleCost">Eligible Cost</label>
-          <span id="eligibleCost-hint" className="hint">
-            The part of the cost the Program will reimburse: tuition plus required fees. Books are
-            never Eligible Costs.
-          </span>
-          <input
-            type="text"
-            id="eligibleCost"
-            name="eligibleCost"
-            inputMode="decimal"
-            autoComplete="off"
-            spellCheck={false}
-            pattern={AMOUNT}
-            required
-            aria-describedby="eligibleCost-hint"
-            data-error="eligibleCost-error"
-            value={entered.eligibleCost}
-            onChange={change("eligibleCost")}
-          />
-          <span id="eligibleCost-error" className="error-msg">
-            Error: enter an amount with two decimal places, for example 2250.00.
-          </span>
-        </div>
-
-        <div className="actions">
-          <button type="submit" onClick={() => (intent.current = "save")} disabled={working}>
-            Save Draft
-          </button>
-          <button
-            type="submit"
-            className="call"
-            onClick={() => (intent.current = "submit")}
-            disabled={working}
-          >
-            Submit for Pre-approval
-          </button>
-        </div>
+        </FieldGroup>
       </form>
     </>
   );
