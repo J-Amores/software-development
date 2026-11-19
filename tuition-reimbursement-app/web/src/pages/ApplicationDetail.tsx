@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import { api } from "../api/client";
 import type { components } from "../api/generated/schema";
-import { statusWord } from "../applications/status";
+import { statusTone, statusWord } from "../applications/status";
 import { readableDate, readableInstant } from "../time/plainDates";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +11,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type Application = components["schemas"]["Application"];
 
-const NOT_YET = "Not entered yet";
+/**
+ * What the Course details read where the Applicant has not entered one yet. This
+ * screen has the room to say it in words, where the list of Applications shows a
+ * dash in a narrow column.
+ */
+const NOT_ENTERED_YET = "Not entered yet";
 
 /**
  * One Application: the Course it is for, where it stands, and its Timeline. The
@@ -62,7 +67,7 @@ export function ApplicationDetail() {
       </h1>
       {/* The status reads as one phrase, so the whole phrase is what is marked:
           "Status" without its value is not a thing anyone needs to read. */}
-      <Badge variant={application.status === "draft" ? "secondary" : "default"}>
+      <Badge variant={statusTone(application.status)}>
         Status: {statusWord(application.status)}
       </Badge>
 
@@ -75,19 +80,19 @@ export function ApplicationDetail() {
         <CardContent>
           <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
             <dt className="text-muted-foreground">Institution</dt>
-            <dd>{course.institution ?? NOT_YET}</dd>
+            <dd>{course.institution ?? NOT_ENTERED_YET}</dd>
             <dt className="text-muted-foreground">Course title</dt>
-            <dd>{course.title ?? NOT_YET}</dd>
+            <dd>{course.title ?? NOT_ENTERED_YET}</dd>
             <dt className="text-muted-foreground">Starts</dt>
-            <dd>{course.startDate ? readableDate(course.startDate) : NOT_YET}</dd>
+            <dd>{course.startDate ? readableDate(course.startDate) : NOT_ENTERED_YET}</dd>
             <dt className="text-muted-foreground">Ends</dt>
-            <dd>{course.endDate ? readableDate(course.endDate) : NOT_YET}</dd>
+            <dd>{course.endDate ? readableDate(course.endDate) : NOT_ENTERED_YET}</dd>
             <dt className="text-muted-foreground">Course cost</dt>
-            <dd>{course.cost ?? NOT_YET}</dd>
+            <dd>{course.cost ?? NOT_ENTERED_YET}</dd>
             <dt className="text-muted-foreground">Degree program</dt>
             <dd>{course.degreeProgram ?? "This Course is not part of one"}</dd>
             <dt className="text-muted-foreground">Eligible Cost</dt>
-            <dd>{application.eligibleCost ?? NOT_YET}</dd>
+            <dd>{application.eligibleCost ?? NOT_ENTERED_YET}</dd>
           </dl>
         </CardContent>
       </Card>
