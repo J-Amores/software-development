@@ -155,32 +155,35 @@
    with its column names in front of its values (responsive-table). The column
    name comes from the cell's own `data-column` through `attr()`, which is the one
    part of this no utility class can carry — a class cannot read an attribute off
-   the element it sits on. */
-@layer components {
-  @container (width < 38rem) {
-    [data-slot="table"],
-    [data-slot="table-header"],
-    [data-slot="table-body"],
-    [data-slot="table-row"],
-    [data-slot="table-head"],
-    [data-slot="table-cell"],
-    [data-slot="table-body"] th {
-      display: block;
-    }
+   the element it sits on.
 
-    [data-slot="table-header"] {
-      display: none;
-    }
+   It sits in no cascade layer on purpose. The registry's Table carries utility
+   classes of its own, among them the one that takes the last row's border away,
+   and anything in a layer loses to a utility whatever its specificity. These
+   rules have to win inside the container query and give way outside it, which is
+   what the query itself already decides. */
+@container (width < 38rem) {
+  [data-slot="table"],
+  [data-slot="table-header"],
+  [data-slot="table-body"],
+  [data-slot="table-row"],
+  [data-slot="table-head"],
+  [data-slot="table-cell"] {
+    display: block;
+  }
 
-    [data-slot="table-body"] [data-slot="table-row"] {
-      margin-block-end: 1rem;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-    }
+  [data-slot="table-header"] {
+    display: none;
+  }
 
-    [data-slot="table-cell"][data-column]::before {
-      content: attr(data-column) ": ";
-      color: var(--muted-foreground);
-    }
+  [data-slot="table-body"] [data-slot="table-row"] {
+    margin-block-end: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+  }
+
+  [data-slot="table-cell"][data-column]::before {
+    content: attr(data-column) ": ";
+    color: var(--muted-foreground);
   }
 }

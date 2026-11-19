@@ -56,6 +56,16 @@ const REQUIRED: ReadonlyArray<{ field: keyof Entered; message: string }> = [
 
 const AMOUNT = "[0-9]+\\.[0-9]{2}";
 
+/**
+ * A field the Program needs. `peer` is what its error message reads to know
+ * whether the browser has decided the field is wrong yet, and the field marks
+ * itself at the same moment (accessible-error-announcement).
+ *
+ * Tailwind only builds the classes it can read literally in the source, so these
+ * are constants rather than anything assembled at runtime.
+ */
+const REQUIRED_FIELD = "peer user-invalid:border-destructive";
+
 /** Every field's error message, shown by the browser's own `:user-invalid` state. */
 const ERROR_MESSAGE = "hidden text-sm text-destructive peer-user-invalid:block";
 
@@ -244,7 +254,7 @@ export function ApplicationForm() {
               <Field>
                 <FieldLabel htmlFor="institution">Institution</FieldLabel>
                 <Input
-                  className="peer"
+                  className={REQUIRED_FIELD}
                   type="text"
                   id="institution"
                   name="institution"
@@ -262,7 +272,7 @@ export function ApplicationForm() {
               <Field>
                 <FieldLabel htmlFor="title">Course title</FieldLabel>
                 <Input
-                  className="peer"
+                  className={REQUIRED_FIELD}
                   type="text"
                   id="title"
                   name="title"
@@ -285,7 +295,7 @@ export function ApplicationForm() {
                     knows the Person's calendar and locale, and it is reachable
                     from the keyboard a segment at a time. */}
                 <Input
-                  className="peer"
+                  className={REQUIRED_FIELD}
                   type="date"
                   id="startDate"
                   name="startDate"
@@ -304,7 +314,7 @@ export function ApplicationForm() {
               <Field>
                 <FieldLabel htmlFor="endDate">End date</FieldLabel>
                 <Input
-                  className="peer"
+                  className={REQUIRED_FIELD}
                   type="date"
                   id="endDate"
                   name="endDate"
@@ -325,7 +335,7 @@ export function ApplicationForm() {
                   The whole cost of the Course, to two decimal places, for example 2400.00.
                 </FieldDescription>
                 <Input
-                  className="peer"
+                  className={REQUIRED_FIELD}
                   type="text"
                   id="cost"
                   name="cost"

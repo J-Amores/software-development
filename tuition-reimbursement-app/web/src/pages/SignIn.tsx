@@ -13,6 +13,12 @@ import {
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
+/** A field sign-in needs, and the shape its error message keys off. */
+const REQUIRED_FIELD = "peer user-invalid:border-destructive";
+
+/** Every field's error message, shown by the browser's own `:user-invalid` state. */
+const ERROR_MESSAGE = "hidden text-sm text-destructive peer-user-invalid:block";
+
 /**
  * Sign in with the Employer account. The browser validates the fields and offers
  * the saved password; this component only handles what Cognito says.
@@ -47,7 +53,7 @@ export function SignIn({ onSignedIn }: { onSignedIn: () => void }) {
     <main className="mx-auto flex min-h-dvh w-full max-w-md items-center p-4">
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>
+          <CardTitle className="text-xl">
             <h1>Tuition Reimbursement</h1>
           </CardTitle>
           <CardDescription>Sign in with your {config.employerName} account.</CardDescription>
@@ -59,10 +65,11 @@ export function SignIn({ onSignedIn }: { onSignedIn: () => void }) {
               <Field>
                 <FieldLabel htmlFor="email">Work email</FieldLabel>
                 {/* `peer` is what the error message below reads to know whether the
-                    browser has decided this field is wrong yet
+                    browser has decided this field is wrong yet, and the field
+                    marks itself at the same moment
                     (accessible-error-announcement). */}
                 <Input
-                  className="peer"
+                  className={REQUIRED_FIELD}
                   type="email"
                   id="email"
                   name="email"
@@ -73,7 +80,7 @@ export function SignIn({ onSignedIn }: { onSignedIn: () => void }) {
                 />
                 <span
                   id="email-error"
-                  className="hidden text-sm text-destructive peer-user-invalid:block"
+                  className={ERROR_MESSAGE}
                 >
                   Enter the email address your Employer account uses.
                 </span>
@@ -82,7 +89,7 @@ export function SignIn({ onSignedIn }: { onSignedIn: () => void }) {
               <Field>
                 <FieldLabel htmlFor="current-password">Password</FieldLabel>
                 <Input
-                  className="peer"
+                  className={REQUIRED_FIELD}
                   type="password"
                   id="current-password"
                   name="password"
@@ -93,7 +100,7 @@ export function SignIn({ onSignedIn }: { onSignedIn: () => void }) {
                 />
                 <span
                   id="password-error"
-                  className="hidden text-sm text-destructive peer-user-invalid:block"
+                  className={ERROR_MESSAGE}
                 >
                   Enter your password.
                 </span>
